@@ -1,0 +1,100 @@
+<section>
+    <div class="container pb-3 mb-3 mt-4">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-6 col-lg-6 col-xl-5">
+                <img src="assets/img/" class="img-fluid" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                <h3 class="text-center">Sign up</h3>
+                {{log result}}
+                {{#if result}}
+                <p class="text-danger">Email Already Exist.</p>
+                {{/if}}
+                <form autocomplete="off" action="/signup" method="post">
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="name">Name</label>
+                        <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Enter your name"
+                            required />
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label for="course" class="form-label">Courses</label>
+                        <select class="form-select" name="course" id="course" required>
+                            <option selected disabled value="">Choose...</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BSC">BSC</option>
+                            <option value="BCOM">BCOM</option>
+                            <option value="BBA">BBA</option>
+                            <option value="BT">BT</option>
+                            <option value="HOMSC">HOMSC</option>
+                            <option value="BA ECO">BA ECO</option>
+                        </select>
+                    </div>
+
+                    <!-- Email input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="email">Email address</label>
+                        <input type="email" name="email" id="email" class="form-control form-control-lg"
+                            placeholder="Enter a valid email address" required />
+                    </div>
+
+                    <!-- Email input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="phone">Phone</label>
+                        <input type="number" name="phone" id="phone" class="form-control form-control-lg"
+                            placeholder="Enter phone number" required />
+                    </div>
+
+                    <!-- Email input -->
+                    {{!-- <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="aadhar">Aadhar</label>
+                        <input type="number" name="aadhar" id="aadhar" class="form-control form-control-lg"
+                            placeholder="Enter aadhar number" required />
+                    </div> --}}
+
+                    <!-- Gender input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label for="" class="form-label">Gender</label>
+                        <br>
+                        <input type="radio" id="male" name="gender" value="male" class="form-check-input" required />
+                        <label for="male">Male</label>
+                        <input type="radio" id="female" name="gender" value="female" class="form-check-input" required />
+                        <label for="female">Female</label>
+                        <input type="radio" id="others" name="gender" value="others" class="form-check-input" required />
+                        <label for="others">Others</label>
+                    </div>
+{{!-- 
+                    <!-- Date of  input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="dob">Date of birth</label>
+                        <input type="date" id="dob" name="dob" class="form-control form-control-lg"
+                            placeholder="Enter Date Of Birth" required />
+                    </div> --}}
+
+                    <!-- Password input -->
+                    <div data-mdb-input-init class="form-outline mb-3">
+                        <label class="form-label" for="passwd">Password</label>
+                        <input type="password" name="password" id="passwd" class="form-control form-control-lg"
+                            placeholder="Enter password" required />
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="small fw-bold mt-2 pt-1 mb-0">Already have an account? <a href="/login"
+                                class="link-danger">Login</a></p>
+                        <!-- <a href="#!" class="text-body">Forgot password?</a> -->
+                    </div>
+
+                    <div class="text-center text-lg-start mt-4 pt-2">
+                        <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
+                            style="padding-left: 
+                2.5rem; padding-right: 2.5rem;">Signup</button>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</section>
