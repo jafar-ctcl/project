@@ -1,7 +1,9 @@
 let mysql = require('mysql')
-let connect = mysql.createConnection({
+let db = mysql.createConnection({
     host : 'localhost',
     user : 'root',
     password : '',
     database : 'project'
 })
+
+module.exports=db

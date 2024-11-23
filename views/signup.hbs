@@ -17,6 +17,16 @@
                         <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Enter your name"
                             required />
                     </div>
+                         <div data-mdb-input-init class="form-outline mb-4">
+                        <label for="type" class="form-label">Type</label>
+                        <select class="form-select" name="type" id="type" required>
+                            <option selected disabled value="">Choose...</option>
+                            <option value="BCA">HOD</option>
+                            <option value="BSC">STUDENT</option>
+                            <option value="BCOM">TEACHER</option>
+                            
+                        </select>
+                    </div>
 
                     <div data-mdb-input-init class="form-outline mb-4">
                         <label for="course" class="form-label">Courses</label>
@@ -29,6 +39,16 @@
                             <option value="BT">BT</option>
                             <option value="HOMSC">HOMSC</option>
                             <option value="BA ECO">BA ECO</option>
+                        </select>
+                    </div>
+                        <div data-mdb-input-init class="form-outline mb-4">
+                        <label for="year" class="form-label">Year</label>
+                        <select class="form-select" name="year" id="year" required>
+                            <option selected disabled value="">Choose...</option>
+                            <option value="BCA">1</option>
+                            <option value="BSC">2</option>
+                            <option value="BCOM">3</option>
+                            
                         </select>
                     </div>
 
@@ -44,6 +64,12 @@
                         <label class="form-label" for="phone">Phone</label>
                         <input type="number" name="phone" id="phone" class="form-control form-control-lg"
                             placeholder="Enter phone number" required />
+                    </div>
+                      <!-- Password input -->
+                    <div data-mdb-input-init class="form-outline mb-3">
+                        <label class="form-label" for="passwd">Password</label>
+                        <input type="password" name="password" id="passwd" class="form-control form-control-lg"
+                            placeholder="Enter password" required />
                     </div>
 
                     <!-- Email input -->
@@ -72,12 +98,7 @@
                             placeholder="Enter Date Of Birth" required />
                     </div> --}}
 
-                    <!-- Password input -->
-                    <div data-mdb-input-init class="form-outline mb-3">
-                        <label class="form-label" for="passwd">Password</label>
-                        <input type="password" name="password" id="passwd" class="form-control form-control-lg"
-                            placeholder="Enter password" required />
-                    </div>
+                  
 
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="small fw-bold mt-2 pt-1 mb-0">Already have an account? <a href="/login"
