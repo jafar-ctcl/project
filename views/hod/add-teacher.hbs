@@ -1,0 +1,87 @@
+
+  <section class="container mt-5">
+    <h2 class="text-center mb-4">Add Teacher Details</h2>
+    <form action="/submit-teacher-details" method="POST">
+      <!-- Personal Information Section -->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5>Personal Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="teacherName" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="teacherName" name="teacherName" placeholder="Enter full name" required>
+          </div>
+          <div class="mb-3">
+            <label for="teacherDOB" class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" id="teacherDOB" name="teacherDOB" required>
+          </div>
+          <div class="mb-3">
+            <label for="teacherGender" class="form-label">Gender</label>
+            <select class="form-select" id="teacherGender" name="teacherGender" required>
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Information Section -->
+      <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+          <h5>Academic Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="teacherID" class="form-label">Employee ID</label>
+            <input type="text" class="form-control" id="teacherID" name="teacherID" placeholder="Enter employee ID" required>
+          </div>
+          <div class="mb-3">
+            <label for="teacherSubject" class="form-label">Subject Taught</label>
+            <input type="text" class="form-control" id="teacherSubject" name="teacherSubject" placeholder="Enter subject" required>
+          </div>
+          <div class="mb-3">
+            <label for="teacherDepartment" class="form-label">Department</label>
+            <select class="form-select" id="teacherDepartment" name="teacherDepartment" required>
+             <option selected disabled value="">Choose...</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BSC">BSC</option>
+                            <option value="BCOM">BCOM</option>
+                            <option value="BBA">BBA</option>
+                            <option value="BT">BT</option>
+                            <option value="HOMSC">HOMSC</option>
+                            <option value="BA ECO">BA ECO</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Information Section -->
+      <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+          <h5>Contact Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="teacherEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="teacherEmail" name="teacherEmail" placeholder="Enter email address" required>
+          </div>
+          <div class="mb-3">
+            <label for="teacherPhone" class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" id="teacherPhone" name="teacherPhone" placeholder="Enter phone number" required>
+          </div>
+          <div class="mb-3">
+            <label for="teacherAddress" class="form-label">Address</label>
+            <textarea class="form-control" id="teacherAddress" name="teacherAddress" rows="3" placeholder="Enter address" required></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Add Teacher</button>
+      </div>
+    </form>
+  </section>
