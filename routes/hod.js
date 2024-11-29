@@ -1,23 +1,36 @@
 var express = require('express');
 var router = express.Router();
+const hodHelpers = require('../helpers/hodHelpers');
+
 var hod=true
-function verifyLogin(req,res,next){
-  if(req.session.loggedIn == true){
+
+const verifyLogin = (req, res, next) => {
+  if (req.session.hodLoggedIn) {
     next()
-  }else{
-    res.redirect('/login')
+  } else {
+    res.redirect('/hod/login')
   }
 }
-/* GET users listing. */
-router.get('/',function(req, res,next ) {
-  res.render('hod/dashboard',{ hod })
-  // res.send('respond with a resource');
+
+router.get('/',verifyLogin, (req, res) => {
+  res.render('hod/dashboard', {hod})
 });
-router.get('/login',(req,res)=>{
-  // if(req.session.loggedIn==true){
-  //   res.redirect('hod/dashboard')
-  // }
-  res.render('login',{hod})
+router.get('/login', (req, res) => {
+  res.render('hod/login', { err: req.session.hodLoginErr })
+})
+router.post('/login', (req, res) => {
+  hodHelpers.doLogin(req.body).then((resp) => {
+    console.log("resp",resp)
+    if (resp.err) {
+       req.session.hodLoginErr = resp.err
+
+      res.redirect('/hod/login')
+    } else {
+       req.session.hodLoggedIn = true
+  
+      res.redirect('/hod')
+    }
+  })
 })
 router.get('/add-student',(req,res)=>{
  res.render('hod/add-student')
@@ -30,5 +43,12 @@ router.get('/view-student',(req,res)=>{
  })
  router.get('/view-teachers',(req,res)=>{
   res.render('hod/view-teachers')
+ })
+ router.get('/add-timetable',(req,res)=>{
+  res.render('hod/add-timetable')
+ })
+ 
+ router.get('/view-timetable',(req,res)=>{
+  res.render('hod/view-timetable')
  })
 module.exports = router;

@@ -1,0 +1,53 @@
+<section class="timetable-creation-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Create Timetable</h2>
+
+        <!-- Timetable Creation Form -->
+        <form action="/submit-timetable" method="POST">
+            <!-- Day Selection -->
+            <div class="mb-3">
+                <label for="daySelect" class="form-label">Day</label>
+                <select id="daySelect" class="form-select" name="day" required>
+                    <option value="">Choose a day...</option>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                </select>
+            </div>
+
+            <!-- Time Slot -->
+            <div class="mb-3">
+                <label for="timeSlot" class="form-label">Time Slot</label>
+                <input type="text" class="form-control" id="timeSlot" name="timeSlot" placeholder="e.g., 9:00 AM - 10:00 AM" required>
+            </div>
+
+            <!-- Subject -->
+            <div class="mb-3">
+                <label for="subject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter subject name" required>
+            </div>
+
+            <!-- Classroom -->
+            <div class="mb-3">
+                <label for="classroom" class="form-label">Classroom</label>
+                <input type="text" class="form-control" id="classroom" name="classroom" placeholder="Enter classroom number" required>
+            </div>
+
+            <!-- Instructor -->
+            <div class="mb-3">
+                <label for="instructor" class="form-label">Instructor</label>
+                <input type="text" class="form-control" id="instructor" name="instructor" placeholder="Enter instructor name" required>
+            </div>
+
+            <!-- Submit Button -->
+             <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div> 
+              {{!-- <div class="text-center mt-4">
+            <a href="/hod/view-timetable" class="btn btn-primary">save Timetable</a>
+        </div> --}}
+        </form>
+    </div>
+</section>

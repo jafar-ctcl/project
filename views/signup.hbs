@@ -1,10 +1,10 @@
 <section>
     <div class="container pb-3 mb-3 mt-4">
-        <div class="row d-flex justify-content-center align-items-center h-100">
+        {{!-- <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-6 col-lg-6 col-xl-5">
                 <img src="assets/img/" class="img-fluid" alt="Sample image">
-            </div>
-            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+            </div> --}}
+            <div class="col-md-8 col-lg-6 col-xl-10 offset-xl-1">
                 <h3 class="text-center">Sign up</h3>
                 {{log result}}
                 {{#if result}}
@@ -21,9 +21,9 @@
                         <label for="type" class="form-label">Type</label>
                         <select class="form-select" name="type" id="type" required>
                             <option selected disabled value="">Choose...</option>
-                            <option value="HOD">HOD</option>
-                            <option value="STUDENT">STUDENT</option>
-                            <option value="TEACHER">TEACHER</option>
+                            {{!-- <option value="HOD">HOD</option> --}}
+                            <option value="student">STUDENT</option>
+                            <option value="teacher">TEACHER</option>
                             
                         </select>
                     </div>
@@ -34,24 +34,24 @@
                             <option selected disabled value="">Select course</option>
                             <option value="BCA">BCA</option>
                             <option value="BSC">BSC</option>
-                            <option value="BCOM">BCOM</option>
+                            {{!-- <option value="BCOM">BCOM</option>
                             <option value="BBA">BBA</option>
                             <option value="BT">BT</option>
                             <option value="HOMSC">HOMSC</option>
-                            <option value="BA ECO">BA ECO</option>
+                            <option value="BA ECO">BA ECO</option> --}}
                         </select>
                     </div>
                         <div data-mdb-input-init class="form-outline mb-4">
                         <label for="year" class="form-label">Year</label>
                         <select class="form-select" name="year" id="year" required>
                              <option value="">Select Year</option>
-              <option value="1">1st Year</option>
-              <option value="2">2nd Year</option>
-              <option value="3">3rd Year</option>
-              <option value="4">4th Year</option>
-                            
-                        </select>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>  
                     </div>
+                   
 
                     <!-- Email input -->
                     <div data-mdb-input-init class="form-outline mb-4">
@@ -72,6 +72,18 @@
                         <input type="password" name="password" id="passwd" class="form-control form-control-lg"
                             placeholder="Enter password" required />
                     </div>
+                      <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="aadhar">Aadhar</label>
+                        <p id="a-msg" class="text-center text-danger d-none">Please enter a valid 12-digit aadhar
+                            number. </p>
+                        <input type="number" name="aadhar" id="aadhar" class="form-control form-control-lg"
+                            placeholder="Enter aadhar number" required />
+                    </div>
+                     {{!-- <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="abcd">ABCD Id</label>
+                        <input type="text" id="abcd" name="abcd" class="form-control form-control-lg" placeholder="Enter your ABCD Id"
+                            required />
+                    </div> --}}
 
                     <!-- Email input -->
                     {{!-- <div data-mdb-input-init class="form-outline mb-4">

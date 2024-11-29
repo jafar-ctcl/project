@@ -1,0 +1,90 @@
+<style>
+    .attendance-section {
+    background-color: #f5f5f5; /* Light background */
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+.attendance-section h2 {
+    font-weight: bold;
+    color: #444;
+}
+.table thead {
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+</style>
+<section class="attendance-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Attendance Management</h2>
+
+        <!-- Class Selection -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="classSelect" class="form-label">Select Class</label>
+                <select id="classSelect" class="form-select">
+                    <option value="">Choose a class...</option>
+                    <option value="class1">Class 1</option>
+                    <option value="class2">Class 2</option>
+                    <option value="class3">Class 3</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="dateSelect" class="form-label">Select Date</label>
+                <input type="date" id="dateSelect" class="form-control">
+            </div>
+        </div>
+
+        <!-- Attendance Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Roll Number</th>
+                        <th>Student Name</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>John Doe</td>
+                        <td>
+                            <input type="radio" name="attendance1" value="present">
+                        </td>
+                        <td>
+                            <input type="radio" name="attendance1" value="absent">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Jane Smith</td>
+                        <td>
+                            <input type="radio" name="attendance2" value="present">
+                        </td>
+                        <td>
+                            <input type="radio" name="attendance2" value="absent">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Michael Johnson</td>
+                        <td>
+                            <input type="radio" name="attendance3" value="present">
+                        </td>
+                        <td>
+                            <input type="radio" name="attendance3" value="absent">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-primary">Submit Attendance</button>
+        </div>
+    </div>
+</section>

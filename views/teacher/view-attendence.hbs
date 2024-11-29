@@ -1,0 +1,74 @@
+<style>
+    .view-attendance-section {
+    background-color: #eef5f9; /* Light blue-gray background */
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+.view-attendance-section h2 {
+    color: #333;
+    font-weight: bold;
+}
+.table thead {
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+</style>
+<section class="view-attendance-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">View Attendance Records</h2>
+
+        <!-- Class and Date Selection -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="classSelect" class="form-label">Select Class</label>
+                <select id="classSelect" class="form-select">
+                    <option value="">Choose a class...</option>
+                    <option value="class1">Class 1</option>
+                    <option value="class2">Class 2</option>
+                    <option value="class3">Class 3</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="dateSelect" class="form-label">Select Date</label>
+                <input type="date" id="dateSelect" class="form-control">
+            </div>
+        </div>
+
+        <!-- Attendance Records Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Roll Number</th>
+                        <th>Student Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>John Doe</td>
+                        <td>Present</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Jane Smith</td>
+                        <td>Absent</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Michael Johnson</td>
+                        <td>Present</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Filter Button -->
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-primary">Filter Records</button>
+        </div>
+    </div>
+</section>
