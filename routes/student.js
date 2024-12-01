@@ -20,7 +20,7 @@ router.get('/login', function (req, res) {
     res.redirect('/student')
   } else {
     res.render('login', { title: 'Student', err: req.session.loginErr,student });
-    req.session.loginErr = false
+   // req.session.loginErr = false
   }
 });
 router.post('/login', (req, res) => {
@@ -30,11 +30,26 @@ router.post('/login', (req, res) => {
       res.redirect('/login')
     } else {
       req.session.loggedIn = true
-      // req.session.student = resp.data
+      req.session.student = resp.data
       res.redirect('/student')
     }
   })
-})  
+})
+
+// router.post('/login', (req, res) => {
+//   studentHelpers.doLogin(req.body).then((resp) => {
+//     if (resp.err) {
+//       req.session.loginErr = resp.err
+//       res.redirect('/login')
+//     } else {
+//       req.session.loggedIn = true
+//       req.session.student = resp.name
+//       console.log(resp.data);
+      
+//       res.redirect('/student')
+//     }
+//   })
+// })  
 router.get('/signup',(req,res)=>{
   res.render('signup')
 })
@@ -44,13 +59,19 @@ router.post('/signup',(req,res)=>{
         res.redirect('/login')
   })
 })
-router.get('/student',(req,res)=>{
+router.get('/student',verifyLogin,(req,res)=>{
+  console.log(req.session.student[0]);
+  let name = req.session.student[0].Name
   
-  res.render('student/dashboard',{})
+  res.render('student/dashboard',{name})
 })
 router.get('/timetable',(req,res)=>{
   
   res.render('student/dashboard')
+})
+router.get('/logout',(req,res)=>{
+  req.session.destroy()
+  res.redirect('/')
 })
 // router.get('/teacher',(req,res)=>{
 //   res.render('teacher/view-attendence')

@@ -32,20 +32,33 @@ router.post('/login', (req, res) => {
     }
   })
 })
-router.get('/add-student',(req,res)=>{
- res.render('hod/add-student')
+
+router.get('/approve-students', verifyLogin, (req, res) => {
+  hodHelpers.getAllStudents().then((resp) => {
+    // console.log(resp);
+    res.render('hod/approve-students', { hod, students: resp })
+  })
 })
+
+router.get('/change-status/:email/:status', verifyLogin, (req, res) => {
+  hodHelpers.changeStatus(req.params).then(() => {
+    res.redirect('/hod/approve-students')
+  })
+})
+// router.get('/add-student',(req,res)=>{
+//  res.render('hod/add-student',{hod})
+// })
 router.get('/view-student',(req,res)=>{
-  res.render('hod/view-student')
+    res.render('hod/view-student',{hod})
  })
  router.get('/add-teacher',(req,res)=>{
-  res.render('hod/add-teacher')
+  res.render('hod/add-teacher',{hod})
  })
  router.get('/view-teachers',(req,res)=>{
-  res.render('hod/view-teachers')
+  res.render('hod/view-teachers',{hod})
  })
  router.get('/add-timetable',(req,res)=>{
-  res.render('hod/add-timetable')
+  res.render('hod/add-timetable',{hod})
  })
  
  router.get('/view-timetable',(req,res)=>{
