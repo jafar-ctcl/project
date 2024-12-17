@@ -10,12 +10,15 @@ module.exports = {
     // Make sure you have a MySQL connection pool or client setup
 
     doSignup: (loginData) => {
-        const { name, type, course, year, phone, email, password, aadhar, gender } = loginData;
+        const { name, course, year, phone, email, password,dob, aadhar, gender } = loginData;
+        
+        // console.log(loginData);
+        
         return new Promise((resolve, reject) => {
             // Define the SQL query
             // const query = 'INSERT INTO students (name,type, course ,year, email, password,gender) VALUES (?, ?, ?, ?, ?,?,?)';
             // Execute the query
-            db.query('INSERT INTO login_data (name,type, course ,year,phone, email, password,aadhar,gender) VALUES (?, ?, ?, ?, ?,?,?,?,?)', [name, type, course, year, phone, email, password, aadhar, gender, 0], (err, results) => {
+            db.query('INSERT INTO login_data (name, type, course, year, phone, email, password,dob, aadhar, gender,status) VALUES (?, ?, ?,?, ?, ?,?,?,?,?,?)', [name, type="student", course, year, phone, email, password,dob, aadhar, gender, 0], (err, results) => {
                 if (err) {
                     console.error('Error inserting into database:', err);
                     throw err
@@ -36,7 +39,7 @@ module.exports = {
             // Query the database for the user by email
             const query = 'SELECT * FROM login_data WHERE email = ?';
             db.query('SELECT * FROM login_data WHERE email = ?', [loginData.email], (err, data) => {
-                // console.log(data[0]);
+                 console.log("student",data[0]);
 
                 if (data.length === 0) {
                     // No user found with the provided email
@@ -45,9 +48,9 @@ module.exports = {
                     resolve({ err: 'Email not exist' })
                 } else {
 
-                    if (loginData.password == data[0].Password) {
+                    if (loginData.password == data[0].password) {
                         console.log(data[0].status);
-                        if (data[0].Type === "student") {
+                        if (data[0].type === "student") {
                             if (data[0].status) {
 
                                 resolve({ err: false, data })

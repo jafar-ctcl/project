@@ -3,7 +3,7 @@
         <h2 class="text-center mb-4">Create Timetable</h2>
 
         <!-- Timetable Creation Form -->
-        <form action="/submit-timetable" method="POST">
+        <form action="/hod/add-timetable" method="POST">
             <!-- Day Selection -->
             <div class="mb-3">
                 <label for="daySelect" class="form-label">Day</label>
@@ -16,38 +16,123 @@
                     <option value="friday">Friday</option>
                 </select>
             </div>
+              <!-- Class Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Year</label>
+                        <select class="form-select" name="year" required>
+                            <option value="">Choose a Year ...</option>
+                            <option value="1">1 Year</option>
+                            <option value="2">2 Year</option>
+                            <option value="3">3 Year</option>
+                            <option value="4">4 Year</option>
+                        </select>
+                    </div>
 
-            <!-- Time Slot -->
-            <div class="mb-3">
-                <label for="timeSlot" class="form-label">Time Slot</label>
-                <input type="text" class="form-control" id="timeSlot" name="timeSlot" placeholder="e.g., 9:00 AM - 10:00 AM" required>
+            <!-- Time Slot Section -->
+            <div id="timeSlotSection">
+                <div class="time-slot mb-3 border p-3">
+                    <h5>Time Slot 1</h5>
+                    <!-- Time Slot Dropdown -->
+                    <div class="mb-3">
+                        <label class="form-label">Time Slot</label>
+                        <select class="form-select" name="timeSlot" required>
+                            <option value="">Select a time slot...</option>
+                            <option value="9:30-10:30">9:30 AM - 10:30 AM</option>
+                            <option value="10:30-11:25">10:30 AM - 11:25 AM</option>
+                            <option value="11:35-12:30">11:35 AM - 12:30 PM</option>
+                            <option value="1:30-2:30">1:30 PM - 2:30 PM</option>
+                            <option value="2:30-3:30">2:30 PM - 3:30 PM</option>
+                        </select>
+                    </div>
+
+                  
+
+                    <!-- Teacher Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Teacher</label>
+                        <select class="form-select" name="teacher" required>
+                            <option value="">Choose a teacher...</option>
+                            <option value="aswathi">Aswathi</option>
+                            <option value="aswani">Aswani</option>
+                            <option value="sajith">Sajith</option>
+                            <option value="jency">Jency</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" name="subject" placeholder="Enter subject name"
+                            required>
+                    </div> 
+                </div>
             </div>
 
-            <!-- Subject -->
-            <div class="mb-3">
-                <label for="subject" class="form-label">Subject</label>
-                <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter subject name" required>
-            </div>
-
-            <!-- Classroom -->
-            <div class="mb-3">
-                <label for="classroom" class="form-label">Classroom</label>
-                <input type="text" class="form-control" id="classroom" name="classroom" placeholder="Enter classroom number" required>
-            </div>
-
-            <!-- Instructor -->
-            <div class="mb-3">
-                <label for="instructor" class="form-label">Instructor</label>
-                <input type="text" class="form-control" id="instructor" name="instructor" placeholder="Enter instructor name" required>
+            <!-- Add/Remove Buttons -->
+            <div class="text-center mb-4">
+                <button type="button" class="btn btn-secondary me-2" id="addTimeSlot">Add More Time Slots</button>
+                <button type="button" class="btn btn-danger" id="removeTimeSlot">Remove Last Slot</button>
             </div>
 
             <!-- Submit Button -->
-             <div class="text-center">
+            <div class="text-center">
                 <button type="submit" class="btn btn-primary">Submit</button>
-            </div> 
-              {{!-- <div class="text-center mt-4">
-            <a href="/hod/view-timetable" class="btn btn-primary">save Timetable</a>
-        </div> --}}
+            </div>
         </form>
     </div>
 </section>
+
+<script>
+    document.getElementById('addTimeSlot').addEventListener('click', function () {
+        const timeSlotSection = document.getElementById('timeSlotSection');
+        const timeSlotCount = timeSlotSection.getElementsByClassName('time-slot').length + 1;
+        if(timeSlotCount <6){
+
+        const newTimeSlot = document.createElement('div');
+        newTimeSlot.className = 'time-slot mb-3 border p-3';
+        newTimeSlot.innerHTML = `
+            <h5>Time Slot ${timeSlotCount}</h5>
+            <div class="mb-3">
+                <label class="form-label">Time Slot</label>
+                <select class="form-select" name="timeSlot" required>
+                    <option value="">Select a time slot...</option>
+                    <option value="9:30-10:30">9:30 AM - 10:30 AM</option>
+                    <option value="10:30-11:25">10:30 AM - 11:25 AM</option>
+                    <option value="11:35-12:30">11:35 AM - 12:30 PM</option>
+                    <option value="1:30-2:30">1:30 PM - 2:30 PM</option>
+                    <option value="2:30-3:30">2:30 PM - 3:30 PM</option>
+                </select>
+            </div>
+           
+            <div class="mb-3">
+                <label class="form-label">Teacher</label>
+                <select class="form-select" name="teacher" required>
+                    <option value="">Choose a teacher...</option>
+                    <option value="aswathi">Aswathi</option>
+                    <option value="aswani">Aswani</option>
+                    <option value="sajith">Sajith</option>
+                    <option value="jency">Jency</option>
+                </select>
+            </div>
+             <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" name="subject" placeholder="Enter subject name"
+                            required>
+                    </div> 
+        `;
+
+        timeSlotSection.appendChild(newTimeSlot);
+        } else {
+            alert('You have already used five timeslot.');
+        }
+    
+    });
+
+    document.getElementById('removeTimeSlot').addEventListener('click', function () {
+        const timeSlotSection = document.getElementById('timeSlotSection');
+        const timeSlots = timeSlotSection.getElementsByClassName('time-slot');
+        if (timeSlots.length > 1) {
+            timeSlotSection.removeChild(timeSlots[timeSlots.length - 1]);
+        } else {
+            alert('You must have at least one time slot.');
+        }
+    });
+</script>

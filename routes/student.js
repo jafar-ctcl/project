@@ -60,14 +60,14 @@ router.post('/signup',(req,res)=>{
   })
 })
 router.get('/student',verifyLogin,(req,res)=>{
-  console.log(req.session.student[0]);
-  let name = req.session.student[0].Name
+  // console.log(req.session.student[0]);
+  let name = req.session.student[0].name
   
   res.render('student/dashboard',{name})
 })
 router.get('/timetable',(req,res)=>{
   
-  res.render('student/dashboard')
+  res.render('student/dashboard',{student})
 })
 router.get('/logout',(req,res)=>{
   req.session.destroy()

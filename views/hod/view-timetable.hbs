@@ -1,105 +1,85 @@
-{{!-- <section class="timetable-view-section py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">View Timetable</h2>
 
-        <!-- Timetable Filters (Optional) -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label for="classSelect" class="form-label">Select Class</label>
-                <select id="classSelect" class="form-select">
-                    <option value="">Choose a class...</option>
-                    <option value="class1">Class 1</option>
-                    <option value="class2">Class 2</option>
-                    <option value="class3">Class 3</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="daySelect" class="form-label">Select Day</label>
-                <select id="daySelect" class="form-select">
-                    <option value="">Choose a day...</option>
-                    <option value="monday">Monday</option>
-                    <option value="tuesday">Tuesday</option>
-                    <option value="wednesday">Wednesday</option>
-                    <option value="thursday">Thursday</option>
-                    <option value="friday">Friday</option>
-                </select>
-            </div>
-        </div>
 
-        <!-- Timetable Table -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Time</th>
-                        <th>Subject</th>
-                        <th>Classroom</th>
-                        <th>Instructor</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Example Timetable Entries -->
-                    <tr>
-                        <td>9:00 AM - 10:00 AM</td>
-                        <td>Mathematics</td>
-                        <td>Room 101</td>
-                        <td>Dr. Smith</td>
-                    </tr>
-                    <tr>
-                        <td>10:15 AM - 11:15 AM</td>
-                        <td>Physics</td>
-                        <td>Room 102</td>
-                        <td>Prof. Johnson</td>
-                    </tr>
-                    <tr>
-                        <td>11:30 AM - 12:30 PM</td>
-                        <td>Chemistry</td>
-                        <td>Room 103</td>
-                        <td>Ms. Carter</td>
-                    </tr>
-                    <tr>
-                        <td>12:45 PM - 1:45 PM</td>
-                        <td>Biology</td>
-                        <td>Room 104</td>
-                        <td>Dr. Taylor</td>
-                    </tr>
-                    <!-- Add more timetable rows dynamically -->
-                </tbody>
-            </table>
-        </div>
 
-    </div>
-</section> --}}
 <section class="timetable-view-section py-5">
     <div class="container">
         <h2 class="text-center mb-4">View Timetable</h2>
 
         <!-- Timetable Table -->
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+              {{!-- <table class="table table-bordered table-striped">
                 <thead class="table-dark">
                     <tr>
-                        <th>Time</th>
-                        <th>Subject</th>
-                        <th>Classroom</th>
-                        <th>Instructor</th>
+                        <th></th> <!-- Empty header for the first column (used for categories like Time, Subject, etc.) -->
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each timetable}}
                     <tr>
-                        <td>{{timeSlot}}</td>
+                        
+                        <td><strong>Time</strong></td>
+                        {{#each timetable}}
+                  
+                        <td>{{time}}</td>
+                      
+                       {{/each}}
+                    </tr>
+                    <tr>
+                        <td><strong>Subject</strong></td>
+                        <td></td>
+                       
+                    </tr>
+                    <tr>
+                        <td><strong>Year</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Teacher</strong></td>
+                        <td>{{timetable.teacher}}</td>
+                     
+                    </tr>
+                </tbody>
+            </table> --}}
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Subject</th>
+                        <th>Year</th>
+                        <th>Teacher</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+ 
+                     {{#each timetable}} 
+                   
+                    <tr>
+                        <td>{{day}}</td>
+                        <td>{{time}}</td>
                         <td>{{subject}}</td>
-                        <td>{{classroom}}</td>
-                        <td>{{instructor}}</td>
+                        <td>{{year}}</td>
+                        <td>{{teacher}}</td>
                     </tr>
                     {{/each}}
-                </tbody>
+    
+</tbody>
+
             </table>
         </div>
         <div class="text-center mt-4">
             <a href="/hod/add-timetable" class="btn btn-primary">Create New Timetable</a>
         </div>
     </div>
-</section>
+</section> 
 
+   

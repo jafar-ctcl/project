@@ -7,44 +7,34 @@
       <table class="table table-bordered">
         <thead class="thead-dark">
           <tr>
-            <th>#</th>
+        
             <th>Full Name</th>
-            <th>Employee ID</th>
-            <th>Subject Taught</th>
-            <th>Department</th>
+           
             <th>Email</th>
             <th>Phone Number</th>
+            <th>Gender</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Teacher 1 -->
+          {{#each teachers}}
+       
           <tr>
-            <td>1</td>
-            <td>John Doe</td>
-            <td>EMP001</td>
-            <td>Mathematics</td>
-            <td>BCA</td>
-            <td>john.doe@example.com</td>
-            <td>(123) 456-7890</td>
-           <td>
+            </th> <!-- Loop Index -->
+            <td>{{name}}</td>              <!-- Full Name -->
+              <td>{{email}}</td>             <!-- Email -->
+            <td>{{phone}}</td> 
+            <td>{{gender}}</td>            <!-- Phone -->
+            <td>
               <div class="d-flex action-buttons">
-                <a href="/edit-teacher/ST123" class=" m-1 btn btn-success">Edit</a>
-                <a href="#!" class="m-1 btn btn-danger">Delete</a>
+                <a href="/manage-teacher" class=" m-1 btn btn-success">Manage</a>
+              
               </div>
           </td>
-          </tr> 
-          <tr>
-            <th scope="row">{{@index}}</th> <!-- Loop Index -->
-            <td>{{employeeID}}</td>        <!-- Employee ID -->
-            <td>{{name}}</td>              <!-- Full Name -->
-            <td>{{subject}}</td>           <!-- Subject -->
-            <td>{{department}}</td>        <!-- Department -->
-            <td>{{email}}</td>             <!-- Email -->
-            <td>{{phone}}</td>             <!-- Phone -->
-            <td>
               </tr> 
-          <!-- Add more teachers here -->
+          
+              {{/each}}
+        
         </tbody>
       </table>
     </div>

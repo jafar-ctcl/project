@@ -36,7 +36,7 @@
 
     <!-- Recent Registrations Table -->
     <div class="card">
-      <div class="card-header bg-secondary text-light">Recent Student Registrations</div>
+      <div class="card-header bg-secondary text-light">Approved student list</div>
       <div class="card-body">
         <table class="table table-hover">
           <thead>
@@ -44,22 +44,17 @@
               <th>#</th>
               <th>Name</th>
               <th>Course</th>
-              <th>Enrollment Date</th>
+              <th>Year</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>John Doe</td>
-              <td>B.Sc. Computer Science</td>
-              <td>2024-10-01</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Jane Smith</td>
-              <td>B.A. English</td>
-              <td>2024-10-05</td>
-            </tr>
+             {{#each students}}
+                <tr>
+                  <td></td>
+                    <td>{{Name}}</td>
+                    <td scope="col">{{Course}}</td>
+                    <td scope="col">{{Year}}</td>
+                {{/each}}
           </tbody>
         </table>
       </div>

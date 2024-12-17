@@ -15,7 +15,7 @@ router.get('/', verifyLogin, function (req, res, next) {
  
  
  
-  res.render('teacher/dashboard', { title: 'SASC', teacher,name: req.session.teacher[0].Name});
+  res.render('teacher/dashboard', { title: 'SASC', teacher,name: req.session.teacher[0].name});
  })
 });
 router.get('/login', (req, res) => {
@@ -58,6 +58,10 @@ router.post('/signup', (req, res) => {
   })
 })
 // 
+router.get('/logout',(req,res)=>{
+  req.session.destroy()
+  res.redirect('/teacher')
+})
 
 router.get('/view-attendence', (req, res) => {
   res.render('teacher/view-attendence')

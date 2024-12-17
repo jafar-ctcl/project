@@ -1,75 +1,122 @@
-let db = require('../config/connection')
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 
-module.exports={
-    doSignup: (userData) => { 
-    
-        const { name,type, course ,year, email, password,aadar,abcd,gender} = userData;
-        userData.status=0
-        
-        return new Promise((resolve, reject) => {
-            // Define the SQL query
-            // const query = 'INSERT INTO students (name,type, course ,year, email, password,gender) VALUES (?, ?, ?, ?, ?,?,?)';
-            // Execute the query
-          db.query( 'INSERT INTO login_data VALUES (?, ?, ?, ?, ?,?,?,?,?)', [name,type, course ,year, email, password,aadar,abcd,gender], (err, results) => {
-                if (err) {
-                    throw err
-                }
-                resolve()
-            })
-        })
-    },
- doLogin: (loginData) => {
-   
-    return new Promise((resolve, reject) => {
-        db.query('select * from login_data where email = ?', loginData.email, (err, data) => {
-            // console.log(data);
-            if (data.length == 0) {
-                resolve({ err: 'Email not exist.' })
-                // console.log("email not exist");
-            } else {
-                if (loginData.password === data[0].password) {
-                    resolve({err:false})
-                    // console.log("success");
-                    if (data[0].type === "student") {
-                        if(data[0].status){
-                            resolve({ err: false })
-                        }else{
-                            resolve({err: 'Account is inactive.'})
-                        }
-                    } else {
-                        resolve({ err: 'Email not exist.' })
-                    }
-                    // resolve({err:'password incorrect'})
-                }
-                else {
-                    resolve({ err: 'Password incorrect.' })
-                    // console.log('password incorrect.')
-                }
-            }
-        })
 
-    })
-},
- 
-doSignup: (userData) => {
-    const { name, type, course, year, email, password, aadhar, gender } = userData; // Removed 'abcd'
+var studentRouter = require('./routes/student');
+var hodRouter = require('./routes/hod');
+var teacherRouter = require('./routes/teacher');
+
+var hbs = require('express-handlebars');
+const db = require('./config/connection');
+const session = require('express-session');
+var app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout/',partialsDir:__dirname+'/views/partials/'}))
+//db connection
+db.connect((err)=>{
+  if(err) throw err;
+  console.log('Db Connected');
   
-    return new Promise((resolve, reject) => {
-      const query = `
-        INSERT INTO login_data (name, type, course, year, email, password, aadhar, gender) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-      const values = [name, type, course, year, email, password, aadhar, gender]; // Removed 'abcd'
-  
-      console.log('Executing query:', db.format(query, values));
-  
-      db.query(query, values, (err, results) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(err);
-        }
-        resolve(results);
-      });
-    });
-  },  
-}
+})
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret:"dms",cookie:{maxAge:600000}}))
+app.use('/', studentRouter);
+app.use('/hod', hodRouter);
+app.use('/teacher', teacherRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;
+// 
+var createError = require('http-errors');
+var express = require('express');
+const exphbs = require('express-handlebars');  // Import express-handlebars
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+
+var studentRouter = require('./routes/student');
+var hodRouter = require('./routes/hod');
+var teacherRouter = require('./routes/teacher');
+
+const db = require('./config/connection');
+const session = require('express-session');
+var app = express();
+
+// Register the custom Handlebars helper
+const hbs = exphbs.create();  // Create an instance of express-handlebars
+hbs.handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+  switch (operator) {
+    case '===':
+      return (v1 === v2) ? options.fn(this) : options.inverse(this);
+    default:
+      return options.inverse(this);
+  }
+});
+
+// View engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+app.engine('hbs', hbs.engine({
+  extname: 'hbs',
+  defaultLayout: 'layout',
+  layoutsDir: __dirname + '/views/layout/',
+  partialsDir: __dirname + '/views/partials/'
+}));
+
+// DB connection
+db.connect((err) => {
+  if (err) throw err;
+  console.log('Db Connected');
+});
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ secret: "dms", cookie: { maxAge: 600000 } }));
+
+app.use('/', studentRouter);
+app.use('/hod', hodRouter);
+app.use('/teacher', teacherRouter);
+
+// Catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+
+// Error handler
+app.use(function (err, req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;

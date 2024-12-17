@@ -20,19 +20,19 @@
             <tbody>
                 {{#each students}}
                 <tr>
-                    <td>{{Name}}</td>
-                    <td scope="col">{{Course}}</td>
-                    <td scope="col">{{Email}}</td>
-                    <td scope="col">{{Phone}}</td>
-                    <td scope="col">{{Aadhar}}</td>
+                    <td>{{name}}</td>
+                    <td scope="col">{{course}}</td>
+                    <td scope="col">{{email}}</td>
+                    <td scope="col">{{phone}}</td>
+                    <td scope="col">{{aadhar}}</td>
                     {{#if status}}
                     <td scope="col">Active</td>
                     {{else}}
                     <td scope="col">Inactive</td>
                     {{/if}}
                     <td>
-                        <a href="/hod/change-status/{{Email}}/1" class="btn btn-success" >Approve</a>
-                        <a href="/hod/change-status/{{Email}}/0" class="btn btn-danger">Reject</a>
+                        <a href="/hod/change-status/{{email}}/1" class="btn btn-success" >Approve</a>
+                        <a href="/hod/change-status/{{email}}/0" class="btn btn-danger">Reject</a>
                     </td>
                 </tr>
                 {{/each}}

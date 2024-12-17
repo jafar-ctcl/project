@@ -7,6 +7,8 @@ var logger = require('morgan');
 
 var studentRouter = require('./routes/student');
 var hodRouter = require('./routes/hod');
+var teacherRouter = require('./routes/teacher');
+
 var hbs = require('express-handlebars');
 const db = require('./config/connection');
 const session = require('express-session');
@@ -31,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret:"dms",cookie:{maxAge:600000}}))
 app.use('/', studentRouter);
 app.use('/hod', hodRouter);
-
+app.use('/teacher', teacherRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
