@@ -10,23 +10,14 @@
                 {{#if result}}
                 <p class="text-danger">Email Already Exist.</p>
                 {{/if}}
-                <form autocomplete="off" action="/signup" method="post">
+                <form autocomplete="off" action="/signup" method="post" autocomplete="on">
 
                     <div data-mdb-input-init class="form-outline mb-4">
                         <label class="form-label" for="name">Name</label>
                         <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Enter your name"
                             required />
                     </div>
-                         <div data-mdb-input-init class="form-outline mb-4">
-                        <label for="type" class="form-label">Type</label>
-                        <select class="form-select" name="type" id="type" required>
-                            <option selected disabled value="">Choose...</option>
-                            {{!-- <option value="HOD">HOD</option> --}}
-                            <option value="student">STUDENT</option>
-                            <option value="teacher">TEACHER</option>
-                            
-                        </select>
-                    </div>
+                      
 
                     <div data-mdb-input-init class="form-outline mb-4">
                         <label for="course" class="form-label">Courses</label>
@@ -59,6 +50,11 @@
                         <input type="email" name="email" id="email" class="form-control form-control-lg"
                             placeholder="Enter a valid email address" required />
                     </div>
+                      <div data-mdb-input-init class="form-outline mb-3">
+                        <label class="form-label" for="passwd">Password</label>
+                        <input type="password" name="password" id="passwd" class="form-control form-control-lg"
+                            placeholder="Enter password" required />
+                    </div>
 
                     <!-- Email input -->
                     <div data-mdb-input-init class="form-outline mb-4">
@@ -66,12 +62,13 @@
                         <input type="number" name="phone" id="phone" class="form-control form-control-lg"
                             placeholder="Enter phone number" required />
                     </div>
-                      <!-- Password input -->
-                    <div data-mdb-input-init class="form-outline mb-3">
-                        <label class="form-label" for="passwd">Password</label>
-                        <input type="password" name="password" id="passwd" class="form-control form-control-lg"
-                            placeholder="Enter password" required />
+                      <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="dob">Date of birth</label>
+                        <input type="date" id="dob" name="dob" class="form-control form-control-lg"
+                            placeholder="Enter Date Of Birth" required />
                     </div>
+                      <!-- Password input -->
+                  
                       <div data-mdb-input-init class="form-outline mb-4">
                         <label class="form-label" for="aadhar">Aadhar</label>
                         <p id="a-msg" class="text-center text-danger d-none">Please enter a valid 12-digit aadhar
@@ -103,15 +100,6 @@
                         <input type="radio" id="others" name="gender" value="others" class="form-check-input" required />
                         <label for="others">Others</label>
                     </div>
-{{!-- 
-                    <!-- Date of  input -->
-                    <div data-mdb-input-init class="form-outline mb-4">
-                        <label class="form-label" for="dob">Date of birth</label>
-                        <input type="date" id="dob" name="dob" class="form-control form-control-lg"
-                            placeholder="Enter Date Of Birth" required />
-                    </div> --}}
-
-                  
 
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="small fw-bold mt-2 pt-1 mb-0">Already have an account? <a href="/login"
@@ -119,10 +107,9 @@
                         <!-- <a href="#!" class="text-body">Forgot password?</a> -->
                     </div>
 
-                    <div class="text-center text-lg-start mt-4 pt-2">
+                    <div class="text-center align-item-center text-lg-start mt-4 pt-2 " >
                         <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
-                            style="padding-left: 
-                2.5rem; padding-right: 2.5rem;">Signup</button>
+                            style="padding-left:2.5rem; padding-right: 2.5rem,">Signup</button>
 
                     </div>
 
