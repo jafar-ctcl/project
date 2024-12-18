@@ -1,9 +1,20 @@
 <section class="timetable-creation-section py-5">
-    <div class="container">
+    <div class="container fw-bold">
         <h2 class="text-center mb-4">Create Timetable</h2>
 
         <!-- Timetable Creation Form -->
         <form action="/hod/add-timetable" method="POST">
+          <!-- Class Selection -->
+                    <div class="mb-3 ">
+                        <label class="form-label ">Select Year</label>
+                        <select class="form-select " name="year" required>
+                            <option value="">Choose a Year ...</option>
+                            <option value="1">1 Year</option>
+                            <option value="2">2 Year</option>
+                            <option value="3">3 Year</option>
+                            {{!-- <option value="4">4 Year</option> --}}
+                        </select>
+                    </div>
             <!-- Day Selection -->
             <div class="mb-3">
                 <label for="daySelect" class="form-label">Day</label>
@@ -16,17 +27,7 @@
                     <option value="friday">Friday</option>
                 </select>
             </div>
-              <!-- Class Selection -->
-                    <div class="mb-3">
-                        <label class="form-label">Year</label>
-                        <select class="form-select" name="year" required>
-                            <option value="">Choose a Year ...</option>
-                            <option value="1">1 Year</option>
-                            <option value="2">2 Year</option>
-                            <option value="3">3 Year</option>
-                            <option value="4">4 Year</option>
-                        </select>
-                    </div>
+            
 
             <!-- Time Slot Section -->
             <div id="timeSlotSection">
@@ -34,7 +35,7 @@
                     <h5>Time Slot 1</h5>
                     <!-- Time Slot Dropdown -->
                     <div class="mb-3">
-                        <label class="form-label">Time Slot</label>
+                        {{!-- <label class="form-label">Time Slot</label> --}}
                         <select class="form-select" name="timeSlot" required>
                             <option value="">Select a time slot...</option>
                             <option value="9:30-10:30">9:30 AM - 10:30 AM</option>
@@ -56,6 +57,7 @@
                             <option value="aswani">Aswani</option>
                             <option value="sajith">Sajith</option>
                             <option value="jency">Jency</option>
+                            <option value="Keerthana">Keerthana</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -91,7 +93,7 @@
         newTimeSlot.innerHTML = `
             <h5>Time Slot ${timeSlotCount}</h5>
             <div class="mb-3">
-                <label class="form-label">Time Slot</label>
+                {{!-- <label class="form-label">Time Slot</label> --}}
                 <select class="form-select" name="timeSlot" required>
                     <option value="">Select a time slot...</option>
                     <option value="9:30-10:30">9:30 AM - 10:30 AM</option>
@@ -110,6 +112,7 @@
                     <option value="aswani">Aswani</option>
                     <option value="sajith">Sajith</option>
                     <option value="jency">Jency</option>
+                      <option value="Keerthana">Keerthana</option>
                 </select>
             </div>
              <div class="mb-3">
