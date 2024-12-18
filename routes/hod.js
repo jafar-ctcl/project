@@ -94,24 +94,90 @@ router.get('/teacher-change-status/:email/:status', (req, res) => {
  router.post('/add-timetable',(req,res)=>{
   // console.log("timetable",req.body);
   hodHelpers.addTimetable(req.body).then(()=>{
-    console.log("...............................................");
-    //  res.redirect('hod/view-timetable')
     res.redirect('/hod')
   })
   
  })
  
- router.get('/view-timetable',verifyLogin,(req,res)=>{
-  hodHelpers.getTimetable().then((resp)=>{
-    console.log("response",resp);
-  
-    // console.log("response",resp);
-    // console.log("response",resp[0].time);
-    // console.log("response",resp[0].year);
-    // console.log("response",resp[0].teacher);
+//  router.get('/view-timetable',verifyLogin,(req,res)=>{
+//   hodHelpers.getTimetable().then((resp)=>{
+//      console.log("response",resp);
+
+
+//     // let mondayData = resp.filter(element => element.day === "monday");
+//     // let tuesdayData = resp.filter(element => element.day === "tuesday");
+//     // let wednesdayData = resp.filter(element => element.day === "wednesday");
+//     // let thursdayData = resp.filter(element => element.day === "thursday");
+//     // let fridayData = resp.filter(element => element.day === "friday");
+
+//     // let thirdYear = resp.filter(element => element.year === 3)
+//     // let secondYear = resp.filter(element => element.year === 2)
+//     // // console.log("Monday Data:", mondayData);
+   
+//     // //console.log("response",resp[0].teacher);
     
-        res.render('hod/view-timetable',{timetable:resp})
-  })
+//        res.render('hod/view-timetable',{hod,thirdYear,monday:mondayData})
+//   })
  
- })
+//  })
+router.get('/view-timetable',verifyLogin,(req,res)=>{
+     hodHelpers.getTimetable().then((resp)=>{
+  
+
+// Separate data by day (Monday to Friday)
+const mondayData = resp.filter(item => item.day === 'monday');
+const tuesdayData = resp.filter(item => item.day === 'tuesday');
+const wednesdayData = resp.filter(item => item.day === 'wednesday');
+const thursdayData = resp.filter(item => item.day === 'thursday');
+const fridayData = resp.filter(item => item.day === 'friday');
+
+// Group data by year for each day
+const mondayByYear = {
+  firstYear: mondayData.filter(item => item.year === 1),
+  secondYear: mondayData.filter(item => item.year === 2),
+  thirdYear: mondayData.filter(item => item.year === 3)
+};
+
+const tuesdayByYear = {
+  firstYear: tuesdayData.filter(item => item.year === 1),
+  secondYear: tuesdayData.filter(item => item.year === 2),
+  thirdYear: tuesdayData.filter(item => item.year === 3)
+};
+
+const wednesdayByYear = {
+  firstYear: wednesdayData.filter(item => item.year === 1),
+  secondYear: wednesdayData.filter(item => item.year === 2),
+  thirdYear: wednesdayData.filter(item => item.year === 3)
+};
+
+const thursdayByYear = {
+  firstYear: thursdayData.filter(item => item.year === 1),
+  secondYear: thursdayData.filter(item => item.year === 2),
+  thirdYear: thursdayData.filter(item => item.year === 3)
+};
+
+const fridayByYear = {
+  firstYear: fridayData.filter(item => item.year === 1),
+  secondYear: fridayData.filter(item => item.year === 2),
+  thirdYear: fridayData.filter(item => item.year === 3)
+};
+
+// console.log("Monday Data by Year:", mondayByYear);
+// console.log("Tuesday Data by Year:", tuesdayByYear);
+// console.log("Wednesday Data by Year:", wednesdayByYear);
+// console.log("Thursday Data by Year:", thursdayByYear);
+// console.log("Friday Data by Year:", fridayByYear);
+
+    // Pass the grouped data to the template
+    res.render('hod/view-timetable', {
+      hod,
+      mondayByYear,
+      tuesdayByYear,
+      wednesdayByYear,
+      thursdayByYear,
+      fridayByYear
+    });
+     })
+    
+  })
 module.exports = router;
