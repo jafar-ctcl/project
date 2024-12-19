@@ -9,15 +9,12 @@ const verifyLogin = (req, res, next) => {
     res.redirect('/teacher/login')
   }
 }
+
 /* GET home page. */
 router.get('/', verifyLogin, function (req, res, next) {
- teacherHelpers.getAllTeacher().then((resp)=>{
- 
- 
- 
-  res.render('teacher/dashboard', { title: 'SASC', teacher,name: req.session.teacher[0].name});
- })
+  res.render('teacher/dashboard', { title: 'SASC', teacher, name: req.session.teacher.name });
 });
+
 router.get('/login', (req, res) => {
   // res.render('teacher/login');
   if (req.session.teacherLoggedIn) {
@@ -40,8 +37,9 @@ router.post('/login', (req, res) => {
 
     } else {
       req.session.teacher = resp.data
-      
-      // console.log("teacher logged"   );
+
+
+      // console.log("teacher logged" ,resp.data  );
       req.session.teacherLoggedIn = true
       // req.session.student = resp.data
       res.redirect('/teacher')
@@ -52,36 +50,73 @@ router.get('/signup', (req, res) => {
   res.render('teacher/signup')
 })
 router.post('/signup', (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   teacherHelpers.doSignup(req.body).then(() => {
     res.render('teacher/login')
   })
 })
 // 
-router.get('/logout',(req,res)=>{
+router.get('/logout', (req, res) => {
   req.session.destroy()
   res.redirect('/teacher')
 })
 
-router.get('/view-attendence', (req, res) => {
-  res.render('teacher/view-attendence')
-})
-router.get('/add-attendence', (req, res) => {
-  console.log("quaery data" ,req.query);
-  
-  const selectedClass = req.query.class || null;
- 
+router.get('/add-attendence', verifyLogin, (req, res) => {
+  teacherHelpers.getAllStudents().then((resp) => {
+// req.session.firstYearStudents=resp.filter((item) => item.year === 1);
+// req.session.secondYearStudents=resp.filter((item) => item.year === 2);
+// req.session.thirdYearStudents=resp.filter((item) => item.year === 3);
 
+    const firstYearStudents = resp.filter((item) => item.year === 1);
+    const secondYearStudents = resp.filter((item) => item.year === 2);
+    const thirdYearStudents = resp.filter((item) => item.year === 3);
+
+    // Render the template and pass separated student data
+    res.render('teacher/add-attendence', {
+      teacher,
+      name: req.session.teacher.name,
+      firstYearStudents,
+      secondYearStudents,
+      thirdYearStudents,
+    });
+  }).catch((err) => {
+    console.error("Error fetching students:", err);
+    res.status(500).send("Error fetching students");
+  });
+
+});
+router.post('/add-attendence', (req, res) => {
+  const { attendanceDate, ...attendanceData } = req.body;
   
-  // Perform some logic based on the class parameter
-  if (selectedClass) {
-    console.log(`Selected class: ${selectedClass}`);
+  
+   const attendanceRecords = [];
+
+  // Prepare attendance records
+  for (let key in attendanceData) {
+    if (attendanceData.hasOwnProperty(key)) {
+      const studentId = key.match(/\d+/)[0];
+      const status = attendanceData[key]; // 'Present' or 'Absent'
+      attendanceRecords.push({ studentId, status, attendanceDate });
+    }
+    // console.log(attendanceRecords);
+    
   }
 
-  res.render('teacher/add-attendence', { selectedClass });
-   teacherHelpers.getClass(selectedClass)
+  // Save attendance to the database
+  teacherHelpers.saveAttendance(attendanceRecords)
+    .then(() => {
+      res.send("Attendance saved successfully");
+    })
+    .catch((err) => {
+      res.status(500).send("Error saving attendance: " + err.message);
+    });
 });
 
+
+
+router.get('/view-attendence', (req, res) => {
+  res.render('teacher/view-attendence', { teacher, name: req.session.teacher.name })
+})
 
 
 
