@@ -1,61 +1,106 @@
-
 <section class="view-attendance-section py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">View Attendance Records</h2>
+  <div class="container">
+    <h2 class="text-center mb-4">View Attendance Records</h2>
 
-        <!-- Class and Date Selection -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label for="classSelect" class="form-label">Select Class</label>
-                <select id="classSelect" class="form-select">
-                    <option value="">Choose a class...</option>
-                    <option value="class1">Class 1</option>
-                    <option value="class2">Class 2</option>
-                    <option value="class3">Class 3</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="dateSelect" class="form-label">Select Date</label>
-                <input type="date" id="dateSelect" class="form-control">
-            </div>
-        </div>
-
-        <!-- Attendance Records Table -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Roll Number</th>
-                        <th>Student Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>John Doe</td>
-                        <td>Present</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jane Smith</td>
-                        <td>Absent</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Michael Johnson</td>
-                        <td>Present</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Filter Button -->
-        <div class="text-center mt-4">
-            <button type="button" class="btn btn-primary">Filter Records</button>
-        </div>
+    <!-- Year Selection -->
+    <div class="mb-4">
+      <label for="yearSelect" class="form-label">Select Year</label>
+      <select id="yearSelect" class="form-select">
+        <option value="">Choose a year...</option>
+        <option value="1">Year 1</option>
+        <option value="2">Year 2</option>
+        <option value="3">Year 3</option>
+      </select>
     </div>
+
+    <!-- Year 1 Attendance Records -->
+    <div class="year-table" id="year-1-view" style="display: none;">
+      <h3>Year 1 Attendance Records</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Roll Number</th>
+              <th>Student Name</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>John Doe</td>
+              <td>Present</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Year 2 Attendance Records -->
+    <div class="year-table" id="year-2-view" style="display: none;">
+      <h3>Year 2 Attendance Records</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Roll Number</th>
+              <th>Student Name</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Jane Smith</td>
+              <td>Absent</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Year 3 Attendance Records -->
+    <div class="year-table" id="year-3-view" style="display: none;">
+      <h3>Year 3 Attendance Records</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Roll Number</th>
+              <th>Student Name</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Michael Johnson</td>
+              <td>Present</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </section>
+<script>
+ document.getElementById("yearSelect").addEventListener("change", function () {
+  var selectedYear = this.value;
+
+  // Hide all year tables
+  var yearTables = document.querySelectorAll(".year-table");
+  yearTables.forEach(function (table) {
+    table.style.display = "none";
+  });
+
+  // Show the selected year table
+  if (selectedYear) {
+    document.getElementById("year-" + selectedYear + "-view").style.display = "block";
+  }
+});
+
+</script>
+
 <style>
     .view-attendance-section {
     background-color: #eef5f9; /* Light blue-gray background */
