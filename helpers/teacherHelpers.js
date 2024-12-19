@@ -104,50 +104,48 @@ module.exports={
     },
     saveAttendance: (attendanceData) => {
         return new Promise((resolve, reject) => {
-            // Log the attendance data for debugging
-            console.log("dataaaa", attendanceData);
+           
+            // console.log("dataaaa", attendanceData);
     
-            // Loop through each attendance record in the array and insert into the database
-            const insertPromises = attendanceData.map(record => 
-                {
-                const { studentId, status, attendanceDate } = record;
+            // Prepare an array of values for the SQL query
+            const values = attendanceData.map(record => [
+                record.studentId, 
+                record.attendanceDate, 
+                record.status
+            ]);
+            // console.log(values);
+            
     
-                // Ensure all required fields are present
-                if (!studentId || !status || !attendanceDate) {
-                    return Promise.reject(new Error('Invalid record: ' + JSON.stringify(record)));
-                }
+            // Create a single INSERT INTO statement with multiple rows
+            const sql = 'INSERT INTO attendance (id, date, status) VALUES ?';
     
-                // Insert the record into the database
-                return new Promise((resolve, reject) => {
-                    db.query(
-                        'INSERT INTO attendance (id, date, status) VALUES(?, ?, ?)', 
-                        [studentId, attendanceDate, status], 
-                        (err, data) => {
-                            if (err) {
-                                console.error('Error inserting attendance for student ID:', studentId, err);
-                                reject(err);  // Reject the promise if there is an error
-                            } else {
-                                console.log('Attendance recorded for student ID:', studentId);
-                                resolve(data);  // Resolve the promise on successful insert
-                            }
-                        }
-                    );
-                });
-            });
-    
-            // Wait for all insert operations to complete
-            Promise.all(insertPromises)
-                .then(() => {
-                    console.log('All attendance records inserted successfully');
-                    resolve();  // Resolve the main promise after all inserts
-                })
-                .catch((err) => {
+            // Execute the query with the prepared values
+            db.query(sql, [values], (err, result) => {
+                if (err) {
                     console.error('Error inserting attendance records:', err);
-                    reject(err);  // Reject the main promise if there was any error
-                });
+                    reject(err); // Reject the promise if there is an error
+                } else {
+                    console.log('Attendance records inserted successfully');
+                    resolve(result);  // Resolve the promise after successful insertion
+                }
+            });
         });
     },
     
+            
+    
+            // // Wait for all insert operations to complete
+            // Promise.all(insertPromises)
+            //     .then(() => {
+            //         console.log('All attendance records inserted successfully');
+            //         resolve();  // Resolve the main promise after all inserts
+            //     })
+            //     .catch((err) => {
+            //         console.error('Error inserting attendance records:', err);
+            //         reject(err);  // Reject the main promise if there was any error
+            //     });
+    
+
 }
     // saveAttendance: (attendanceData) => {
        

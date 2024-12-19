@@ -9,10 +9,11 @@
             <thead>
                 <tr>
                     <th scope="col">Student Name</th>
-                    <th scope="col">Course</th>
+                    
                     <th scope="col">Email</th>
                     <th scope="col">Phone</th>
-                    <th scope="col">Adhar</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Course</th>
                     <th scope="col">Status</th>
                     <th scope="col">Options</th>
                 </tr>
@@ -21,10 +22,11 @@
                 {{#each students}}
                 <tr>
                     <td>{{name}}</td>
-                    <td scope="col">{{course}}</td>
+                    
                     <td scope="col">{{email}}</td>
                     <td scope="col">{{phone}}</td>
-                    <td scope="col">{{aadhar}}</td>
+                    <td scope="col">{{year}}</td>
+                    <td scope="col">{{course}}</td>
                     {{#if status}}
                     <td scope="col">Active</td>
                     {{else}}
