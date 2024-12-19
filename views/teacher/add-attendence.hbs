@@ -1,129 +1,119 @@
+<section class="attendance-section py-5">
+  <div class="container fw-bold">
+    <h2 class="text-center mb-4">Attendance Management</h2>
 
-    <section class="attendance-section py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">Attendance Management</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">Select Your Class</h5>
-                        <select id="classSelect" class="form-select mb-4">
-                            <option value="">Choose a class...</option>
-                            <option value="/teacher/add-attendence?class=1">1 Year</option>
-                            <option value="/teacher/add-attendence?class=2">2 Year</option>
-                            <option value="/teacher/add-attendence?class=3">3 Year</option>
-                            <option value="/teacher/add-attendence?class=4">4 Year</option>
-                        </select>
-                        <label for="dateSelect" class="form-label">Select Date</label>
-                        <input type="date" id="dateSelect" class="form-control mb-4">
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{#if selectedClass}}
-  <p>Selected Class: {{selectedClass}}</p>
-{{else}}
-  <p>No class selected</p>
-{{/if}}
-
-
-        {{!-- <!-- Attendance Table -->
-        <div class="table-responsive mt-5">
-            <table class="table table-bordered table-hover">
-                <thead class="bg-primary text-white">
-                    <tr>
-                        <th>Roll Number</th>
-                        <th>Student Name</th>
-                        <th>Present</th>
-                        <th>Absent</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>John Doe</td>
-                        <td>
-                            <input type="radio" name="attendance1" value="present">
-                        </td>
-                        <td>
-                            <input type="radio" name="attendance1" value="absent">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jane Smith</td>
-                        <td>
-                            <input type="radio" name="attendance2" value="present">
-                        </td>
-                        <td>
-                            <input type="radio" name="attendance2" value="absent">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Michael Johnson</td>
-                        <td>
-                            <input type="radio" name="attendance3" value="present">
-                        </td>
-                        <td>
-                            <input type="radio" name="attendance3" value="absent">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> --}}
-
-        <!-- Submit Button -->
-        <div class="text-center mt-4">
-            <button type="button" class="btn btn-success btn-lg">Submit Attendance</button>
-        </div>
+    <!-- Year Selection -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Select Year</label>
+      <select class="form-select form-select-lg border-2 shadow-sm" id="yearSelect" name="year" required>
+        <option value="" disabled selected>Choose a Year...</option>
+        <option value="1">1 Year</option>
+        <option value="2">2 Year</option>
+        <option value="3">3 Year</option>
+      </select>
     </div>
+
+    <!-- Attendance Form -->
+    <form action="/teacher/add-attendence" method="POST">
+      
+      <!-- Date Selection -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Select Date</label>
+        <input type="date" class="form-control form-control-lg" name="attendanceDate" required />
+      </div>
+
+     
+
+      <div class="year-table" id="year-3" style="display: none;">
+        {{#if thirdYearStudents}}
+        <h3>Attendance for Year 3</h3>
+
+        <div class="table-responsive mt-4">
+          <table class="table table-bordered table-hover">
+            <thead class="bg-primary text-white">
+              <tr>
+                <th>Roll Number</th>
+                <th>Student Name</th>
+                <th>Present</th>
+                <th>Absent</th>
+              </tr>
+            </thead>
+            <tbody>
+           {{#each thirdYearStudents}}
+                    <tr>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>
+                  <input type="radio" name="attendance[{{this.id}}]" value="present" required />
+                </td>
+                <td>
+                  <input type="radio" name="attendance[{{this.id}}]" value="absent" required />
+                </td>
+              </tr>
+           {{/each}}
+
+            </tbody>
+          </table>
+        </div>
+        {{/if}}
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success btn-lg">Submit Attendance</button>
+      </div>
+    </form>
+  </div>
 </section>
 
-<style>
-    .attendance-section {
-        background-color: #f8f9fa;
-        padding: 50px;
-        border-radius: 10px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    }
-
-    .card {
-        background-color: #ffffff;
-        border-radius: 10px;
-    }
-
-    .card-title {
-        font-weight: bold;
-        color: #333;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    .btn-success {
-        background-color: #28a745;
-        border-color: #28a745;
-    }
-
-    .btn-success:hover {
-        background-color: #218838;
-        border-color: #1e7e34;
-    }
-</style>
 
 <script>
-    // Get the select element
-    const classSelect = document.getElementById('classSelect');
+  document.getElementById("yearSelect").addEventListener("change", function () {
+    var selectedYear = this.value;
 
-    // Listen for the change event
-    classSelect.addEventListener('change', function () {
-        const selectedValue = classSelect.value; // Get the selected value (URL)
-        
-        if (selectedValue) {
-            // Navigate to the selected URL
-            window.location.href = selectedValue;
-        }
+    // Hide all year tables
+    var yearTables = document.querySelectorAll(".year-table");
+    yearTables.forEach(function (table) {
+      table.style.display = "none";
     });
+
+    // Show the selected year table
+    if (selectedYear) {
+      document.getElementById("year-" + selectedYear).style.display = "block";
+    }
+  });
 </script>
+
+
+<style>
+  .attendance-section {
+    background-color: #f8f9fa;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-select {
+    border-radius: 10px;
+  }
+
+  .year-table {
+    margin-top: 30px;
+  }
+
+  .table-bordered th,
+  .table-bordered td {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+</style>
