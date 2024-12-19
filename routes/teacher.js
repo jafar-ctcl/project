@@ -87,8 +87,11 @@ console.log("Fisrt",firstYearStudents);
 
 // 
 router.post('/add-attendence', (req, res) => {
-  const { attendanceDate, ...attendanceData } = req.body;
-
+  console.log("ttttttttt",req.body);
+  
+  
+  const { attendanceDate,year, ...attendanceData } = req.body;
+  // console.log("abcs",year);
   const attendanceRecords = [];
 
   // Prepare attendance records
@@ -96,7 +99,7 @@ router.post('/add-attendence', (req, res) => {
     if (attendanceData.hasOwnProperty(key)) {
       const studentId = key.match(/\d+/)[0]; // Extract the numeric part of the key
       const [status, name] = attendanceData[key].split('|'); // Split value into status and name
-      attendanceRecords.push({ studentId, name, status, attendanceDate });
+      attendanceRecords.push({ name,year, status, attendanceDate });
     }
   }
 
