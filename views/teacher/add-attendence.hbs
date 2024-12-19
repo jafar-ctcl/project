@@ -12,82 +12,77 @@
         <option value="3">3 Year</option>
       </select>
     </div>
-   
-
 
     {{!-- First Year Attendance --}}
-<div class="year-table" id="year-1" style="display: none;">
-  <!-- Attendance Form -->
-  <form action="/teacher/add-attendence" method="POST">
-    <!-- Date Selection -->
-    <div class="mb-4">
-      <label class="form-label fw-semibold">Select Date</label>
-      <input type="date" class="form-control form-control-lg" name="attendanceDate" required />
-    </div>
-
-    {{#if firstYearStudents}}
-    <h3>Attendance for Year 1</h3>
-
-    <div class="table-responsive mt-4">
-      <table class="table table-bordered table-hover">
-        <thead class="bg-primary text-white">
-          <tr>
-            <th>Roll Number</th>
-            <th>Student Name</th>
-            <th>Present</th>
-            <th>Absent</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each firstYearStudents}}
-          <tr>
-            <td>{{id}}</td>
-            <td>{{name}}</td>
-            <td>
-              <input
-                type="radio"
-                name="attendance[{{this.id}}]"
-                value="present|{{this.name}}"
-                required
-              />
-            </td>
-            <td>
-              <input
-                type="radio"
-                name="attendance[{{this.id}}]"
-                value="absent|{{this.name}}"
-                required
-              />
-            </td>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </div>
-    {{/if}}
-
-    <!-- Submit Button -->
-    <div class="text-center mt-4">
-      <button type="submit" class="btn btn-success btn-lg">Submit Attendance</button>
-    </div>
-  </form>
-</div> 
-
-    {{!-- first year attendance end--}}
-
-    {{!-- Second year attendance --}}
-
-    <div class="year-table" id="year-2" style="display: none;">
+    <div class="year-table" id="year-1" style="display: none;">
       <!-- Attendance Form -->
       <form action="/teacher/add-attendence" method="POST">
-
         <!-- Date Selection -->
         <div class="mb-4">
           <label class="form-label fw-semibold">Select Date</label>
           <input type="date" class="form-control form-control-lg" name="attendanceDate" required />
         </div>
 
+        {{#if firstYearStudents}}
+        <h3>Attendance for Year 1</h3>
 
+        <div class="table-responsive mt-4">
+          <table class="table table-bordered table-hover">
+            <thead class="bg-primary text-white">
+              <tr>
+                <th>Roll Number</th>
+                <th>Student Name</th>
+                <th>Present</th>
+                <th>Absent</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each firstYearStudents}}
+              <tr>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>
+                  <input
+                    type="radio"
+                    name="attendance[{{this.id}}]"
+                    value="present|{{this.name}}"
+                    required
+                  />
+                </td>
+                <td>
+                  <input
+                    type="radio"
+                    name="attendance[{{this.id}}]"
+                    value="absent|{{this.name}}"
+                    required
+                  />
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        {{/if}}
+
+        <!-- Hidden Year Input -->
+        <input type="hidden" name="year" id="hiddenYearInput" value="1" />
+
+        <!-- Submit Button -->
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-success btn-lg">Submit Attendance</button>
+        </div>
+      </form>
+    </div>
+
+    {{!-- Second Year Attendance --}}
+    <div class="year-table" id="year-2" style="display: none;">
+      <!-- Attendance Form -->
+      <form action="/teacher/add-attendence" method="POST">
+        <!-- Date Selection -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Select Date</label>
+          <input type="date" class="form-control form-control-lg" name="attendanceDate" required />
+        </div>
 
         {{#if secondYearStudents}}
         <h3>Attendance for Year 2</h3>
@@ -104,31 +99,34 @@
             </thead>
             <tbody>
               {{#each secondYearStudents}}
-                       <tr>
-            <td>{{id}}</td>
-            <td>{{name}}</td>
-            <td>
-              <input
-                type="radio"
-                name="attendance[{{this.id}}]"
-                value="present|{{this.name}}"
-                required
-              />
-            </td>
-            <td>
-              <input
-                type="radio"
-                name="attendance[{{this.id}}]"
-                value="absent|{{this.name}}"
-                required
-              />
-            </td>
-          </tr>              {{/each}}
-
+              <tr>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>
+                  <input
+                    type="radio"
+                    name="attendance[{{this.id}}]"
+                    value="present|{{this.name}}"
+                    required
+                  />
+                </td>
+                <td>
+                  <input
+                    type="radio"
+                    name="attendance[{{this.id}}]"
+                    value="absent|{{this.name}}"
+                    required
+                  />
+                </td>
+              </tr>
+              {{/each}}
             </tbody>
           </table>
         </div>
         {{/if}}
+
+        <!-- Hidden Year Input -->
+        <input type="hidden" name="year" id="hiddenYearInput2" value="2" />
 
         <!-- Submit Button -->
         <div class="text-center mt-4">
@@ -137,20 +135,15 @@
       </form>
     </div>
 
-    {{!-- Second year attendance end --}}
-
-    {{!-- third year attendance --}}
+    {{!-- Third Year Attendance --}}
     <div class="year-table" id="year-3" style="display: none;">
       <!-- Attendance Form -->
       <form action="/teacher/add-attendence" method="POST">
-
         <!-- Date Selection -->
         <div class="mb-4">
           <label class="form-label fw-semibold">Select Date</label>
           <input type="date" class="form-control form-control-lg" name="attendanceDate" required />
         </div>
-
-
 
         {{#if thirdYearStudents}}
         <h3>Attendance for Year 3</h3>
@@ -167,32 +160,34 @@
             </thead>
             <tbody>
               {{#each thirdYearStudents}}
-            <tr>
-            <td>{{id}}</td>
-            <td>{{name}}</td>
-            <td>
-              <input
-                type="radio"
-                name="attendance[{{this.id}}]"
-                value="present|{{this.name}}"
-                required
-              />
-            </td>
-            <td>
-              <input
-                type="radio"
-                name="attendance[{{this.id}}]"
-                value="absent|{{this.name}}"
-                required
-              />
-            </td>
-          </tr>
-        {{/each}}
-
+              <tr>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>
+                  <input
+                    type="radio"
+                    name="attendance[{{this.id}}]"
+                    value="present|{{this.name}}"
+                    required
+                  />
+                </td>
+                <td>
+                  <input
+                    type="radio"
+                    name="attendance[{{this.id}}]"
+                    value="absent|{{this.name}}"
+                    required
+                  />
+                </td>
+              </tr>
+              {{/each}}
             </tbody>
           </table>
         </div>
         {{/if}}
+
+        <!-- Hidden Year Input -->
+        <input type="hidden" name="year" id="hiddenYearInput3" value="3" />
 
         <!-- Submit Button -->
         <div class="text-center mt-4">
@@ -201,11 +196,8 @@
       </form>
     </div>
 
-    {{!-- third year attendance end --}}
-
   </div>
 </section>
-
 
 <script>
   document.getElementById("yearSelect").addEventListener("change", function () {
@@ -220,9 +212,15 @@
     // Show the selected year table
     if (selectedYear) {
       document.getElementById("year-" + selectedYear).style.display = "block";
+
+      // Update hidden input value
+      document.getElementById("hiddenYearInput").value = selectedYear;
+      document.getElementById("hiddenYearInput2").value = selectedYear;
+      document.getElementById("hiddenYearInput3").value = selectedYear;
     }
   });
 </script>
+
 
 
 <style>
