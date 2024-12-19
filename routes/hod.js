@@ -94,32 +94,11 @@ router.get('/teacher-change-status/:email/:status', (req, res) => {
  router.post('/add-timetable',(req,res)=>{
   // console.log("timetable",req.body);
   hodHelpers.addTimetable(req.body).then(()=>{
-    res.redirect('/hod')
+    res.redirect('/hod/add-timetable')
   })
   
  })
  
-//  router.get('/view-timetable',verifyLogin,(req,res)=>{
-//   hodHelpers.getTimetable().then((resp)=>{
-//      console.log("response",resp);
-
-
-//     // let mondayData = resp.filter(element => element.day === "monday");
-//     // let tuesdayData = resp.filter(element => element.day === "tuesday");
-//     // let wednesdayData = resp.filter(element => element.day === "wednesday");
-//     // let thursdayData = resp.filter(element => element.day === "thursday");
-//     // let fridayData = resp.filter(element => element.day === "friday");
-
-//     // let thirdYear = resp.filter(element => element.year === 3)
-//     // let secondYear = resp.filter(element => element.year === 2)
-//     // // console.log("Monday Data:", mondayData);
-   
-//     // //console.log("response",resp[0].teacher);
-    
-//        res.render('hod/view-timetable',{hod,thirdYear,monday:mondayData})
-//   })
- 
-//  })
 router.get('/view-timetable',verifyLogin,(req,res)=>{
      hodHelpers.getTimetable().then((resp)=>{
   

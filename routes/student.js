@@ -31,6 +31,10 @@ router.post('/login', (req, res) => {
     } else {
       req.session.loggedIn = true
       req.session.student = resp.data
+      // console.log("data",resp.data);
+      console.log("name",resp.data.name);
+
+      
       res.redirect('/student')
     }
   })
@@ -61,7 +65,7 @@ router.post('/signup',(req,res)=>{
 })
 router.get('/student',verifyLogin,(req,res)=>{
   // console.log(req.session.student[0]);
-  let name = req.session.student[0].name
+  let name = req.session.student.name
   
   res.render('student/dashboard',{name})
 })

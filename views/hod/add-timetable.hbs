@@ -1,20 +1,23 @@
 <section class="timetable-creation-section py-5">
+    
+
     <div class="container fw-bold">
         <h2 class="text-center mb-4">Create Timetable</h2>
 
         <!-- Timetable Creation Form -->
         <form action="/hod/add-timetable" method="POST">
-          <!-- Class Selection -->
-                    <div class="mb-3 ">
-                        <label class="form-label ">Select Year</label>
-                        <select class="form-select " name="year" required>
-                            <option value="">Choose a Year ...</option>
-                            <option value="1">1 Year</option>
-                            <option value="2">2 Year</option>
-                            <option value="3">3 Year</option>
-                            {{!-- <option value="4">4 Year</option> --}}
-                        </select>
-                    </div>
+            <!-- Class Selection -->
+            <div class="mb-3 ">
+                <label class="form-label">Select Year</label>
+                <select class="form-select" name="year" required>
+                    <option value="">Choose a Year ...</option>
+                    <option value="1">1 Year</option>
+                    <option value="2">2 Year</option>
+                    <option value="3">3 Year</option>
+                    {{!-- <option value="4">4 Year</option> --}}
+                </select>
+            </div>
+
             <!-- Day Selection -->
             <div class="mb-3">
                 <label for="daySelect" class="form-label">Day</label>
@@ -27,7 +30,6 @@
                     <option value="friday">Friday</option>
                 </select>
             </div>
-            
 
             <!-- Time Slot Section -->
             <div id="timeSlotSection">
@@ -46,8 +48,6 @@
                         </select>
                     </div>
 
-                  
-
                     <!-- Teacher Selection -->
                     <div class="mb-3">
                         <label class="form-label">Teacher</label>
@@ -62,9 +62,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="subject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" name="subject" placeholder="Enter subject name"
-                            required>
-                    </div> 
+                        <input type="text" class="form-control" name="subject" placeholder="Enter subject name" required>
+                    </div>
                 </div>
             </div>
 
@@ -81,52 +80,160 @@
         </form>
     </div>
 </section>
+<style>
+        /* General Section Style */
+        .timetable-creation-section {
+            background-color: #f4f6f9; /* Light gray background for the section */
+            padding: 50px 0;
+        }
+
+        /* Container style to center content and give bold font */
+        .timetable-creation-section .container {
+            background-color: #ffffff; /* White background for the form */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            padding: 30px;
+            max-width: 800px; /* Limiting the width for better layout */
+        }
+
+        /* Header style */
+        .timetable-creation-section h2 {
+            font-size: 2.2rem;
+            color: #333; /* Dark text color for header */
+            margin-bottom: 20px;
+        }
+
+        /* Label styling */
+        .form-label {
+            color: #555; /* Lighter text color for labels */
+            font-weight: 600; /* Bold labels */
+        }
+
+        /* Input/Select fields styling */
+        .form-control, .form-select {
+            border-radius: 8px; /* Rounded input/select fields */
+            border: 1px solid #ddd; /* Light border */
+            padding: 10px;
+            font-size: 1rem;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle inset shadow */
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff; /* Focus color */
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Blue focus glow */
+        }
+
+        /* Time Slot Section */
+        .time-slot {
+            background-color: #f9f9f9; /* Light background for time slot */
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0; /* Light border */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-slot h5 {
+            color: #333; /* Dark color for time slot titles */
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-size: 1rem;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d; /* Secondary button color */
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268; /* Darker hover color */
+        }
+
+        .btn-danger {
+            background-color: #dc3545; /* Red color for remove button */
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Darker hover color */
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Primary button color */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker hover color */
+        }
+
+        /* Add spacing between buttons */
+        .text-center.mb-4 .btn {
+            margin-right: 10px;
+        }
+
+        /* Add custom padding for form elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Make sure form elements do not stretch too much on wider screens */
+        @media (min-width: 992px) {
+            .timetable-creation-section .container {
+                max-width: 900px;
+            }
+        }
+    </style>
 
 <script>
     document.getElementById('addTimeSlot').addEventListener('click', function () {
         const timeSlotSection = document.getElementById('timeSlotSection');
         const timeSlotCount = timeSlotSection.getElementsByClassName('time-slot').length + 1;
-        if(timeSlotCount <6){
+        if(timeSlotCount < 6){
 
-        const newTimeSlot = document.createElement('div');
-        newTimeSlot.className = 'time-slot mb-3 border p-3';
-        newTimeSlot.innerHTML = `
-            <h5>Time Slot ${timeSlotCount}</h5>
-            <div class="mb-3">
-                {{!-- <label class="form-label">Time Slot</label> --}}
-                <select class="form-select" name="timeSlot" required>
-                    <option value="">Select a time slot...</option>
-                    <option value="9:30-10:30">9:30 AM - 10:30 AM</option>
-                    <option value="10:30-11:25">10:30 AM - 11:25 AM</option>
-                    <option value="11:35-12:30">11:35 AM - 12:30 PM</option>
-                    <option value="1:30-2:30">1:30 PM - 2:30 PM</option>
-                    <option value="2:30-3:30">2:30 PM - 3:30 PM</option>
-                </select>
-            </div>
-           
-            <div class="mb-3">
-                <label class="form-label">Teacher</label>
-                <select class="form-select" name="teacher" required>
-                    <option value="">Choose a teacher...</option>
-                    <option value="aswathi">Aswathi</option>
-                    <option value="aswani">Aswani</option>
-                    <option value="sajith">Sajith</option>
-                    <option value="jency">Jency</option>
-                      <option value="Keerthana">Keerthana</option>
-                </select>
-            </div>
-             <div class="mb-3">
-                        <label for="subject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" name="subject" placeholder="Enter subject name"
-                            required>
-                    </div> 
-        `;
+            const newTimeSlot = document.createElement('div');
+            newTimeSlot.className = 'time-slot mb-3 border p-3';
+            newTimeSlot.innerHTML = `
+                <h5>Time Slot ${timeSlotCount}</h5>
+                <div class="mb-3">
+                    {{!-- <label class="form-label">Time Slot</label> --}}
+                    <select class="form-select" name="timeSlot" required>
+                        <option value="">Select a time slot...</option>
+                        <option value="9:30-10:30">9:30 AM - 10:30 AM</option>
+                        <option value="10:30-11:25">10:30 AM - 11:25 AM</option>
+                        <option value="11:35-12:30">11:35 AM - 12:30 PM</option>
+                        <option value="1:30-2:30">1:30 PM - 2:30 PM</option>
+                        <option value="2:30-3:30">2:30 PM - 3:30 PM</option>
+                    </select>
+                </div>
 
-        timeSlotSection.appendChild(newTimeSlot);
+                <div class="mb-3">
+                    <label class="form-label">Teacher</label>
+                    <select class="form-select" name="teacher" required>
+                        <option value="">Choose a teacher...</option>
+                        <option value="aswathi">Aswathi</option>
+                        <option value="aswani">Aswani</option>
+                        <option value="sajith">Sajith</option>
+                        <option value="jency">Jency</option>
+                        <option value="Keerthana">Keerthana</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input type="text" class="form-control" name="subject" placeholder="Enter subject name" required>
+                </div>
+            `;
+
+            timeSlotSection.appendChild(newTimeSlot);
         } else {
-            alert('You have already used five timeslot.');
+            alert('You have already used five time slots.');
         }
-    
     });
 
     document.getElementById('removeTimeSlot').addEventListener('click', function () {

@@ -26,7 +26,7 @@ module.exports = {
                     if (loginData.password == data[0].password) {
                         // console.log(data[0]);
                         if (data[0].type == "hod") {
-
+                              
                             resolve({ err: false })
                         } else {
                             // console.log("its not admin");
@@ -59,9 +59,10 @@ module.exports = {
     getApprovedStudents: () => {
         return new Promise((resolve, reject) => {
             db.query('select * from login_data where type="student" AND status= 1', (err, data) => {
-                // console.log(data);
+                 console.log("approved",data);
 
                 resolve(data)
+                
             })
         })
     },
@@ -88,32 +89,10 @@ module.exports = {
             })
         })
     },
-    // addTimetable: (timetableData) => {
-    //     return new Promise((resolve, reject) => {
-    //         const { day, timeSlot, year, teacher, subject } = timetableData;
-    //         console.log(timetableData);
-    //         // Data   :{
-    //         //     day: 'tuesday',
-    //         //     year: '1',
-    //         //     timeSlot: [ '10:30-11:25', '1:30-2:30' ],
-    //         //     teacher: [ 'aswathi', 'jency' ],
-    //         //     subject: [ 'ccc', 'dsds' ]
-    //         //   }
-    //         // Insert the timetable data into the database
-    //         db.query('INSERT INTO timetable (day, time, year, teacher, subject) VALUES (?, ?, ?, ?, ?)', [day, timeSlot, year, teacher, subject], (err, result) => {
-    //             if (err) {
-    //                 console.error("Error inserting data:", err);
-    //                 return reject(err); // Reject the promise if insertion fails
-    //             }
-
-    //             resolve()
-    //         });
-    //     });
-    // },
+ 
     addTimetable: (timetableData) => {
         return new Promise((resolve, reject) => {
             const { day, timeSlot, year, teacher, subject } = timetableData;
-    console.log("length",timeSlot.length);
     
             // Ensure all arrays (timeSlot, teacher, subject) have the same length
             if (timeSlot.length !== teacher.length || teacher.length !== subject.length) {
@@ -122,14 +101,12 @@ module.exports = {
     
             // Iterate over the arrays and insert each row into the database
             const insertPromises = timeSlot.map((time, index) => {
-                console.log(time,index);
+                // console.log(time,index);
                 
                 return new Promise((resolve, reject) => {
                     const currentTeacher = teacher[index];
                     const currentSubject = subject[index];
-                    console.log(currentTeacher);
-                    console.log(currentSubject);
-                    
+                  
     
                     // Insert each combination into the timetable
                     db.query(

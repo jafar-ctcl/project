@@ -1,7 +1,10 @@
 <div class="d-flex" id="wrapper">
     <!-- Sidebar-->
     <div class="border-end bg-white" id="sidebar-wrapper">
-        <div class="sidebar-heading border-bottom bg-light fw-bold">{{name}}</div>
+       {{#if name}} <div class="sidebar-heading border-bottom bg-light fw-bold">{{name}}</div>
+      {{else}} 
+      <div class="sidebar-heading border-bottom bg-light fw-bold">Teacher
+       {{/if}}
         <div class="list-group list-group-flush">
             <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
                 <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
