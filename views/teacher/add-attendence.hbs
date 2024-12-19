@@ -12,64 +12,72 @@
         <option value="3">3 Year</option>
       </select>
     </div>
-
-    {{!-- first year attendance  --}}
-     <div class="year-table" id="year-1" style="display: none;">
-      <!-- Attendance Form -->
-      <form action="/teacher/add-attendence" method="POST">
-
-        <!-- Date Selection -->
-        <div class="mb-4">
-          <label class="form-label fw-semibold">Select Date</label>
-          <input type="date" class="form-control form-control-lg" name="attendanceDate" required />
-        </div>
+   
 
 
+    {{!-- First Year Attendance --}}
+<div class="year-table" id="year-1" style="display: none;">
+  <!-- Attendance Form -->
+  <form action="/teacher/add-attendence" method="POST">
+    <!-- Date Selection -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Select Date</label>
+      <input type="date" class="form-control form-control-lg" name="attendanceDate" required />
+    </div>
 
-        {{#if firstYearStudents}}
-        <h3>Attendance for Year 1</h3>
+    {{#if firstYearStudents}}
+    <h3>Attendance for Year 1</h3>
 
-        <div class="table-responsive mt-4">
-          <table class="table table-bordered table-hover">
-            <thead class="bg-primary text-white">
-              <tr>
-                <th>Roll Number</th>
-                <th>Student Name</th>
-                <th>Present</th>
-                <th>Absent</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each firstYearStudents}}
-              <tr>
-                <td>{{id}}</td>
-                <td>{{name}}</td>
-                <td>
-                  <input type="radio" name="attendance[{{this.id}}]" value="present" required />
-                </td>
-                <td>
-                  <input type="radio" name="attendance[{{this.id}}]" value="absent" required />
-                </td>
-              </tr>
-              {{/each}}
+    <div class="table-responsive mt-4">
+      <table class="table table-bordered table-hover">
+        <thead class="bg-primary text-white">
+          <tr>
+            <th>Roll Number</th>
+            <th>Student Name</th>
+            <th>Present</th>
+            <th>Absent</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each firstYearStudents}}
+          <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>
+              <input
+                type="radio"
+                name="attendance[{{this.id}}]"
+                value="present|{{this.name}}"
+                required
+              />
+            </td>
+            <td>
+              <input
+                type="radio"
+                name="attendance[{{this.id}}]"
+                value="absent|{{this.name}}"
+                required
+              />
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{/if}}
 
-            </tbody>
-          </table>
-        </div>
-        {{/if}}
-        
     <!-- Submit Button -->
     <div class="text-center mt-4">
       <button type="submit" class="btn btn-success btn-lg">Submit Attendance</button>
     </div>
-    </form>
-    </div>
+  </form>
+</div> 
 
-  {{!-- first year attendance   end--}}
+    {{!-- first year attendance end--}}
 
-    {{!-- Second year attendance  --}}
+    {{!-- Second year attendance --}}
 
-     <div class="year-table" id="year-2" style="display: none;">
+    <div class="year-table" id="year-2" style="display: none;">
       <!-- Attendance Form -->
       <form action="/teacher/add-attendence" method="POST">
 
@@ -96,33 +104,42 @@
             </thead>
             <tbody>
               {{#each secondYearStudents}}
-              <tr>
-                <td>{{id}}</td>
-                <td>{{name}}</td>
-                <td>
-                  <input type="radio" name="attendance[{{this.id}}]" value="present" required />
-                </td>
-                <td>
-                  <input type="radio" name="attendance[{{this.id}}]" value="absent" required />
-                </td>
-              </tr>
-              {{/each}}
+                       <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>
+              <input
+                type="radio"
+                name="attendance[{{this.id}}]"
+                value="present|{{this.name}}"
+                required
+              />
+            </td>
+            <td>
+              <input
+                type="radio"
+                name="attendance[{{this.id}}]"
+                value="absent|{{this.name}}"
+                required
+              />
+            </td>
+          </tr>              {{/each}}
 
             </tbody>
           </table>
         </div>
         {{/if}}
-        
-    <!-- Submit Button -->
-    <div class="text-center mt-4">
-      <button type="submit" class="btn btn-success btn-lg">Submit Attendance</button>
-    </div>
-    </form>
+
+        <!-- Submit Button -->
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-success btn-lg">Submit Attendance</button>
+        </div>
+      </form>
     </div>
 
- {{!-- Second year attendance end   --}}
+    {{!-- Second year attendance end --}}
 
-  {{!-- third year attendance  --}}
+    {{!-- third year attendance --}}
     <div class="year-table" id="year-3" style="display: none;">
       <!-- Attendance Form -->
       <form action="/teacher/add-attendence" method="POST">
@@ -150,32 +167,42 @@
             </thead>
             <tbody>
               {{#each thirdYearStudents}}
-              <tr>
-                <td>{{id}}</td>
-                <td>{{name}}</td>
-                <td>
-                  <input type="radio" name="attendance[{{this.id}}]" value="present" required />
-                </td>
-                <td>
-                  <input type="radio" name="attendance[{{this.id}}]" value="absent" required />
-                </td>
-              </tr>
-              {{/each}}
+            <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>
+              <input
+                type="radio"
+                name="attendance[{{this.id}}]"
+                value="present|{{this.name}}"
+                required
+              />
+            </td>
+            <td>
+              <input
+                type="radio"
+                name="attendance[{{this.id}}]"
+                value="absent|{{this.name}}"
+                required
+              />
+            </td>
+          </tr>
+        {{/each}}
 
             </tbody>
           </table>
         </div>
         {{/if}}
-             
-    <!-- Submit Button -->
-    <div class="text-center mt-4">
-      <button type="submit" class="btn btn-success btn-lg">Submit Attendance</button>
+
+        <!-- Submit Button -->
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-success btn-lg">Submit Attendance</button>
+        </div>
+      </form>
     </div>
-    </form>
-    </div>
-    
-{{!-- third year attendance end --}}
-   
+
+    {{!-- third year attendance end --}}
+
   </div>
 </section>
 
