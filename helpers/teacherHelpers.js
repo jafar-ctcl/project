@@ -102,22 +102,19 @@ module.exports={
             })
         })
     },
-    saveAttendance: (attendanceData) => {
+    saveAttendance: (attendanceData) => { 
         return new Promise((resolve, reject) => {
-           
-            // console.log("dataaaa", attendanceData);
-    
             // Prepare an array of values for the SQL query
             const values = attendanceData.map(record => [
-                record.studentId, 
-                record.attendanceDate, 
-                record.status
+                // record.studentId,
+                record.year,
+                record.name,
+                record.attendanceDate,
+                record.status,
             ]);
-            // console.log(values);
-            
     
             // Create a single INSERT INTO statement with multiple rows
-            const sql = 'INSERT INTO attendance (id, date, status) VALUES ?';
+            const sql = 'INSERT INTO attendance (year, name, date, status) VALUES ?';
     
             // Execute the query with the prepared values
             db.query(sql, [values], (err, result) => {
@@ -126,11 +123,41 @@ module.exports={
                     reject(err); // Reject the promise if there is an error
                 } else {
                     console.log('Attendance records inserted successfully');
-                    resolve(result);  // Resolve the promise after successful insertion
+                    resolve(result); // Resolve the promise after successful insertion
                 }
             });
         });
     },
+    
+    // saveAttendance: (attendanceData) => {
+    //     return new Promise((resolve, reject) => {
+           
+    //         // console.log("dataaaa", attendanceData);
+    
+    //         // Prepare an array of values for the SQL query
+    //         const values = attendanceData.map(record => [
+    //             record.studentId, 
+    //             record.attendanceDate, 
+    //             record.status
+    //         ]);
+    //         // console.log(values);
+            
+    
+    //         // Create a single INSERT INTO statement with multiple rows
+    //         const sql = 'INSERT INTO attendance (id, date, status) VALUES ?';
+    
+    //         // Execute the query with the prepared values
+    //         db.query(sql, [values], (err, result) => {
+    //             if (err) {
+    //                 console.error('Error inserting attendance records:', err);
+    //                 reject(err); // Reject the promise if there is an error
+    //             } else {
+    //                 console.log('Attendance records inserted successfully');
+    //                 resolve(result);  // Resolve the promise after successful insertion
+    //             }
+    //         });
+    //     });
+    // },
     
             
     
