@@ -68,6 +68,7 @@ router.get('/add-attendence', verifyLogin, (req, res) => {
     const firstYearStudents = resp.filter((item) => item.year === 1);
     const secondYearStudents = resp.filter((item) => item.year === 2);
     const thirdYearStudents = resp.filter((item) => item.year === 3);
+console.log("Fisrt",firstYearStudents);
 
     // Render the template and pass separated student data
     res.render('teacher/add-attendence', {
@@ -83,73 +84,31 @@ router.get('/add-attendence', verifyLogin, (req, res) => {
   });
 
 });
-// router.post('/add-attendence', (req, res) => {
-//   const { attendanceDate, ...attendanceData } = req.body;
 
-//   // Validate input data
-//   if (!attendanceDate || Object.keys(attendanceData).length === 0) {
-//     return res.status(400).send('Missing attendance date or attendance data.');
-//   }
-
-//   const attendanceRecords = [];
-
-//   // Prepare attendance records
-//   for (let key in attendanceData) {
-//     if (attendanceData.hasOwnProperty(key)) {
-//       const studentIdMatch = key.match(/\d+/);
-//       if (studentIdMatch) {
-//         const studentId = studentIdMatch[0]; // Extract student ID
-//         const status = attendanceData[key]; // Get status ('present' or 'absent')
-//         attendanceRecords.push({ studentId, status, attendanceDate });
-//       }
-//     }
-//   }
-
-//   // Log the attendance records for debugging
-//   console.log('Attendance Records:', attendanceRecords);
-
-//   // Save attendance to the database
-//   teacherHelpers
-//     .saveAttendance(attendanceRecords)
-//     .then(() => {
-//       res.send('Attendance saved successfully');
-//     })
-//     .catch((err) => {
-//       console.error('Error saving attendance:', err);
-//       res.status(500).send('Error saving attendance: ' + err.message);
-//     });
-// });
-
+// 
 router.post('/add-attendence', (req, res) => {
   const { attendanceDate, ...attendanceData } = req.body;
-  
-  
-   const attendanceRecords = [];
+
+  const attendanceRecords = [];
 
   // Prepare attendance records
   for (let key in attendanceData) {
     if (attendanceData.hasOwnProperty(key)) {
-      const studentId = key.match(/\d+/);
-      const status = attendanceData[key]; // 'Present' or 'Absent'
-      attendanceRecords.push({ studentId, status, attendanceDate });
-      
+      const studentId = key.match(/\d+/)[0]; // Extract the numeric part of the key
+      const [status, name] = attendanceData[key].split('|'); // Split value into status and name
+      attendanceRecords.push({ studentId, name, status, attendanceDate });
     }
- 
-    // console.log(attendanceRecords);
-    
   }
 
   // Save attendance to the database
   teacherHelpers.saveAttendance(attendanceRecords)
     .then(() => {
-      res.redirect('/teacher')
+      res.redirect('/teacher');
     })
     .catch((err) => {
       res.status(500).send("Error saving attendance: " + err.message);
     });
 });
-
-
 
 router.get('/view-attendence', (req, res) => {
   res.render('teacher/view-attendence', { teacher, name: req.session.teacher.name })
