@@ -2,14 +2,14 @@
 
 let db = require('../config/connection')
 
-module.exports={
+module.exports = {
     // const { name, email, password,phone, gender } = teacherData;
     doSignup: (teacherData) => {
-      const { name,email, password, phone, gender } = teacherData;
-    
+        const { name, email, password, phone, gender } = teacherData;
+
         return new Promise((resolve, reject) => {
-  
-            db.query(' INSERT INTO login_data (name,type, email, password, phone, gender, status)  VALUES (?,?, ?, ?, ?, ?,?)', [name, type="teacher",email, password, phone, gender, 0], (err, results) => {
+
+            db.query(' INSERT INTO login_data (name,type, email, password, phone, gender, status)  VALUES (?,?, ?, ?, ?, ?,?)', [name, type = "teacher", email, password, phone, gender, 0], (err, results) => {
                 if (err) {
                     console.error('Error inserting into database:', err.message);
                     return reject(err); // Reject the promise on error
@@ -31,10 +31,10 @@ module.exports={
                     resolve({ err: "Email not exist" });
                 } else {
                     const user = data[0]; // Get the user data
-    
+
                     // Check if the provided password matches the one stored in the database
                     if (loginData.password === user.password) {
-    
+
                         // Check if the user is a teacher and if their account is active
                         if (user.type === "teacher") {
                             if (user.status) {
@@ -56,10 +56,10 @@ module.exports={
             });
         });
     },
-    
+
     // doLogin:(loginData)=>{
     //     // console.log(loginData);
-        
+
     //     return new Promise((resolve,reject)=>{
     //         db.query('SELECT * FROM login_data WHERE email= ?',[loginData.email],(err,data)=>{
     //             if(data.length===0){
@@ -70,7 +70,7 @@ module.exports={
     //                     // console.log(data[0].status);
     //                     if (data[0].type === "teacher") {
     //                         if (data[0].status) {
-  
+
     //                             resolve({ err: false, data })
     //                         } else {
 
@@ -89,9 +89,9 @@ module.exports={
     //     })
     // },
     getAllTeacher: () => {
-        return new Promise((resolve,reject) => {
-            db.query('SELECT * FROM login_data WHERE type="teacher" ', (err,data)=> {
-                resolve(data)                
+        return new Promise((resolve, reject) => {
+            db.query('SELECT * FROM login_data WHERE type="teacher" ', (err, data) => {
+                resolve(data)
             })
         })
     },
@@ -102,7 +102,7 @@ module.exports={
             })
         })
     },
-    saveAttendance: (attendanceData) => { 
+    saveAttendance: (attendanceData) => {
         return new Promise((resolve, reject) => {
             // Prepare an array of values for the SQL query
             const values = attendanceData.map(record => [
@@ -112,10 +112,10 @@ module.exports={
                 record.attendanceDate,
                 record.status,
             ]);
-    
+
             // Create a single INSERT INTO statement with multiple rows
             const sql = 'INSERT INTO attendance (year, name, date, status) VALUES ?';
-    
+
             // Execute the query with the prepared values
             db.query(sql, [values], (err, result) => {
                 if (err) {
@@ -128,87 +128,67 @@ module.exports={
             });
         });
     },
-    
-    // saveAttendance: (attendanceData) => {
-    //     return new Promise((resolve, reject) => {
-           
-    //         // console.log("dataaaa", attendanceData);
-    
-    //         // Prepare an array of values for the SQL query
-    //         const values = attendanceData.map(record => [
-    //             record.studentId, 
-    //             record.attendanceDate, 
-    //             record.status
-    //         ]);
-    //         // console.log(values);
-            
-    
-    //         // Create a single INSERT INTO statement with multiple rows
-    //         const sql = 'INSERT INTO attendance (id, date, status) VALUES ?';
-    
-    //         // Execute the query with the prepared values
-    //         db.query(sql, [values], (err, result) => {
-    //             if (err) {
-    //                 console.error('Error inserting attendance records:', err);
-    //                 reject(err); // Reject the promise if there is an error
-    //             } else {
-    //                 console.log('Attendance records inserted successfully');
-    //                 resolve(result);  // Resolve the promise after successful insertion
-    //             }
-    //         });
-    //     });
-    // },
-    
-            
-    
-            // // Wait for all insert operations to complete
-            // Promise.all(insertPromises)
-            //     .then(() => {
-            //         console.log('All attendance records inserted successfully');
-            //         resolve();  // Resolve the main promise after all inserts
-            //     })
-            //     .catch((err) => {
-            //         console.error('Error inserting attendance records:', err);
-            //         reject(err);  // Reject the main promise if there was any error
-            //     });
-    
+    getAttendance: (viewData) => {
+        return new Promise((resolve, reject) => {
+            console.log("helpers", viewData.year, viewData.date);
+            db.query('SELECT * FROM attendance WHERE year = ? AND date = ?', [viewData.year, viewData.date], (err, data) => {
+                if (err) {
+                  console.log("error", err);
+                  return;
+                }
+              
+                console.log("data", data);
+              
+                if (data.length > 0) {
+                  // Loop through all rows and format the date along with the attendance data
+                  const formattedData = data.map(row => {
+                    const originalDate = new Date(row.date);
+              
+                    // Get the full day name (e.g., "Monday", "Tuesday", etc.)
+                    const dayName = originalDate.toLocaleString('en-US', { weekday: 'long' });
+              
+                    // Include both the original row data and the day name
+                    return {
+                      ...row, // Spread the existing row data
+                      day: dayName, // Add the day of the week to the row
+                    };
+                  });
+              
+                  console.log("Formatted Data:", formattedData); // Log all formatted data with day names
+              
+                  // Resolve with the formatted data including the day of the week
+                  resolve(formattedData);
+                } else {
+                  console.log("No data found");
+                  resolve([]); // Return an empty array if no data
+                }
+              });
+              
+
+
+
+
+        })
+    },
+    updateAttendence: (updData) => {
+        return new Promise((resolve, reject) => {
+          db.query('UPDATE attendance SET status = ? WHERE id = ?', [updData.status, updData.id], (err, result) => {
+            if (err) {
+              console.log("Error updating attendance:", err);
+              reject({ success: false, message: 'Error updating attendance' }); // Reject the promise if there's an error
+            } else {
+              console.log('Attendance updated successfully');
+              resolve({ success: true }); // Resolve the promise with success
+            }
+          });
+        });
+      }
 
 }
-    // saveAttendance: (attendanceData) => {
-       
-    
+//   const day = originalDate.getDate(); // Day of the month
+//   const month = originalDate.getMonth() + 1; // Months are 0-indexed, so add 1
+//   const year = originalDate.getFullYear(); // Full year
 
-    //     return new Promise((resolve, reject) => {
-    //         console.log("dataaaa",attendanceData);
-    //         // dataaaa [
-    //         //     { studentId: '1', status: 'present', attendanceDate: '2024-12-13' },
-    //         //     { studentId: '2', status: 'present', attendanceDate: '2024-12-13' },
-    //         //     { studentId: '3', status: 'present', attendanceDate: '2024-12-13' }
-    //         //   ]
-    //         resolve()
-    //     })
-        //   // Loop through each attendance record in the array
-          
-      
-      
-        //     // Ensure you log the attendanceDate to check if it's correct
-        //     // console.log("Attendance Date:", attendanceDate);
-      
-        //     // Insert the record into the database
-        //     db.query(
-        //         'INSERT INTO attendance (id, date, status) VALUES(?, ?, ?)', 
-        //         [studentId, attendanceDate, status], 
-        //         (err, data) => {
-        //           if (err) {
-        //             console.error('Error inserting attendance for student ID:', studentId, err);
-        //             // Optionally reject or handle the error
-        //           } else {
-        //             console.log('Attendance recorded for student ID:', studentId);
-        //             resolve()
-        //         }
-        //   })
-
-        // })
+//   console.log(`Formatted Date: Day: ${day}, Month: ${month}, Year: ${year}`);
 
 
-      
