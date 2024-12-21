@@ -153,32 +153,104 @@ router.post('/edit-attendance/:id', (req, res) => {
       res.status(500).json(err); // Respond with error message
     });
 });
+// // Route to fetch monthly attendance for the current year, grouped by month
+// router.get('/monthly-attendance', (req, res) => {
+//   //const currentYear = new Date().getFullYear();  // Get current year
 
-  // // Update the attendance in the database
-  // db.query('UPDATE attendance SET status = ? WHERE id = ?', [status, id], (err, result) => {
-  //   if (err) {
-  //     console.log("Error updating attendance:", err);
-  //     return res.status(500).json({ success: false, message: 'Error updating attendance' });
-  //   }
+//   const currentYear = new Date().getFullYear();  // Get current year
 
-  //   console.log('Attendance updated successfully');
-  //   res.json({ success: true });
+//   teacherHelpers.getAttendanceByYear(currentYear)
+//     .then(formattedData => {
+//       // Check if formattedData is an array and contains the expected data
+//       if (!Array.isArray(formattedData)) {
+//         console.error('Formatted data is not an array:', formattedData);
+//         return res.status(500).send('Error: Invalid data format');
+//       }
+
+//       // Log the formattedData to inspect the structure
+//       console.log('Formatted Attendance Data:', formattedData);
+
+//       // Loop through the formattedData array and log attendance details
+//       formattedData.forEach(month => {
+//         console.log(`Attendance for ${month.monthName}:`);
+        
+//         // Loop through the attendance array for each month and log student details
+//         if (month.attendance && Array.isArray(month.attendance)) {
+//           month.attendance.forEach(student => {
+//             console.log(`Student: ${student.name}, Roll Number: ${student.id}, Status: ${student.status}`);
+//           });
+//         } else {
+//           console.error('Attendance data for month is not an array:', month.attendance);
+//         }
+//       });
+
+//       // Render the view and pass the data
+//       res.render('teacher/monthly-attendance', {
+//         attendanceByMonth: formattedData,
+//         year: currentYear
+//       });
+//     })
+//     .catch(err => {
+//       console.log('Error fetching attendance data:', err);
+//       res.status(500).send('Error fetching attendance data');
+//     });
+// });
+
+router.get('/monthly-attendance', (req, res) => {
+  teacherHelpers.getAllAttendance()
+  .then(formattedData => {
+    // Log the formatted data for debugging purposes
+    console.log("Formatted Data:", formattedData);
+
+    // Add the first date of each year to the formattedData
+    formattedData.forEach(yearData => {
+      // Find the first date of attendance for that year
+      const firstAttendanceDate = new Date(yearData.months[0].attendance[0].date); // Assuming attendance has a date field
+      yearData.firstDate = firstAttendanceDate.toLocaleDateString(); // Format the date
+    });
+
+    // Send the separated data to the view
+    res.render('teacher/monthly-attendance', {
+      attendanceData: formattedData // Pass the attendance data to the view
+    });
+  })
+  .catch(err => {
+    console.log('Error fetching attendance data:', err);
+    res.status(500).send('Error fetching attendance data');
+  });
+
+  // teacherHelpers.getAllAttendance()
+  // .then(formattedData => {
+  //   // Log the formatted data for debugging purposes
+  //   console.log("Formatted Data:", formattedData);
+
+  //   // Loop through the formattedData (year and month wise)
+  //   formattedData.forEach(yearData => {
+  //     console.log(`Year: ${yearData.year}`); // Access the year
+    
+  //     // Loop through each month within the year
+  //     yearData.months.forEach(month => {
+  //       console.log(`Month: ${month.monthName} (${month.monthNumber})`); // Access the month name and number
+    
+  //       // Loop through attendance for each student in the month
+  //       month.attendance.forEach(student => {
+  //         console.log(`Student: ${student.name}, Roll Number: ${student.id}, Status: ${student.status}`);
+  //       });
+  //     });
+  //   });
+
+  //   // After separating the data and debugging, pass it to the view for rendering
+  //   res.render('teacher/monthly-attendance', {
+  //     attendanceData: formattedData // Pass the attendance data to the view
+  //   });
+  // })
+  // .catch(err => {
+  //   console.log('Error fetching attendance data:', err);
+  //   res.status(500).send('Error fetching attendance data');
   // });
 
 
-
-  // getAttendanceByYear(year) // Replace with your actual helper function
-  //   .then((attendanceData) => {
-  //     if (attendanceData.length > 0) {
-  //       res.json({ success: true, attendance: attendanceData });
-  //     } else {
-  //       res.json({ success: false, message: 'No attendance data found.' });
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     console.error('Error fetching attendance:', error);
-  //     res.status(500).json({ success: false, message: 'Server error.' });
-  //   });
+});
 
 
 
