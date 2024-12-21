@@ -182,9 +182,129 @@ module.exports = {
             }
           });
         });
+      },
+    
+      getAllAttendance: () => {
+        return new Promise((resolve, reject) => {
+          const query = `
+            SELECT * FROM attendance
+            ORDER BY date
+          `;
+    
+          db.query(query, (err, results) => {
+            if (err) {
+              console.log('Error fetching attendance data:', err);
+              return reject('Error fetching attendance data');
+            }
+    
+            if (results.length === 0) {
+              console.log('No attendance data found.');
+              return resolve({}); // Return an empty object if no data is found
+            }
+    
+            // Group the results by year and month
+            const groupedData = results.reduce((acc, record) => {
+              const year = new Date(record.date).getFullYear(); // Extract the year
+              const month = new Date(record.date).getMonth() + 1; // Get month as 1-based (January = 1, December = 12)
+    
+              if (!acc[year]) {
+                acc[year] = {}; // Initialize the year object if it doesn't exist
+              }
+              
+              if (!acc[year][month]) {
+                acc[year][month] = []; // Initialize the month array if it doesn't exist
+              }
+              
+              acc[year][month].push(record); // Group by year and month
+    
+              return acc;
+            }, {});
+    
+            // Prepare formatted data for easy access
+            const monthNames = [
+              "January", "February", "March", "April", "May", "June", 
+              "July", "August", "September", "October", "November", "December"
+            ];
+    
+            // Convert groupedData into an array for rendering
+            const formattedData = Object.keys(groupedData).map(year => {
+              const yearData = groupedData[year];
+              const monthsData = Object.keys(yearData).map(month => {
+                return {
+                  monthName: monthNames[month - 1],  // Get the name of the month
+                  monthNumber: month,
+                  attendance: yearData[month]        // Attendance records for this month
+                };
+              });
+    
+              return {
+                year: year,
+                months: monthsData
+              };
+            });
+             
+              
+            resolve(formattedData); // Resolve with the formatted data
+          });
+        });
+      },
+        // getAttendanceByYear: (year) => {
+        //   return new Promise((resolve, reject) => {
+        //     const query = `
+        //       SELECT * FROM attendance
+        //       WHERE YEAR(date) = ?
+        //       ORDER BY date
+        //     `;
+      
+        //     db.query(query, [year], (err, results) => {
+        //       if (err) {
+        //         console.log('Error fetching attendance data:', err);
+        //         return reject('Error fetching attendance data');
+        //       }
+      
+        //       if (results.length === 0) {
+        //         console.log('No attendance data found for the year:', year);
+        //         return resolve([]); // Return an empty array if no data is found
+        //       }
+      
+        //       // Group the results by month
+        //       const groupedData = results.reduce((acc, record) => {
+        //         const month = new Date(record.date).getMonth() + 1; // Get month as 1-based (January = 1, December = 12)
+      
+        //         if (!acc[month]) {
+        //           acc[month] = [];
+        //         }
+        //         acc[month].push(record); // Group by month
+      
+        //         return acc;
+        //       }, {});
+      
+        //       // Prepare formatted data for easy access
+        //       const monthNames = [
+        //         "January", "February", "March", "April", "May", "June", 
+        //         "July", "August", "September", "October", "November", "December"
+        //       ];
+      
+        //       // Convert groupedData into an array for rendering
+        //       const formattedData = Object.keys(groupedData).map(month => {
+        //         return {
+        //           monthName: monthNames[month - 1],  // Get the name of the month
+        //           monthNumber: month,
+        //           attendance: groupedData[month]   // Attendance records for this month
+        //         };
+        //       });
+      
+        //       console.log('Grouped and formatted data:', formattedData); // Log the data for debugging
+        //       resolve(formattedData); // Resolve with the formatted data
+        //     });
+        //   });
+        // },
       }
+      
+      
+      
 
-}
+
 //   const day = originalDate.getDate(); // Day of the month
 //   const month = originalDate.getMonth() + 1; // Months are 0-indexed, so add 1
 //   const year = originalDate.getFullYear(); // Full year
