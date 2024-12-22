@@ -128,6 +128,45 @@ module.exports = {
             });
         });
     },
+   
+        getLastAttendance: () => {
+          return new Promise((resolve, reject) => {
+            // Query to fetch the latest attendance record to get the most recent date
+            db.query('SELECT * FROM attendance ORDER BY date DESC LIMIT 1', (err, result) => {
+              if (err) {
+                console.error('Error fetching last attendance:', err);
+                reject(err); // Reject the promise in case of error
+              } else {
+                const lastAttendance = result[0]; // Get the most recent attendance record
+                
+                if (lastAttendance && lastAttendance.date) {
+                  const lastAttendanceDate = lastAttendance.date;
+      
+                  // Query to fetch all attendance records for the last attendance date
+                  db.query('SELECT * FROM attendance WHERE date = ?', [lastAttendanceDate], (err, allRecords) => {
+                    if (err) {
+                      console.error('Error fetching all attendance for the last date:', err);
+                      reject(err);
+                    } else {
+                      // Process the records to add the day of the week
+                      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                      allRecords.forEach(record => {
+                        const attendanceDate = new Date(record.date);
+                        record.dayOfWeek = daysOfWeek[attendanceDate.getDay()];
+                      });
+      
+                      resolve(allRecords); // Resolve the promise with all attendance records for the last date
+                    }
+                  });
+                } else {
+                  resolve([]); // If no attendance records exist, return an empty array
+                }
+              }
+            });
+          });
+        
+      
+    },
     getAttendance: (viewData) => {
         return new Promise((resolve, reject) => {
             console.log("helpers", viewData.year, viewData.date);
@@ -248,57 +287,33 @@ module.exports = {
           });
         });
       },
-        // getAttendanceByYear: (year) => {
-        //   return new Promise((resolve, reject) => {
-        //     const query = `
-        //       SELECT * FROM attendance
-        //       WHERE YEAR(date) = ?
-        //       ORDER BY date
-        //     `;
+        getMonthAttendance: (year, month) => {
+          return new Promise((resolve, reject) => {
+            const query = `
+              SELECT * FROM attendance
+              WHERE YEAR(date) = ? AND MONTH(date) = ?
+              ORDER BY date
+            `;
       
-        //     db.query(query, [year], (err, results) => {
-        //       if (err) {
-        //         console.log('Error fetching attendance data:', err);
-        //         return reject('Error fetching attendance data');
-        //       }
+            db.query(query, [year, month], (err, results) => {
+              if (err) {
+                console.log('Error fetching attendance data:', err);
+                return reject('Error fetching attendance data');
+              }
       
-        //       if (results.length === 0) {
-        //         console.log('No attendance data found for the year:', year);
-        //         return resolve([]); // Return an empty array if no data is found
-        //       }
+              // Prepare attendance data for each day of the month
+              const daysInMonth = new Date(year, month, 0).getDate();
+              const attendanceByDay = Array.from({ length: daysInMonth }, (_, dayIndex) => ({
+                day: dayIndex + 1, // Day of the month (1-based index)
+                students: results.filter(record => new Date(record.date).getDate() === dayIndex + 1)
+              }));
       
-        //       // Group the results by month
-        //       const groupedData = results.reduce((acc, record) => {
-        //         const month = new Date(record.date).getMonth() + 1; // Get month as 1-based (January = 1, December = 12)
+              resolve(attendanceByDay);
+            });
+          });
+        },
       
-        //         if (!acc[month]) {
-        //           acc[month] = [];
-        //         }
-        //         acc[month].push(record); // Group by month
       
-        //         return acc;
-        //       }, {});
-      
-        //       // Prepare formatted data for easy access
-        //       const monthNames = [
-        //         "January", "February", "March", "April", "May", "June", 
-        //         "July", "August", "September", "October", "November", "December"
-        //       ];
-      
-        //       // Convert groupedData into an array for rendering
-        //       const formattedData = Object.keys(groupedData).map(month => {
-        //         return {
-        //           monthName: monthNames[month - 1],  // Get the name of the month
-        //           monthNumber: month,
-        //           attendance: groupedData[month]   // Attendance records for this month
-        //         };
-        //       });
-      
-        //       console.log('Grouped and formatted data:', formattedData); // Log the data for debugging
-        //       resolve(formattedData); // Resolve with the formatted data
-        //     });
-        //   });
-        // },
       }
       
       
