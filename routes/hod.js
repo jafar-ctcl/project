@@ -13,8 +13,11 @@ const verifyLogin = (req, res, next) => {
   }
 }
 router.get('/',verifyLogin, (req, res) => {
-    hodHelpers.getAllStudents().then((resp)=>{
-    res.render('hod/dashboard', {hod,students:resp})
+    hodHelpers.getApprovedStudents().then((resp)=>{
+       hodHelpers.getApprovedTeachers().then((teacherData)=>{
+        res.render('hod/dashboard', {hod,students:resp,teachers:teacherData})
+       })
+   
     })
   
 });
@@ -28,7 +31,7 @@ router.get('/login', (req, res) => {
 })
 router.post('/login', (req, res) => {
   hodHelpers.doLogin(req.body).then((resp) => {
-    console.log("resp",resp)
+    // console.log("resp",resp)
     if (resp.err) {
        req.session.hodLoginErr = resp.err
 
@@ -83,6 +86,8 @@ router.get('/teacher-change-status/:email/:status', (req, res) => {
 })
  router.get('/view-teachers',verifyLogin,(req,res)=>{
   hodHelpers.getApprovedTeachers().then((resp)=>{
+    console.log("resp",resp);
+    
   res.render('hod/view-teachers',{hod,teachers:resp})
 
   })
@@ -159,4 +164,19 @@ const fridayByYear = {
      })
     
   })
+  router.post('/manage-teacher', (req, res) => {
+    const teacherManageData = req.body;  // Get all the form data
+  
+    // Call the helper function to manage the teacher
+    hodHelpers.manageTeacher(teacherManageData)
+      .then((resp) => {
+        res.status(200).json({ success: true, message: 'Teacher saved successfully!' });
+      })
+      .catch((error) => {
+        res.status(500).json({ success: false, message: 'Failed to save teacher data', error: error });
+      });
+  });
+  
+
+
 module.exports = router;
