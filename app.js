@@ -10,14 +10,31 @@ var hodRouter = require('./routes/hod');
 var teacherRouter = require('./routes/teacher');
 
 var hbs = require('express-handlebars');
+// var handlebars = require('handlebars')
 const db = require('./config/connection');
 const session = require('express-session');
 var app = express();
 
+
+// // Register custom Handlebars helpers
+// handlebars.registerHelper('range', function(start, end) {
+//   const range = [];
+//   for (let i = start; i <= end; i++) {
+//     range.push(i);
+//   }
+//   return range;
+// });
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout/',partialsDir:__dirname+'/views/partials/'}))
+app.engine('hbs',
+  hbs.engine({
+    extname:'hbs',
+    defaultLayout:'layout',
+    layoutsDir:__dirname+'/views/layout/',
+    partialsDir:__dirname+'/views/partials/'
+  }))
 //db connection
 db.connect((err)=>{
   if(err) throw err;

@@ -154,7 +154,7 @@ router.post('/edit-attendance/:id', (req, res) => {
 });
 
 
-router.get('/monthly-attendance', (req, res) => {
+router.get('/year-attendance', (req, res) => {
   teacherHelpers.getAllAttendance()
   .then(formattedData => {
     // Log the formatted data for debugging purposes
@@ -168,7 +168,7 @@ router.get('/monthly-attendance', (req, res) => {
     });
 
     // Send the separated data to the view
-    res.render('teacher/monthly-attendance', {
+    res.render('teacher/year-attendance', {
       attendanceData: formattedData // Pass the attendance data to the view
     });
   })
@@ -178,19 +178,42 @@ router.get('/monthly-attendance', (req, res) => {
   });
 
 });
-router.get('/attendance-book', (req, res) => {
-  const monthName = "January";
-  const year = 2024;
-
-  const students = [
-    { name: "John Doe", attendance: Array(31).fill(true).map((_, i) => i % 2 === 0) },
-    { name: "Jane Smith", attendance: Array(31).fill(true).map((_, i) => i % 3 !== 0) },
-  ];
-
-  const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
-
-  res.render('teacher/attendance-book', { monthName, year, students, daysInMonth });
+// Route to render the attendance page with the form
+router.get('/monthly-attendance', (req, res) => {
+  res.render('teacher/monthly-attendance');
 });
+// Route to handle form submission and fetch attendance data
+router.post('/monthly-attendance', (req, res) => {
+  const { studentYear, month } = req.body;
+  console.log("Form Data:", req.body);
+
+  // Fetch attendance data for the given year and month
+  teacherHelpers.getMonthAttendance(studentYear, month).then(attendance => {
+    console.log("Attendance Data to Render:", attendance);
+
+    // Get the number of days in the selected month
+    const daysInMonth = new Date(2024, month, 0).getDate(); // Get last day of the month (1-31)
+    
+    // Organize attendance by student and day
+    const organizedAttendance = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dayAttendance = attendance.filter(record => new Date(record.date).getDate() === i);
+      organizedAttendance.push(dayAttendance);
+    }
+
+    // Render the attendance page with data
+    res.render('teacher/monthly-attendance', {
+      attendance: organizedAttendance,
+      studentYear: studentYear,
+      month: month,
+      daysInMonth: Array.from({ length: daysInMonth }, (_, i) => i + 1)  // Array of days (1-31)
+    });
+  }).catch(err => {
+    console.error("Error fetching attendance:", err);
+    res.status(500).send("Server error");
+  });
+});
+
 
 
 
