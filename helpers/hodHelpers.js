@@ -58,10 +58,27 @@ module.exports = {
                 })
                 
                 }
+                 // Update the status in login_data
+            db.query('UPDATE login_data SET status=? WHERE email = ?', [data.status, data.email], (err, result) => {
+                if (err) return reject(err);
+    
+                // Call getApprovedTeachers only if the status is 1
+                if (data.status == 1) {
+                    module.exports
+                        .getApprovedStudents()
+                        .then((approvedStudents) => {
+                            console.log("Approved Teachers:", approvedStudents);
+                            resolve();
+                        })
+                        .catch((error) => reject(error));
+                } else {
+                    resolve(); // Resolve directly if the status is not 1
+                }
+            });
      
-            db.query('update login_data set status=? where email = ?', [data.status, data.email], (err, data) => {
-                resolve()
-            })
+            // db.query('update login_data set status=? where email = ?', [data.status, data.email], (err, data) => {
+            //     resolve()
+            // })
         })
     },
     getApprovedStudents: () => {
