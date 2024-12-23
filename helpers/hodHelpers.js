@@ -72,7 +72,7 @@ module.exports = {
                 data.map((user) => {
                     db.query('SELECT * FROM  students WHERE email = ?', [user.email], (err, result) => {
                         if (err) return reject(err)
-
+                         
                         if (result.length > 0) {
                             // If the teacher already exists, skip insertion
                             console.log(`Teacher ${user.email} already exists, skipping.`);
