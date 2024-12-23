@@ -9,7 +9,7 @@
             <thead>
                 <tr>
                     <th scope="col">Student Name</th>
-                    
+
                     <th scope="col">Email</th>
                     <th scope="col">Phone</th>
                     <th scope="col">Year</th>
@@ -22,20 +22,22 @@
                 {{#each students}}
                 <tr>
                     <td>{{name}}</td>
-                    
+
                     <td scope="col">{{email}}</td>
                     <td scope="col">{{phone}}</td>
                     <td scope="col">{{year}}</td>
                     <td scope="col">{{course}}</td>
                     {{#if status}}
                     <td scope="col">Active</td>
+                    <td> <a href="/hod/change-status/{{email}}/0" class="btn btn-danger">Reject</a>
+                    </td>
                     {{else}}
                     <td scope="col">Inactive</td>
-                    {{/if}}
                     <td>
-                        <a href="/hod/change-status/{{email}}/1" class="btn btn-success" >Approve</a>
-                        <a href="/hod/change-status/{{email}}/0" class="btn btn-danger">Reject</a>
+                        <a href="/hod/change-status/{{email}}/1" class="btn btn-success">Approve</a>
                     </td>
+                    {{/if}}
+                    
                 </tr>
                 {{/each}}
             </tbody>
