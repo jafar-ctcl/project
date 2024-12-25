@@ -13,21 +13,29 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="teacher-table-body">
         {{#each teachers}}
-        <tr>
+        <tr id="teacher-{{email}}">
           <td>{{name}}</td>
           <td>{{email}}</td>
           <td>{{phone}}</td>
           <td>{{gender}}</td>
           <td>
-            <button 
-              class="btn btn-info btn-sm" 
-              data-bs-toggle="modal" 
-              data-bs-target="#teacherModal" 
-              onclick="manageTeacher('{{name}}', '{{email}}')">
+            <!-- Manage Button -->
+            <button class="btn btn-info btn-sm manage-btn" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#teacherModal"
+                    data-email="{{email}}" 
+                    onclick="manageTeacher('{{name}}', '{{email}}')">
               Manage
             </button>
+
+            <!-- View Button (Initially hidden) -->
+            <a href="/view-managed-teacher/{{email}}" 
+               class="btn btn-success btn-sm view-btn d-none" 
+               id="view-{{email}}">
+              View
+            </a>
           </td>
         </tr>
         {{/each}}
@@ -51,22 +59,23 @@
               <input type="text" id="name" name="name" class="form-control" />
             </div>
 
-            <!-- Email -->
-            <div class="mb-3">
+            <!-- Email (hidden) -->
+            <div class="mb-3 d-none">
               <label for="email" class="form-label">Email</label>
               <input type="text" id="email" name="email" class="form-control" readonly />
             </div>
 
             <!-- Set New Teacher ID -->
             <div class="mb-3">
-              <label for="newId" class="form-label">Set Teacher ID</label>
-              <input type="text" id="newId" name="newId" class="form-control" placeholder="Enter New Teacher ID" />
+              <label for="teacherId" class="form-label">Set Teacher ID</label>
+              <input type="text" id="teacherId" name="teacherId" class="form-control" placeholder="Enter Teacher ID" />
             </div>
 
             <!-- Class Teacher -->
             <div class="mb-3">
               <label for="classTeacher" class="form-label">Class Teacher</label>
               <select id="classTeacher" name="classTeacher" class="form-select">
+                <option value="">Select Class</option>
                 <option value="1">1st Year</option>
                 <option value="2">2nd Year</option>
                 <option value="3">3rd Year</option>
@@ -88,7 +97,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success" onclick="saveTeacher()">Save</button>
+          <button type="button" class="btn btn-success" id="saveTeacherButton" onclick="saveTeacher()">Save</button>
         </div>
       </div>
     </div>
@@ -96,10 +105,11 @@
 </section>
 
 <script>
+  // Populate the modal with teacher data
   function manageTeacher(name, email) {
     document.getElementById('name').value = name; // Populate Name
     document.getElementById('email').value = email; // Populate Email
-    document.getElementById('newId').value = ''; // Reset Teacher ID
+    document.getElementById('teacherId').value = ''; // Reset Teacher ID
     document.getElementById('classTeacher').value = ''; // Reset Class Teacher
     document.getElementById('subjectInputs').innerHTML = `
       <div class="input-group mb-2">
@@ -109,6 +119,7 @@
     `;
   }
 
+  // Add subject input fields
   function addSubjectInput() {
     const subjectInputs = document.getElementById('subjectInputs');
     const newInputGroup = document.createElement('div');
@@ -133,41 +144,76 @@
     subjectInputs.appendChild(newInputGroup);
   }
 
+  // Remove subject input fields
   function removeSubjectInput(button) {
-    button.parentElement.remove();
+    const subjectInputs = document.getElementById('subjectInputs');
+    if (subjectInputs.children.length > 1) {
+      button.parentElement.remove();
+    } else {
+      alert('At least one subject is required.');
+    }
   }
 
-function saveTeacher() {
-  fetch('/hod/manage-teacher', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      newId: document.getElementById('newId').value,
-      classTeacher: document.getElementById('classTeacher').value,
-      subjects: Array.from(document.querySelectorAll('input[name="subjects[]"]')).map(input => input.value),
-    }),
-  })
-  .then(response => {
-    if (!response.ok) {
-      // If the response status code is not OK (e.g., 400, 500), throw an error.
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
-    if (data.success) {
-      alert('Teacher details saved successfully!');
-      location.reload();
-    } else {
-      alert('Error: ' + data.message);
-    }
-  })
-  .catch(error => {
-    console.error('Error occurred:', error); // Log full error details for debugging
-    alert('An error occurred. Please try again.'); // User-friendly message
-  });
-}
+  // Save Teacher function
+  function saveTeacher() {
+    const email = document.getElementById('email').value.trim();
+    const teacherId = document.getElementById('teacherId').value.trim();
+    const classTeacher = document.getElementById('classTeacher').value;
+    const subjects = Array.from(
+      document.querySelectorAll('input[name="subjects[]"]')
+    ).map(input => input.value.trim());
 
+    if (!teacherId || subjects.some(subject => !subject)) {
+      alert('Please fill all fields before saving.');
+      return;
+    }
+
+    const saveButton = document.getElementById('saveTeacherButton');
+    saveButton.disabled = true;
+
+    // AJAX Request
+    $.ajax({
+      url: '/hod/manage-teacher',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        email: email,
+        teacherId: teacherId,
+        classTeacher: classTeacher,
+        subjects: subjects,
+      }),
+      success: function (data) {
+        saveButton.disabled = false;
+
+        if (data.success) {
+          alert('Teacher details saved successfully!');
+
+          // Find the "Manage" button and hide it
+          const teacherRow = document.getElementById(`teacher-${email}`);
+          const manageButton = teacherRow.querySelector('.manage-btn');
+          const viewButton = teacherRow.querySelector('.view-btn');
+
+          // Hide the Manage button and show the View button
+          if (manageButton) {
+            manageButton.style.display = 'none'; // Hide Manage Button
+          }
+          if (viewButton) {
+            viewButton.classList.remove('d-none'); // Show View Button
+          }
+
+          // Close the modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('teacherModal'));
+          modal.hide();
+
+        } else {
+          alert('Error: ' + data.message);
+        }
+      },
+      error: function (xhr, status, error) {
+        saveButton.disabled = false;
+        console.error('Error occurred:', xhr.responseText || error);
+        alert('An error occurred. Please try again.');
+      },
+    });
+  }
 </script>
