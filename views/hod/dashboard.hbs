@@ -34,6 +34,7 @@
       </div>
     </div>
 
+{{#if students}}
     <!-- Recent Registrations Table -->
     <div class="card">
       <div class="card-header bg-secondary text-light">Approved student list</div>
@@ -48,18 +49,52 @@
             </tr>
           </thead>
           <tbody>
+            
              {{#each students}}
                 <tr>
-                  <td></td>
-                    <td>{{Name}}</td>
-                    <td scope="col">{{Course}}</td>
-                    <td scope="col">{{Year}}</td>
+                  <td>{{this.id}}</td>
+                  {{!-- <td>{{this.id}}</td> --}}
+                    <td>{{this.name}}</td>
+                    <td scope="col">{{this.course}}</td>
+                    <td scope="col">{{this.year}}</td>
                 {{/each}}
           </tbody>
         </table>
       </div>
     </div>
-  
+  {{/if}}
+  {{#if teachers}}
+    <!-- Recent Registrations Table -->
+    <div class="card mt-4">
+      <div class="card-header bg-secondary text-light">Approved teachers list</div>
+      <div class="card-body">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Class Teacher</th>
+              <th>Gender</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+             {{#each teachers}}
+                <tr>
+                  <td>{{this.id}}</td>
+                  {{!-- <td>{{this.id}}</td> --}}
+                    <td>{{this.name}}</td>
+                    <td>{{this.class_teacher}}</td>
+                    <td>{{this.gender}}</td>
+                   
+                  
+                  
+                {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {{/if}}
   </div>
     
 </div>
