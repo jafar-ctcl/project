@@ -13,13 +13,15 @@ const verifyLogin = (req, res, next) => {
   }
 }
 router.get('/',verifyLogin, (req, res) => {
-    hodHelpers.getApprovedStudents().then((resp)=>{
-       hodHelpers.getApprovedTeachers().then((teacherData)=>{
-        res.render('hod/dashboard', {hod,students:resp,teachers:teacherData})
+    hodHelpers.getApprovedStudents().then((studentsData)=>{
+       hodHelpers.getAllTeachers().then((teachersData)=>{
+        console.log("sttudent",teachersData);
+        
+        res.render('hod/dashboard', {hod,students:studentsData,teachers:teachersData})
        })
    
     })
-  
+  // res.render('hod/dashboard', {hod})
 });
 router.get('/login', (req, res) => {
   if(req.session.hodLoggedIn){
@@ -72,7 +74,7 @@ hodHelpers.getApprovedStudents().then((resp) => {
  })
  router.get('/approve-teacher',verifyLogin,(req,res)=>{
   // res.render('hod/approve-teacher',{hod})
- hodHelpers.getAllTeacher().then((resp) => {
+ hodHelpers.getTeacher().then((resp) => {
  
 
 res.render('hod/approve-teacher',{hod,teachers:resp})
@@ -85,8 +87,7 @@ router.get('/teacher-change-status/:email/:status', (req, res) => {
   })
 })
  router.get('/view-teachers',verifyLogin,(req,res)=>{
-  hodHelpers.getApprovedTeachers().then((resp)=>{
-    console.log("resp",resp);
+  hodHelpers.getAllTeachers().then((resp)=>{
     
   res.render('hod/view-teachers',{hod,teachers:resp})
 
@@ -164,7 +165,9 @@ const fridayByYear = {
      })
     
   })
-  router.post('/manage-teacher', (req, res) => {
+   router.post('/manage-teacher', (req, res) => {
+    console.log("...........",req.body);
+    
     const teacherManageData = req.body;  // Get all the form data
   
     // Call the helper function to manage the teacher
