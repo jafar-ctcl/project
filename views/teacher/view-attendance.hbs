@@ -1,46 +1,18 @@
 <section>
   <div class="container mt-5">
-
-    <!-- Attendance Filter Form -->
-    <div class="card shadow-lg p-4 mb-5">
-      <h4 class="text-center mb-4 text-primary">Filter Attendance</h4>
-      <form id="attendanceForm" method="POST" action="/teacher/view-attendance">
-        <div class="row">
-          <!-- Year Selection -->
-          <div class="col-md-6 mb-3">
-            <label for="courseSelect" class="form-label">Select Year</label>
-            <select class="form-select" id="courseSelect" name="year" required>
-              <option selected disabled>Choose Year</option>
-              <option value="1">1st Year</option>
-              <option value="2">2nd Year</option>
-              <option value="3">3rd Year</option>
-            </select>
-          </div>
-
-          <!-- Date Selection -->
-          <div class="col-md-6 mb-3">
-            <label for="attendanceDate" class="form-label">Select Date</label>
-            <input type="date" class="form-control" id="attendanceDate" name="date" required>
-          </div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="row mt-4">
-          <div class="col-md-12 text-center">
-            <button type="submit" class="btn btn-primary btn-lg px-4 py-2 shadow-lg hover-effect">View Attendance</button>
-          </div>
-        </div>
-      </form>
-    </div>
-
+<!-- Home Link with Style -->
+        <a href="/teacher" class="home-link text-decoration-none">
+          <i class="bi bi-house-door me-2"></i>Home
+        </a>
     {{#if attendance}}
     <!-- Attendance Table -->
-    <div class="row mt-5">
+    <div class="row">
       <div class="col-md-12">
+        
         <div class="table-responsive">
           <!-- Table Header -->
           <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold text-dark">Attendance Records</h4>
+            <h4 class="fw-bold text-dark">Today Attendance</h4>
             <a href="/teacher/monthly-attendance" class="btn btn-outline-info btn-lg shadow-lg hover-effect rounded-0">
               <i class="bi bi-calendar-month me-2"></i> View Monthly Attendance
             </a>
@@ -71,90 +43,134 @@
         </div>
       </div>
     </div>
-   
     {{/if}}
-    
-  <!-- Modal for Editing Attendance -->
-  <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="attendanceModalLabel">Edit Attendance</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <!-- Attendance Filter Form -->
+    <div class="card shadow-lg p-4 mb-5 mt-5">
+      <h4 class="text-center mb-4 text-primary">Filter Attendance</h4>
+      <form id="attendanceForm" method="POST" action="/teacher/view-attendance">
+        <div class="row">
+          <!-- Year Selection -->
+          <div class="col-md-6 mb-3">
+            <label for="courseSelect" class="form-label">Select Year</label>
+            <select class="form-select" id="courseSelect" name="year" required>
+              <option selected disabled>Choose Year</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+            </select>
+          </div>
+
+          <!-- Date Selection -->
+          <div class="col-md-6 mb-3">
+            <label for="attendanceDate" class="form-label">Select Date</label>
+            <input type="date" class="form-control" id="attendanceDate" name="date" required>
+          </div>
         </div>
-        <div class="modal-body">
-          <form id="editAttendanceForm">
-            <div class="mb-3">
-              <label for="studentName" class="form-label">Student Name</label>
-              <input type="text" class="form-control" id="studentName" disabled>
-            </div>
-            <div class="mb-3">
-              <label for="attendanceStatus" class="form-label">Attendance Status</label>
-              <select class="form-select" id="attendanceStatus">
-                <option value="present">Present</option>
-                <option value="absent">Absent</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-          </form>
+
+        <!-- Submit Button -->
+        <div class="row mt-4">
+          <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary btn-lg px-4 py-2 shadow-lg hover-effect">View Attendance</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal for Editing Attendance -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="attendanceModalLabel">Edit Attendance</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editAttendanceForm">
+              <div class="mb-3">
+                <label for="studentName" class="form-label">Student Name</label>
+                <input type="text" class="form-control" id="studentName" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="attendanceStatus" class="form-label">Attendance Status</label>
+                <select class="form-select" id="attendanceStatus">
+                  <option value="present">Present</option>
+                  <option value="absent">Absent</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
+
   </div>
-</div>
- 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-  // JavaScript to handle the "Edit Attendance" functionality
-// JavaScript to handle attendance editing
-function editAttendance(id, name, status) {
-  document.getElementById('studentName').value = name;
-  document.getElementById('attendanceStatus').value = status.toLowerCase();
+  <!-- JavaScript to handle attendance editing -->
+  <script>
+    function editAttendance(id, name, status) {
+      document.getElementById('studentName').value = name;
+      document.getElementById('attendanceStatus').value = status.toLowerCase();
 
-  // Handle form submission for editing attendance
-  document.getElementById('editAttendanceForm').onsubmit = function (e) {
-    e.preventDefault(); // Prevent default form submission
+      document.getElementById('editAttendanceForm').onsubmit = function (e) {
+        e.preventDefault(); // Prevent default form submission
 
-    const updatedStatus = document.getElementById('attendanceStatus').value;
+        const updatedStatus = document.getElementById('attendanceStatus').value;
 
-    // Send the updated data to the backend
-    fetch(`/teacher/edit-attendance/${id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id: id,
-        status: updatedStatus,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-        //  alert('Attendance updated successfully!');
-          var modal = bootstrap.Modal.getInstance(document.getElementById('attendanceModal'));
-          modal.hide();
-          // Optionally, reload the page or refresh the table
-          location.reload();
-        } else {
-          alert('Failed to update attendance');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Error updating attendance');
-      });
-  };
-}
-
-</script>
+        fetch(`/teacher/edit-attendance/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: id,
+            status: updatedStatus,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              var modal = bootstrap.Modal.getInstance(document.getElementById('attendanceModal'));
+              modal.hide();
+              location.reload();
+            } else {
+              alert('Failed to update attendance');
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('Error updating attendance');
+          });
+      };
+    }
+  </script>
 
   <!-- Styling for Improved Design -->
   <style>
-    /* General Container Padding */
     .container {
       padding: 20px 40px;
+    }
+
+    /* Home Link Styling */
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      color: #007bff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      transition: color 0.3s ease;
+    }
+
+    .home-link:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+
+    .home-link i {
+      font-size: 1.3rem;
+      margin-right: 8px;
     }
 
     /* Table Styling */
@@ -247,5 +263,24 @@ function editAttendance(id, name, status) {
         font-size: 16px;
       }
     }
+
+    /* Card styling */
+    .card {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-select {
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control {
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
   </style>
+
 </section>
