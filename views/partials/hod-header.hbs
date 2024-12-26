@@ -17,6 +17,14 @@
 
             <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
                 <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Teacher</a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/hod/approve-teacher">approve teacher</a>
+                    <a class="dropdown-item" href="/hod/view-teachers">View teacher</a>
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
+                <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Student</a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="/hod/approve-students">Approve student</a>
@@ -24,14 +32,6 @@
                 </div>
             </li>
 
-            <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
-                <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Teacher</a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="/hod/approve-teacher">approve teacher</a>
-                    <a class="dropdown-item" href="/hod/view-teachers">View teacher</a>
-                </div>
-            </li>
             <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
                 <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Timetable</a>
@@ -52,10 +52,13 @@
                 <a class=" nav-link " href="/student-view">Mark</a>
 
             </li>
-            <li class="list-group-item  p-4">
-                <a class="nav-link text-center align-items-center rounded btn btn-secondary px-3"
-                    style="font-size: 18px;padding: 6px; color:white ; " href="/hod/logout">logout</a>
-            </li>
+          <li class="list-group-item p-4">
+    <a class="nav-link text-center align-items-center rounded btn btn-secondary px-3"
+        style="font-size: 18px; padding: 6px; color:white; background-color: #6c757d; display: block;"
+        href="/hod/logout">Logout</a>
+</li>
+
+
 
             
         </div>
@@ -71,6 +74,5 @@
             </div>
         </nav>
     <style>
-        a{
-text-decoration: none;        }
+           
     </style>

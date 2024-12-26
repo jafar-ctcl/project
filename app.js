@@ -16,15 +16,6 @@ const session = require('express-session');
 var app = express();
 
 
-// // Register custom Handlebars helpers
-// handlebars.registerHelper('range', function(start, end) {
-//   const range = [];
-//   for (let i = start; i <= end; i++) {
-//     range.push(i);
-//   }
-//   return range;
-// });
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
