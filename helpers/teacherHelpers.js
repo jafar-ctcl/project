@@ -287,31 +287,69 @@ module.exports = {
           });
         });
       },
-        getMonthAttendance: (year, month) => {
-          return new Promise((resolve, reject) => {
-            const query = `
-              SELECT * FROM attendance
-              WHERE YEAR(date) = ? AND MONTH(date) = ?
-              ORDER BY date
-            `;
+      getMonthAttendance: (month, year) => {
+        return new Promise((resolve, reject) => {
+          console.log("month and year", month, year);
       
-            db.query(query, [year, month], (err, results) => {
-              if (err) {
-                console.log('Error fetching attendance data:', err);
-                return reject('Error fetching attendance data');
+          const query = `
+            SELECT * FROM attendance
+            WHERE YEAR(date) = ? AND MONTH(date) = ?
+            ORDER BY date
+          `;
+      
+          db.query(query, [year, month], (err, results) => {
+            if (err) {
+              console.log('Error fetching attendance data:', err);
+              return reject('Error fetching attendance data');
+            }
+      
+            // Process the attendance data
+            const studentsMap = {};
+      
+            // Organize attendance data by student name
+            results.forEach((record) => {
+              const day = new Date(record.date).getDate(); // Extract day from the date
+              if (!studentsMap[record.name]) {
+                // Initialize the student's attendance record
+                studentsMap[record.name] = {
+                  name: record.name,
+                  attendance: Array(31).fill(null), // Array for days in the month
+                };
               }
-      
-              // Prepare attendance data for each day of the month
-              const daysInMonth = new Date(year, month, 0).getDate();
-              const attendanceByDay = Array.from({ length: daysInMonth }, (_, dayIndex) => ({
-                day: dayIndex + 1, // Day of the month (1-based index)
-                students: results.filter(record => new Date(record.date).getDate() === dayIndex + 1)
-              }));
-      
-              resolve(attendanceByDay);
+              // Mark the day's status (e.g., present or absent)
+              studentsMap[record.name].attendance[day - 1] = record.status;
             });
+      
+            // Convert the studentsMap to an array for rendering
+            const students = Object.values(studentsMap);
+      
+            // Return the processed data
+            resolve({ students });
           });
-        },
+        });
+      },
+      
+        // getMonthAttendance: (month,year) => {
+        //   return new Promise((resolve, reject) => {
+        //     console.log("month m year",month,year);
+            
+        //     const query = `
+        //       SELECT * FROM attendance
+        //       WHERE YEAR(date) = ? AND MONTH(date) = ?
+        //       ORDER BY date
+        //     `;
+      
+        //     db.query(query, [year, month], (err, results) => {
+        //       if (err) {
+        //         console.log('Error fetching attendance data:', err);
+        //         return reject('Error fetching attendance data');
+        //       }
+      
+            
+        //       resolve(results);
+        //     })
+        //   })
+        // },
       
       
       }
