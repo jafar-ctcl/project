@@ -88,16 +88,16 @@ module.exports = {
     //         })
     //     })
     // },
-    getAllTeacher: () => {
+    getTeacher: (email) => {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM login_data WHERE type="teacher" ', (err, data) => {
+            db.query('SELECT * FROM teachers WHERE email=? ',[email] ,(err, data) => {
                 resolve(data)
             })
         })
     },
-    getAllStudents: () => {
+    getStudents: (year) => {
         return new Promise((resolve, reject) => {
-            db.query('select * from login_data where type="student" AND status=1', (err, data) => {
+            db.query('select * from students where year=?', [year],(err, data) => {
                 resolve(data)
             })
         })
@@ -287,17 +287,17 @@ module.exports = {
           });
         });
       },
-      getMonthAttendance: (month, year) => {
+      getMonthAttendance: (month, year,stdYear) => {
         return new Promise((resolve, reject) => {
           console.log("month and year", month, year);
       
           const query = `
             SELECT * FROM attendance
-            WHERE YEAR(date) = ? AND MONTH(date) = ?
+            WHERE YEAR(date) = ? AND MONTH(date) = ? AND year = ?
             ORDER BY date
           `;
       
-          db.query(query, [year, month], (err, results) => {
+          db.query(query, [year, month,stdYear], (err, results) => {
             if (err) {
               console.log('Error fetching attendance data:', err);
               return reject('Error fetching attendance data');
