@@ -12,7 +12,15 @@ const verifyLogin = (req, res, next) => {
 
 /* GET home page. */
 router.get('/', verifyLogin, function (req, res, next) {
-  res.render('teacher/dashboard', { title: 'SASC', teacher, name: req.session.teacher.name });
+ let  email = req.session.teacher.email
+  teacherHelpers.getTeacher(email).then((resp)=>{
+    req.session.teacherData = resp[0]
+//  console.log("teaches", req.session.teacherData.name);
+
+  
+res.render('teacher/dashboard', { title: 'SASC', teacher, name: req.session.teacherData.name });
+  })
+
 });
 
 router.get('/login', (req, res) => {
@@ -62,21 +70,26 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/add-attendance', verifyLogin, (req, res) => {
-  teacherHelpers.getAllStudents().then((resp) => {
+  console.log(req.session.teacherData.class_teacher);
+ let year = req.session.teacherData.class_teacher
+  teacherHelpers.getStudents(year).then((resp) => {
 
-
-    const firstYearStudents = resp.filter((item) => item.year === 1);
-    const secondYearStudents = resp.filter((item) => item.year === 2);
-    const thirdYearStudents = resp.filter((item) => item.year === 3);
-    console.log("Fisrt", firstYearStudents);
+ console.log("studetns",resp);
+ let students = resp
+    // const firstYearStudents = resp.filter((item) => item.year === 1);
+    // const secondYearStudents = resp.filter((item) => item.year === 2);
+    // const thirdYearStudents = resp.filter((item) => item.year === 3);
+    // console.log("Fisrt", firstYearStudents);
 
     // Render the template and pass separated student data
     res.render('teacher/add-attendance', {
       teacher,
       name: req.session.teacher.name,
-      firstYearStudents,
-      secondYearStudents,
-      thirdYearStudents,
+      year,
+      students,
+      // firstYearStudents,
+      // secondYearStudents,
+      // thirdYearStudents,
     });
   }).catch((err) => {
     console.error("Error fetching students:", err);
@@ -88,10 +101,10 @@ router.get('/add-attendance', verifyLogin, (req, res) => {
 // 
 router.post('/add-attendance', (req, res) => {
 
-
   const { attendanceDate, year, ...attendanceData } = req.body;
   // console.log("abcs",year);
   const attendanceRecords = [];
+console.log("req",req.body);
 
   // Prepare attendance records
   for (let key in attendanceData) {
@@ -99,6 +112,8 @@ router.post('/add-attendance', (req, res) => {
       const studentId = key.match(/\d+/)[0]; // Extract the numeric part of the key
       const [status, name] = attendanceData[key].split('|'); // Split value into status and name
       attendanceRecords.push({ name, year, status, attendanceDate });
+    
+      
     }
   }
 
@@ -125,10 +140,10 @@ router.get('/view-attendance',verifyLogin, (req, res) => {
 
 router.post('/view-attendance',verifyLogin, (req, res) => {
   const { year, date } = req.body; // Expecting `year` and `date` in the POST body
-  console.log("Year:", year, "Date:", date);
+  // console.log("Year:", year, "Date:", date);
 
   teacherHelpers.getAttendance(req.body).then((resp) => {
-    console.log("Attendance Data:", resp);
+    // console.log("Attendance Data:", resp);
 
     // Render the view with the attendance data and year
     res.render('teacher/view-attendance', {attendance: resp, year});
@@ -179,11 +194,12 @@ router.get('/year-attendance', (req, res) => {
 
 });
 router.get('/monthly-attendance',verifyLogin, (req, res) => {
+  const stdYear = req.session.teacherData.class_teacher;
   const date = new Date();
   const monthNumber = date.getMonth() + 1; // Get current month number (1-12)
   const year = date.getFullYear(); // Get current year
 
-  teacherHelpers.getMonthAttendance(monthNumber, year)
+  teacherHelpers.getMonthAttendance(monthNumber, year,stdYear)
   .then((data) => {
     const students = data.students; // Data returned by the helper function
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1); // Days of the month (1-31)
@@ -199,7 +215,6 @@ router.get('/monthly-attendance',verifyLogin, (req, res) => {
     
     // Render the attendance page with the required data
     res.render('teacher/monthly-attendance', {
-      teacher,
       name:req.session.teacher.name,
       monthName: date.toLocaleString('default', { month: 'long' }),
       year,
