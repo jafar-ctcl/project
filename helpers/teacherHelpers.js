@@ -167,16 +167,16 @@ module.exports = {
         
       
     },
-    getAttendance: (viewData) => {
+    getAttendance: (date,year, ) => {
         return new Promise((resolve, reject) => {
-            console.log("helpers", viewData.year, viewData.date);
-            db.query('SELECT * FROM attendance WHERE year = ? AND date = ?', [viewData.year, viewData.date], (err, data) => {
+            // console.log("helpers", year, date);
+            db.query('SELECT * FROM attendance WHERE year = ? AND date = ?', [year, date], (err, data) => {
                 if (err) {
                   console.log("error", err);
                   return;
                 }
               
-                console.log("data", data);
+                // console.log("get  attendance", data);
               
                 if (data.length > 0) {
                   // Loop through all rows and format the date along with the attendance data
@@ -193,12 +193,12 @@ module.exports = {
                     };
                   });
               
-                  console.log("Formatted Data:", formattedData); // Log all formatted data with day names
+                  // console.log("Formatted Data:", formattedData); // Log all formatted data with day names
               
                   // Resolve with the formatted data including the day of the week
                   resolve(formattedData);
                 } else {
-                  console.log("No data found");
+                  // console.log("No data found");
                   resolve([]); // Return an empty array if no data
                 }
               });
@@ -287,9 +287,9 @@ module.exports = {
           });
         });
       },
-      getMonthAttendance: (month, year,stdYear) => {
+      getMonthAttendance: (month, year, stdYear) => {
         return new Promise((resolve, reject) => {
-          console.log("month and year", month, year);
+          console.log("Month and Year:", month, year);
       
           const query = `
             SELECT * FROM attendance
@@ -297,71 +297,66 @@ module.exports = {
             ORDER BY date
           `;
       
-          db.query(query, [year, month,stdYear], (err, results) => {
+          db.query(query, [year, month, stdYear], (err, results) => {
             if (err) {
-              console.log('Error fetching attendance data:', err);
-              return reject('Error fetching attendance data');
+              console.error("Error fetching attendance data:", err);
+              return reject("Error fetching attendance data");
             }
+            console.log("Query Results:", results);
+            if (results.length === 0) {
+              console.log("No attendance data found for the given month and year.");
+            }
+          
+          
       
             // Process the attendance data
             const studentsMap = {};
       
-            // Organize attendance data by student name
             results.forEach((record) => {
-              const day = new Date(record.date).getDate(); // Extract day from the date
+              const day = new Date(record.date).getDate(); // Extract the day from the date
+      
               if (!studentsMap[record.name]) {
-                // Initialize the student's attendance record
                 studentsMap[record.name] = {
                   name: record.name,
-                  attendance: Array(31).fill(null), // Array for days in the month
+                  attendance: Array(31).fill(null), // Initialize attendance array for the month
                 };
               }
-              // Mark the day's status (e.g., present or absent)
+      
+              // Assign the status (e.g., present, absent) for the specific day
               studentsMap[record.name].attendance[day - 1] = record.status;
             });
       
-            // Convert the studentsMap to an array for rendering
+            // Convert studentsMap to an array for rendering
             const students = Object.values(studentsMap);
-      
-            // Return the processed data
+        // console.log("studerts",students);
+           
             resolve({ students });
           });
         });
       },
       
-        // getMonthAttendance: (month,year) => {
-        //   return new Promise((resolve, reject) => {
-        //     console.log("month m year",month,year);
-            
-        //     const query = `
-        //       SELECT * FROM attendance
-        //       WHERE YEAR(date) = ? AND MONTH(date) = ?
-        //       ORDER BY date
-        //     `;
-      
-        //     db.query(query, [year, month], (err, results) => {
-        //       if (err) {
-        //         console.log('Error fetching attendance data:', err);
-        //         return reject('Error fetching attendance data');
-        //       }
-      
-            
-        //       resolve(results);
-        //     })
-        //   })
-        // },
-      
+      getAvailableYears: (stdYear) => {
+        return new Promise((resolve, reject) => {
+          const query = `
+            SELECT DISTINCT YEAR(date) AS year 
+            FROM attendance 
+            WHERE year = ? 
+            ORDER BY year DESC;
+          `;
+        
+          db.query(query, [stdYear], (err, results) => {
+            if (err) {
+              console.log("Error fetching years:", err);
+              return reject("Error fetching years");
+            }
+        
+            const years = results.map(record => record.year); // Extract years from the query result
+            resolve(years);  // Resolve the promise with the years
+          });
+        });
+      },
       
       }
       
       
-      
-
-
-//   const day = originalDate.getDate(); // Day of the month
-//   const month = originalDate.getMonth() + 1; // Months are 0-indexed, so add 1
-//   const year = originalDate.getFullYear(); // Full year
-
-//   console.log(`Formatted Date: Day: ${day}, Month: ${month}, Year: ${year}`);
-
-
+  
