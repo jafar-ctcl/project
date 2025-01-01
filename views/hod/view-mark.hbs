@@ -1,0 +1,95 @@
+<!-- view-marks.hbs -->
+<section class="container mt-5">
+  <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">Student Marks</h1>
+
+  <!-- Filters Section (Optional) -->
+  <div class="row mb-4">
+    <div class="col-md-4 offset-md-2">
+      <div class="form-group">
+        <label for="filterYear" class="form-label">Filter by Year</label>
+        <select id="filterYear" class="form-control">
+          <option value="all">All Years</option>
+          <option value="1">1st Year</option>
+          <option value="2">2nd Year</option>
+          <option value="3">3rd Year</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="filterSubject" class="form-label">Filter by Subject</label>
+        <select id="filterSubject" class="form-control">
+          <option value="all">All Subjects</option>
+          <option value="math">Mathematics</option>
+          <option value="physics">Physics</option>
+          <option value="chemistry">Chemistry</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marks Table -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header text-white" style="background: #3949ab;">Marks List</div>
+        <div class="card-body">
+          <table class="table table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Student Name</th>
+                <th>Subject</th>
+                <th>Marks</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each marks}}
+                <tr>
+                  <td>{{this.id}}</td>
+                  <td>{{this.studentName}}</td>
+                  <td>{{this.subject}}</td>
+                  <td>{{this.marks}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button to View Other Pages -->
+  <div class="mt-5 text-center">
+    <a href="/hod/view-students" class="btn btn-primary">View students</a>
+  </div>
+</section>
+
+<script>
+  // Optional: Add JS for filtering the marks by year and subject
+  document.addEventListener("DOMContentLoaded", function () {
+    const filterYear = document.getElementById("filterYear");
+    const filterSubject = document.getElementById("filterSubject");
+
+    // Listen to changes on the filter dropdowns
+    filterYear.addEventListener("change", function () {
+      const year = filterYear.value;
+      const subject = filterSubject.value;
+      filterMarks(year, subject);
+    });
+
+    filterSubject.addEventListener("change", function () {
+      const subject = filterSubject.value;
+      const year = filterYear.value;
+      filterMarks(year, subject);
+    });
+
+    function filterMarks(year, subject) {
+      // For now, just log the selected filters
+      console.log(`Filtering marks by Year: ${year}, Subject: ${subject}`);
+      
+      // Implement filtering functionality as needed, for example by making an API request to fetch filtered marks
+    }
+  });
+</script>
