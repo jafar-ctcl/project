@@ -1,0 +1,23 @@
+<section>
+    <div class="container mt-5">
+        <h2 class="mb-4">Mark a Teacher</h2>
+        <form action="/teacher/add-mark" method="POST">
+            <div class="mb-3">
+                <label for="teacher" class="form-label">Teacher</label>
+                <select class="form-select" id="teacher" name="teacher" required>
+                    <option value="">Select Teacher</option>
+                    {{#each teachers}}
+                    <option value="{{email}}">{{name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="marks" class="form-label">Marks</label>
+                <input type="number" class="form-control" id="marks" name="marks" required placeholder="Enter Marks">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Marks</button>
+        </form>
+    </div>
+</section>
