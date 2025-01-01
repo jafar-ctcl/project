@@ -1,0 +1,44 @@
+<!-- event-list.hbs -->
+<section class="container mt-5">
+  <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">Event Calendar</h1>
+
+  <!-- Event Calendar -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header text-white" style="background: #3949ab;">Event Calendar</div>
+        <div class="card-body">
+          <div id="calendar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5 text-center">
+    <a href="/hod/add-event" class="btn btn-primary">Add New Event</a>
+  </div>
+</section>
+
+<!-- Include FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize the calendar
+    const calendarEl = document.getElementById("calendar");
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth",
+      height: 350,
+      events: [
+        // Static sample events (these would be replaced by events fetched from the backend)
+        { title: "Math Exam", start: "2024-12-28" },
+        { title: "Holiday", start: "2024-12-31", end: "2025-01-01" },
+        { title: "Faculty Meeting", start: "2024-12-30" },
+      ],
+      eventClick: function(info) {
+        alert('Event: ' + info.event.title + '\nDate: ' + info.event.start.toLocaleString());
+      },
+    });
+    calendar.render();
+  });
+</script>
