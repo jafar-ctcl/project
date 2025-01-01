@@ -1,29 +1,81 @@
-<div class="container py-4">
-  <h2 class="text-center">Attendance  for {{monthName}} {{year}}</h2>
+<div class="container py-4 ">
+  {{#if students}}
+  <h2 class="text-center">{{monthName}}</h2>
 
   <table class="attendance-table">
     <thead>
       <tr>
         <th>Student Name</th>
         {{#each daysInMonth}}
-        <th>{{this}}</th>
+          <th>{{this}}</th>
         {{/each}}
       </tr>
     </thead>
     <tbody>
-  {{#each students}}
-  <tr>
-    <td>{{this.name}}</td>
-    {{#each this.attendance}}
-      <td>{{this}}</td>
-    {{/each}}
-  </tr>
-{{/each}}
-
-
-
+      {{#each students}}
+        <tr>
+          <td>{{this.name}}</td>
+          {{#each this.attendance}}
+            <td>{{this}}</td>
+          {{/each}}
+        </tr>
+      {{/each}}
     </tbody>
   </table>
+{{else}}
+  <div class="no-attendance-message">
+    <h1>No Attendance Records for {{monthName}} {{year}} </h1>
+    <p>No attendance has been marked for this month. Please check back later or add the records.</p>
+  </div>
+{{/if}}
+
+  {{!-- {{/else}} --}}
+ <div class="card shadow-lg p-4 mb-5 mt-5">
+      <h4 class="text-center mb-4 text-primary">Filter Attendance</h4>
+      <form id="attendanceForm" method="POST" action="/teacher/monthly-attendance">
+        <!-- Year Selection -->
+       <div class="mb-3">
+  <label for="attendanceYear" class="form-label">Select Year</label>
+  <select class="form-select" id="attendanceYear" name="year" required>
+    <option value="" disabled selected>Choose a Year...</option>
+    {{#each availableYears}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+</div>
+
+
+        <!-- Month Selection -->
+        <div class="mb-3">
+          <label for="attendanceMonth" class="form-label">Select Month</label>
+          <select class="form-select" id="attendanceMonth" name="month" required>
+            <option value="" disabled selected>Choose a Month...</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center ">
+          <button type="submit" class="btn btn-primary btn-lg px-4 py-2 shadow-lg">View Attendance</button>
+        </div>
+      </form>
+    </div>
+
+</div>
+
+<div class="text-center">
+  <a href="/teacher" class="btn btn-primary mb-4 ">Go Back</a>
 </div>
 
 
@@ -38,7 +90,7 @@
 
   .attendance-table th, .attendance-table td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 9px;
   }
 
   .attendance-table th {
@@ -51,4 +103,26 @@
     font-weight: bold;
     padding: 5px;
   }
+  .no-attendance-message {
+  text-align: center;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 50px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.no-attendance-message h1 {
+  font-size: 2rem;
+  color: #333;
+}
+
+.no-attendance-message p {
+  font-size: 1rem;
+  color: #666;
+}
+
 </style>
