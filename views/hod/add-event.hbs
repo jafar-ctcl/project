@@ -1,0 +1,54 @@
+<!-- add-event.hbs -->
+<section class="container mt-5">
+  <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">Add New Event</h1>
+
+  <!-- Event Form -->
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <form id="eventForm">
+            <div class="mb-3">
+              <label for="eventTitle" class="form-label">Event Title</label>
+              <input type="text" class="form-control" id="eventTitle" required>
+            </div>
+            <div class="mb-3">
+              <label for="eventDate" class="form-label">Event Date</label>
+              <input type="date" class="form-control" id="eventDate" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Event</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5 text-center">
+    <a href="/hod/view-event" class="btn btn-secondary">Go to Event Calendar</a>
+  </div>
+</section>
+
+<!-- Include FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Event Form Submission
+    const eventForm = document.getElementById('eventForm');
+    eventForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Get event data from the form
+      const eventTitle = document.getElementById('eventTitle').value;
+      const eventDate = document.getElementById('eventDate').value;
+
+      // Send the event data to your backend for storage (AJAX request or other)
+      // For now, we'll simulate adding the event to the calendar
+
+      alert(`Event "${eventTitle}" added for ${eventDate}`);
+
+      // Reset the form after submission
+      eventForm.reset();
+    });
+  });
+</script>
