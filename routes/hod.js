@@ -227,7 +227,7 @@ router.post('/manage-teacher', (req, res) => {
       // console.log(result);
       
       // If the teacher is updated successfully, redirect or show success message
-      res.redirect('/hod');
+      res.redirect('/hod/view-teachers');
     })
     .catch((error) => {
       // If teacher already exists, show error message
