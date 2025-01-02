@@ -68,13 +68,18 @@ router.get('/logout', (req, res) => {
   req.session.destroy()
   res.redirect('/teacher')
 })
-
+router.get('/students',(req,res)=>{
+  let year = req.session.teacherData.class_teacher
+  teacherHelpers.getStudents(year).then((resp)=>{
+    res.render('teacher/students',{teacher,name:req.session.teacherData.name,students:resp})
+  })
+})
 router.get('/add-attendance', verifyLogin, (req, res) => {
   console.log(req.session.teacherData.class_teacher);
  let year = req.session.teacherData.class_teacher
   teacherHelpers.getStudents(year).then((resp) => {
 
- console.log("studetns",resp);
+//  console.log("studetns",resp);
  let students = resp
     // const firstYearStudents = resp.filter((item) => item.year === 1);
     // const secondYearStudents = resp.filter((item) => item.year === 2);
@@ -93,9 +98,9 @@ router.get('/add-attendance', verifyLogin, (req, res) => {
     });
   }).catch((err) => {
     console.error("Error fetching students:", err);
-    res.status(500).send("Error fetching students");
+    res.status(500
+).send("Error fetching students");
   });
-
 });
 
 // 
@@ -120,7 +125,7 @@ console.log("req",req.body);
   // Save attendance to the database
   teacherHelpers.saveAttendance(attendanceRecords)
     .then(() => {
-      res.redirect('/teacher');
+      res.redirect('/teacher/view-attendance');
     })
     .catch((err) => {
       res.status(500).send("Error saving attendance: " + err.message);
@@ -128,8 +133,11 @@ console.log("req",req.body);
 });
 
 router.get('/view-attendance',verifyLogin, (req, res) => {
+  const stdYear = req.session.teacherData.class_teacher
+  console.log(stdYear);
+  
   // Fetch the last added attendance using the helper function
-  teacherHelpers.getLastAttendance().then((attendanceRecords) => {
+  teacherHelpers.getLastAttendance(stdYear).then((attendanceRecords) => {
     // Render the view with the attendance records for the last day
     res.render('teacher/view-attendance', { teacher,name:req.session.teacher.name,attendance: attendanceRecords });
   })
@@ -148,7 +156,7 @@ router.post('/view-attendance',verifyLogin, (req, res) => {
     // console.log("Attendance Data:", resp);
 
     // Render the view with the attendance data and year
-    res.render('teacher/view-attendance', {attendance: resp, year});
+    res.render('teacher/view-attendance', {attendance: resp, year,teacher,name:req.session.teacherData.name});
   })
 });
 router.post('/edit-attendance/:id', (req, res) => {
