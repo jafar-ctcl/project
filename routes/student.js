@@ -63,6 +63,11 @@ router.post('/signup',(req,res)=>{
         res.redirect('/login')
   })
 })
+
+router.get('/logout', (req, res) => {
+  req.session.destroy()
+  res.redirect('/studetn')
+})
 router.get('/student',verifyLogin,(req,res)=>{
   // console.log(req.session.student[0]);
   let name = req.session.student.name
