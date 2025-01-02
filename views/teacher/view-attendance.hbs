@@ -1,5 +1,5 @@
 <section>
-  <div class="container mt-5">
+  <div class="container mt-4">
 <!-- Home Link with Style -->
         <a href="/teacher" class="home-link text-decoration-none">
           <i class="bi bi-house-door me-2"></i>Home
@@ -22,7 +22,7 @@
             <thead>
               <tr>
                 <th>Student Name</th>
-                <th>Roll Number</th>
+                {{!-- <th>Roll Number</th> --}}
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -31,7 +31,7 @@
               {{#each attendance}}
                 <tr>
                   <td>{{name}}</td>
-                  <td>{{id}}</td>
+                  {{!-- <td>{{id}}</td> --}}
                   <td>{{status}}</td>
                   <td>
                     <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#attendanceModal" onclick="editAttendance({{id}}, '{{name}}', '{{status}}')">Edit</button>
@@ -49,24 +49,12 @@
     <div class="card shadow-lg p-4 mb-5 mt-5">
       <h4 class="text-center mb-4 text-primary">Filter Attendance</h4>
       <form id="attendanceForm" method="POST" action="/teacher/view-attendance">
-        <div class="row">
-          <!-- Year Selection -->
-          <div class="col-md-6 mb-3">
-            <label for="courseSelect" class="form-label">Select Year</label>
-            <select class="form-select" id="courseSelect" name="year" required>
-              <option selected disabled>Choose Year</option>
-              <option value="1">1st Year</option>
-              <option value="2">2nd Year</option>
-              <option value="3">3rd Year</option>
-            </select>
-          </div>
-
           <!-- Date Selection -->
-          <div class="col-md-6 mb-3">
+          <div class="col-md-12 mb-3">
             <label for="attendanceDate" class="form-label">Select Date</label>
             <input type="date" class="form-control" id="attendanceDate" name="date" required>
           </div>
-        </div>
+        {{!-- </div> --}}
 
         <!-- Submit Button -->
         <div class="row mt-4">
@@ -110,40 +98,45 @@
   <!-- JavaScript to handle attendance editing -->
   <script>
     function editAttendance(id, name, status) {
-      document.getElementById('studentName').value = name;
-      document.getElementById('attendanceStatus').value = status.toLowerCase();
+  // Populate modal fields with the existing data
+  document.getElementById('studentName').value = name;
+  document.getElementById('attendanceStatus').value = status.toLowerCase();
 
-      document.getElementById('editAttendanceForm').onsubmit = function (e) {
-        e.preventDefault(); // Prevent default form submission
+  // Attach the AJAX function to the form's onsubmit event
+  document.getElementById('editAttendanceForm').onsubmit = function (e) {
+    e.preventDefault(); // Prevent default form submission
 
-        const updatedStatus = document.getElementById('attendanceStatus').value;
+    const updatedStatus = document.getElementById('attendanceStatus').value;
 
-        fetch(`/teacher/edit-attendance/${id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id: id,
-            status: updatedStatus,
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              var modal = bootstrap.Modal.getInstance(document.getElementById('attendanceModal'));
-              modal.hide();
-              location.reload();
-            } else {
-              alert('Failed to update attendance');
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            alert('Error updating attendance');
-          });
-      };
-    }
+    // Perform AJAX request using jQuery
+    $.ajax({
+      url: `/teacher/edit-attendance/${id}`,
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        id: id,
+        status: updatedStatus,
+      }),
+      success: function (data) {
+        if (data.success) {
+          // Close the modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('attendanceModal'));
+          modal.hide();
+
+          // Reload the page or update DOM dynamically
+          location.reload();
+        } else {
+          alert('Failed to update attendance');
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error('Error:', error);
+        alert('Error updating attendance');
+      },
+    });
+  };
+}
+
   </script>
 
   <!-- Styling for Improved Design -->
