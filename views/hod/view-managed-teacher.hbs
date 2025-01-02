@@ -52,79 +52,88 @@
     </div>
 
     <!-- View Teachers Button -->
-    <div class="container text-center">
+    <div class=" text-center mt-5">
       <a href="/hod/view-teachers" class="btn btn-primary mb-3">Go back</a>
     </div>
 
 
-
-    <!-- Modal for Teacher Details -->
-    <div class="modal fade" id="teacherModal" tabindex="-1" aria-labelledby="teacherModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="teacherModalLabel">Manage Teacher Details</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div id="error-message" class="alert alert-danger d-none" role="alert">
-              <!-- Error message will appear here -->
-            </div>
-            <form id="teacherForm">
-              <!-- Teacher Name -->
-              <div class="mb-3">
-                <label for="teacherName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="teacherName" required value="{{teacherData.name}}">
-              </div>
-
-              <!-- Teacher Email -->
-              <div class="mb-3">
-                <label for="teacherEmail" class="form-label">Email</label>
-                <input type="email" class="form-control" id="teacherEmail" value="{{teacherData.email}}" readonly>
-              </div>
-
-              <!-- Teacher ID -->
-              <div class="mb-3">
-                <label for="teacherId" class="form-label">Teacher ID</label>
-                <input type="text" class="form-control" id="teacherId" value="{{teacherData.teacher_id}}">
-              </div>
-
-              <!-- Class Teacher -->
-              <div class="mb-3">
-                <label for="classTeacher" class="form-label">Class Teacher</label>
-                <select class="form-select" id="classTeacher">
-                  <option value="" {{#if (eq teacherData.class_teacher 0)}}selected{{/if}}>Not class teacher</option>
-                  <option value="1" {{#if (eq teacherData.class_teacher 1)}}selected{{/if}}>1st Year</option>
-                  <option value="2" {{#if (eq teacherData.class_teacher 2)}}selected{{/if}}>2nd Year</option>
-                  <option value="3" {{#if (eq teacherData.class_teacher 3)}}selected{{/if}}>3rd Year</option>
-                </select>
-              </div>
-
-              <!-- Subjects -->
-              <div class="mb-3">
-                <label for="subjectsContainer" class="form-label">Subjects</label>
-                <div id="subjectsContainer">
-                  {{#each subjects}}
-                  <div class="input-group mb-2">
-                    <input type="text" name="subjects[]" class="form-control border-secondary bg-light" value="{{this}}"
-                      placeholder="Enter subject" required />
-                    <button type="button" class="btn btn-danger" onclick="removeSubjectInput(this)">Remove</button>
-                  </div>
-                  {{/each}}
-                </div>
-                <button type="button" class="btn btn-primary" onclick="addSubjectInput()">Add Subject</button>
-              </div>
-
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" id="saveTeacherButton"
-                  onclick="saveTeacher()">Save</button>
-              </div>
-            </form>
-          </div>
+<!-- Modal for Teacher Details -->
+<div class="modal fade" id="teacherModal" tabindex="-1" aria-labelledby="teacherModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- Increased modal width -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="teacherModalLabel">Manage Teacher Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="error-message" class="alert alert-danger d-none" role="alert">
+          <!-- Error message will appear here -->
         </div>
+        <form id="teacherForm">
+          <!-- Teacher Name and Email Row -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="teacherName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="teacherName" required value="{{teacherData.name}}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="teacherEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="teacherEmail" value="{{teacherData.email}}" readonly>
+            </div>
+          </div>
+
+          <!-- Teacher ID and Class Teacher Row -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="teacherId" class="form-label">Teacher ID</label>
+              <input type="text" class="form-control" id="teacherId" value="{{teacherData.teacher_id}}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="classTeacher" class="form-label">Class Teacher</label>
+              <select class="form-select" id="classTeacher">
+                <option value="" {{#if (eq teacherData.class_teacher 0)}}selected{{/if}}>Not class teacher</option>
+                <option value="1" {{#if (eq teacherData.class_teacher 1)}}selected{{/if}}>1st Year</option>
+                <option value="2" {{#if (eq teacherData.class_teacher 2)}}selected{{/if}}>2nd Year</option>
+                <option value="3" {{#if (eq teacherData.class_teacher 3)}}selected{{/if}}>3rd Year</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Subjects Row -->
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label for="subjectsContainer" class="form-label">Subjects</label>
+              <div id="subjectsContainer">
+                {{#each subjects}}
+                <div class="input-group mb-2">
+                  <input
+                    type="text"
+                    name="subjects[]"
+                    class="form-control border-secondary bg-light"
+                    value="{{this}}"
+                    placeholder="Enter subject"
+                    required
+                  />
+                  <button type="button" class="btn btn-danger" onclick="removeSubjectInput(this)">Remove</button>
+                </div>
+                {{/each}}
+              </div>
+              <button type="button" class="btn btn-primary" onclick="addSubjectInput()">Add Subject</button>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" id="saveTeacherButton" onclick="saveTeacher()">Save</button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
+</div>
+
+
 
   </div>
 </section>
@@ -275,8 +284,14 @@
 
 <!-- Styling -->
 <style>
+   /* Set background color for the entire page */
+ 
+  /* Container Styling */
   .container {
-    padding: 30px;
+   padding: 25px;
+    background-color: #e0f7fa; /* Keep the container background white */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for container */
   }
 
   /* Home Link Styling */
@@ -305,6 +320,7 @@
     border-radius: 8px;
     border: 1px solid #ddd;
     padding: 20px;
+    background-color: #ffffff; /* Keep the table background white */
   }
 
   .table th,
@@ -334,10 +350,31 @@
     border-color: #0056b3;
   }
 
-  /* Card Styling */
-  .card {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+  /* Increase modal width */
+  .modal-lg {
+    max-width: 900px;
+  }
+
+  /* Add spacing and alignment to labels and inputs */
+  .form-label {
+    font-weight: 500;
+  }
+
+  .form-control,
+  .form-select {
+    border: 2px solid #ced4da;
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  }
+
+  .modal-body {
+    padding: 20px 30px;
   }
 </style>
