@@ -81,10 +81,6 @@ router.get('/add-attendance', verifyLogin, (req, res) => {
 
 //  console.log("studetns",resp);
  let students = resp
-    // const firstYearStudents = resp.filter((item) => item.year === 1);
-    // const secondYearStudents = resp.filter((item) => item.year === 2);
-    // const thirdYearStudents = resp.filter((item) => item.year === 3);
-    // console.log("Fisrt", firstYearStudents);
 
     // Render the template and pass separated student data
     res.render('teacher/add-attendance', {
@@ -103,32 +99,31 @@ router.get('/add-attendance', verifyLogin, (req, res) => {
   });
 });
 
-// 
 router.post('/add-attendance', (req, res) => {
-
+  console.log(req.body);
+  
   const { attendanceDate, year, ...attendanceData } = req.body;
-  // console.log("abcs",year);
-  const attendanceRecords = [];
-console.log("req",req.body);
 
-  // Prepare attendance records
+  const attendanceRecords = [];
   for (let key in attendanceData) {
     if (attendanceData.hasOwnProperty(key)) {
-      const studentId = key.match(/\d+/)[0]; // Extract the numeric part of the key
-      const [status, name] = attendanceData[key].split('|'); // Split value into status and name
+      const studentId = key.match(/\d+/)[0];
+      const [status, name] = attendanceData[key].split('|');
       attendanceRecords.push({ name, year, status, attendanceDate });
-    
-      
     }
   }
 
-  // Save attendance to the database
-  teacherHelpers.saveAttendance(attendanceRecords)
+  teacherHelpers
+    .saveAttendance(attendanceRecords)
     .then(() => {
       res.redirect('/teacher/view-attendance');
     })
     .catch((err) => {
-      res.status(500).send("Error saving attendance: " + err.message);
+      res.render('teacher/add-attendance', {
+        errorMessage: err.message, // Pass the error message to the template
+        year,
+        students: req.body.students, // Pass existing data back to the template
+      });
     });
 });
 
@@ -260,6 +255,47 @@ router.post('/monthly-attendance', (req, res) => {
       res.status(500).send('Internal Server Error');
       });
     })
+});
+
+router.get('/year-attendance', (req, res) => {
+  const { year, month } = req.body;
+
+  // Log input data
+  console.log("POST Parameters:", { year, month, stdYear });
+  teacherHelpers.getAvailableYears(stdYear) // Fetch the available years
+  .then((availableYears) => {
+  teacherHelpers.getAllAttendance(month, year, stdYear)
+    .then((data) => {
+      const students = data.students;
+      console.log("Fetched Students:", students); // Debug log
+
+      const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
+
+      // Preprocess attendance data
+      students.forEach(student => {
+        student.attendance = student.attendance.map(status => {
+          if (status === 'present') return '✔';
+          if (status === 'absent') return '✖';
+          return '-';
+        });
+      });
+
+      // Render with fetched data
+      res.render('teacher/monthly-attendance', {
+        name: req.session.teacher.name,
+        monthName: new Date(year, month - 1).toLocaleString('default', { month: 'long' }),
+        year,
+        students,
+        daysInMonth,
+        availableYears, 
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching attendance:", err);
+      res.status(500).send('Internal Server Error');
+      });
+    })
+
 });
 
 
