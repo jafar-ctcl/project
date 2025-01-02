@@ -1,7 +1,15 @@
 <section class="attendance-section py-5">
   <div class="container fw-bold">
-    <h2 class="text-center mb-4">Add Attendance</h2>
+    
 
+    <!-- Error Message -->
+    {{#if errorMessage}}
+    <div class="alert alert-danger text-center">
+      {{errorMessage}}
+    </div>
+    {{/if}}
+  {{#if students}}
+  <h2 class="text-center mb-4">Add Attendance</h2>
     <!-- Attendance Form -->
     <div class="year-table">
       <form action="/teacher/add-attendance" method="POST">
@@ -12,12 +20,13 @@
             type="date" 
             class="form-control form-control-lg" 
             name="attendanceDate" 
+            value="{{attendanceDate}}" 
             required 
           />
         </div>
 
         <!-- Year Heading -->
-        <h3>Attendance for {{year}} year students </h3>
+        <h3>Attendance for {{year}} year students</h3>
 
         <!-- Attendance Table -->
         <div class="table-responsive mt-4">
@@ -58,7 +67,7 @@
         </div>
 
         <!-- Hidden Year Input -->
-        <input type="hidden" name="year" value="{{this.year}}" />
+        <input type="hidden" name="year" value="{{year}}" />
 
         <!-- Submit Button -->
         <div class="text-center mt-4">
@@ -66,6 +75,17 @@
         </div>
       </form>
     </div>
+    {{else}}
+    {{#if errorMessage}} 
+     <div class="text-center mt-4">
+      <a href="/teacher/add-attendance" class="btn btn-outline-primary shadow-sm">Add attendance</a>
+    </div>
+   {{else}}
+   <h2>no students found</h2>
+    {{/if}}
+    {{/if}}
+    
+   
   </div>
 </section>
 
@@ -101,4 +121,5 @@
     background-color: #218838;
     border-color: #1e7e34;
   }
-</style>
+</style> 
+
