@@ -129,10 +129,10 @@ module.exports = {
         });
     },
    
-        getLastAttendance: () => {
+        getLastAttendance: (stdYear) => {
           return new Promise((resolve, reject) => {
             // Query to fetch the latest attendance record to get the most recent date
-            db.query('SELECT * FROM attendance ORDER BY date DESC LIMIT 1', (err, result) => {
+            db.query('SELECT * FROM attendance    ORDER BY date DESC LIMIT 1 ', (err, result) => {
               if (err) {
                 console.error('Error fetching last attendance:', err);
                 reject(err); // Reject the promise in case of error
@@ -143,7 +143,7 @@ module.exports = {
                   const lastAttendanceDate = lastAttendance.date;
       
                   // Query to fetch all attendance records for the last attendance date
-                  db.query('SELECT * FROM attendance WHERE date = ?', [lastAttendanceDate], (err, allRecords) => {
+                  db.query('SELECT * FROM attendance WHERE date = ? AND year = ?', [lastAttendanceDate,stdYear], (err, allRecords) => {
                     if (err) {
                       console.error('Error fetching all attendance for the last date:', err);
                       reject(err);
