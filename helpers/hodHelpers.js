@@ -64,33 +64,34 @@ module.exports = {
                 // Call getApprovedTeachers only if the status is 1
                 if (data.status == 1) {
                     db.query('select * from login_data where type="student" AND status= 1', (err, data) => {
-                        // console.log("approved", data);
-                        let user = data[0]
-                        let result = data.map((user) => {
+
+                        //console.log("students", user);
+
+                        data.map((user) => {
                             db.query('SELECT * FROM  students WHERE email = ?', [user.email], (err, result) => {
                                 if (err) return reject(err)
-        
+
                                 if (result.length > 0) {
                                     // If the teacher already exists, skip insertion
                                     // console.log(`Student ${user.email} already exists, skipping.`);
                                 } else {
                                     db.query(
-                                        'INSERT INTO students (name, email,year,course,phone, gender) VALUES (?,?,?, ?, ?, ?)',
-                                        [user.name, user.email, user.year, user.course, user.phone, user.gender],
+                                        'INSERT INTO students (name, email,year,dob,course,phone, gender) VALUES (?,?,?,?, ?, ?, ?)',
+                                        [user.name, user.email, user.year, user.dob, user.course, user.phone, user.gender],
                                         (err, Result) => {
                                             if (err) return reject(err)
                                         })
-        
+
                                 }
-        
-                                
+
+
                             })
-        
-        
+
+
                         })
-        
-                        resolve(data)
-        
+
+                        resolve()
+
                     })
                 } else {
                     resolve(); // Resolve directly if the status is not 1
@@ -104,11 +105,10 @@ module.exports = {
     },
     getApprovedStudents: () => {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM students',(err,data)=>
-                {
-                    if(err)reject(err)
-                    resolve(data)
-                })
+            db.query('SELECT * FROM students', (err, data) => {
+                if (err) reject(err)
+                resolve(data)
+            })
         })
     },
     getTeacher: () => {
@@ -141,7 +141,7 @@ module.exports = {
                         data.map((user) => {
                             db.query('SELECT * FROM  teachers WHERE email = ?', [user.email], (err, result) => {
                                 if (err) return reject(err)
-        
+
                                 if (result.length > 0) {
                                     // If the teacher already exists, skip insertion
                                     console.log(`Teacher ${user.email} already exists, skipping.`);
@@ -152,7 +152,7 @@ module.exports = {
                                         (err, Result) => {
                                             if (err) return reject(err)
                                         })
-        
+
                                 }
                             })
                         })
@@ -166,35 +166,12 @@ module.exports = {
 
     getAllTeachers: () => {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM teachers',(err,data)=>
-            {
-                
-                if(err)reject(err)
+            db.query('SELECT * FROM teachers', (err, data) => {
+
+                if (err) reject(err)
                 resolve(data)
             })
-            // db.query('select * from login_data where type="teacher" AND status= 1', (err, data) => {
-            //     // console.log(data);
-            //     resolve(data)
-            //     data.map((user) => {
-            //         db.query('SELECT * FROM  teachers WHERE email = ?', [user.email], (err, result) => {
-            //             if (err) return reject(err)
 
-            //             if (result.length > 0) {
-            //                 // If the teacher already exists, skip insertion
-            //                 console.log(`Teacher ${user.email} already exists, skipping.`);
-            //             } else {
-            //                 db.query(
-            //                     'INSERT INTO teachers (name, email, phone, gender) VALUES (?, ?, ?, ?)',
-            //                     [user.name, user.email, user.phone, user.gender],
-            //                     (err, Result) => {
-            //                         if (err) return reject(err)
-            //                     })
-
-            //             }
-            //         })
-            //     })
-            // })
-           
         })
     },
 
@@ -256,25 +233,141 @@ module.exports = {
     },
     manageTeacher: (teacherManageData) => {
         return new Promise((resolve, reject) => {
-          const { name, email, teacherId, classTeacher, subjects } = teacherManageData;
+            const { name, email, teacherId, classTeacher, subjects } = teacherManageData;
+    
+            // Ensure subjects is an array (even if it's just one subject)
+            const subjectsArray = Array.isArray(subjects) ? subjects : [subjects];
+    
+            // Convert subjects to a comma-separated string
+            const subjectsString = subjectsArray.join(', ');
+    
+            // Check if the teacher with the same email and class_teacher already exists
+            db.query('SELECT * FROM teachers WHERE email = ? AND class_teacher = ?', [email, classTeacher], (err, data) => {
+    
+                if (data.length > 0) {
+                    // Teacher already exists with the same email and class_teacher
+                    console.warn("class has already been assigned");
+    
+                    // Pass the error message to the view (e.g., Handlebars)
+                    return reject(new Error(`The ${classTeacher} class has already been assigned to another teacher.`));
+    
+                } else {
+                    // Teacher doesn't exist, update the teacher's details
+    
+                    db.query(
+                        'UPDATE teachers SET teacher_id = ?, class_teacher = ?, subjects = ?, isManaged = 1 WHERE email = ?',
+                        [teacherId, classTeacher, subjectsString, email],
+                        (err, result) => {
+                            if (err) {
+                                console.log("Error updating teacher details:", err);
+                                return reject(new Error(`${err.sqlMessage}`));
+                            } else {
+                                console.log("Teacher details added successfully, and isManaged set to 1.");
+                                resolve(result);
+                            }
+                        }
+                    );
+                }
+            });
+        });
+    },
+    
+    // manageTeacher: (teacherManageData) => {
+    //     // console.log(teacherManageData);
+
+    //     return new Promise((resolve, reject) => {
+    //         const { name, email, teacherId, classTeacher, subjects } = teacherManageData;
+
+    //         // Ensure subjects is an array (even if it's just one subject)
+    //         const subjectsArray = Array.isArray(subjects) ? subjects : [subjects];
+
+    //         // Convert subjects to a comma-separated string
+    //         const subjectsString = subjectsArray.join(', ');
+
+    //         // console.log("subjects:", subjectsString);
+
+
+    //         // Check if the teacher with the same email and class_teacher already exists
+    //         db.query('SELECT * FROM teachers WHERE email = ? AND class_teacher = ?', [email, classTeacher], (err, data) => {
+
+    //             if (data.length > 0) {
+    //                 // Teacher already exists with the same email and class_teacher
+    //                 console.warn("class has already been assigned");
+
+    //                 // Pass the error message to the view (e.g., Handlebars)
+    //                 return reject(new Error(`The ${classTeacher} class has already been assigned to another teacher.`));
+
+    //             }
+    //             else {
+    //                 // Teacher doesn't exist, update the teacher's details
+                    
+    //                 db.query(
+    //                     'UPDATE teachers SET teacher_id = ?, class_teacher = ?, subjects = ? WHERE email = ?',
+    //                     [teacherId, classTeacher, subjectsString, email],
+    //                     (err, result) => {
+    //                         if (err) {
+    //                             console.log("Error updating teacher details:", err);
+    //                             // reject(err);
+    //                             return reject(new Error(`${err.sqlMessage}`));
+    //                         } else {
+    //                             console.log("Teacher details added successfully.");
+    //                             resolve(result);
+    //                         }
+    //                     }
+    //                 );
+    //             }
+    //         });
+    //     });
+    // },
+
+    viewManagedTeacher: (email) => {
+        console.log("Fetching details for:", email);
+
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM teachers WHERE email = ?';
+
+            db.query(query, [email], (err, data) => {
+                if (err) {
+                    console.error("Error fetching teacher details:", err);
+                    return reject(err);
+                }
+
+                if (data.length === 0) {
+                    console.warn("No teacher found with the provided email:", email);
+                    return reject(new Error("Teacher not found"));
+                }
+
+                console.log("Successfully fetched teacher details:", data);
+                resolve(data);
+            });
+        });
+    },
+    updateTeacher: (teacherManageData) => {
+        const { name, email, teacherId, classTeacher, subjects } = teacherManageData;
       
-          // Convert subjects to a comma-separated string
-          const subjectsString = subjects ? subjects.join(', ') : '';
-      
+        return new Promise((resolve, reject) => {
+          // Assuming you're using a database query here to update teacher data
           db.query(
             'UPDATE teachers SET teacher_id = ?, class_teacher = ?, subjects = ? WHERE email = ?',
-            [teacherId, classTeacher, subjectsString, email],
+            [
+              teacherId,  // teacher_id to update
+              classTeacher,  // class_teacher to update
+              subjects.join(','),  // subjects as comma-separated string
+              email  // identifying teacher by email
+            ],
             (err, result) => {
               if (err) {
-                console.log("Error updating teacher details:", err);
-                reject(err);
+                console.log(err);
+                
+                return reject(new Error(err.sqlMessage)); // Passing SQL error message
               } else {
-                console.log("Teacher details updated successfully.");
-                resolve({ result, status: true });
+                resolve({ result, status: true }); // If successful
               }
             }
           );
         });
-      },
+      }
+      
+      
 }
 
