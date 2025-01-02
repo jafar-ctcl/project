@@ -1,7 +1,8 @@
 <div class="d-flex" id="wrapper">
     <!-- Sidebar-->
     <div class="border-end bg-white" id="sidebar-wrapper">
-        <div class="sidebar-heading border-bottom bg-light fw-bold"><a href="/hod">ADMIN</a></div>
+        <div class="sidebar-heading border-bottom bg-light fw-bold"><a href="/hod"
+                style="text-decoration: none;">ADMIN</a></div>
         <div class="list-group list-group-flush">
             {{!-- <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Dashboard</a>
             --}}
@@ -23,6 +24,10 @@
                     <a class="dropdown-item" href="/hod/view-teachers">View teacher</a>
                 </div>
             </li>
+             {{!-- <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item ">
+                <a class=" nav-link " href="/hod/approve-teacher">Teacher</a>
+
+            </li> --}}
             <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
                 <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Student</a>
@@ -49,18 +54,23 @@
                 </div>
             </li>
             <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item ">
-                <a class=" nav-link " href="/student-view">Mark</a>
+                <a class=" nav-link " href="/hod/view-mark">Mark</a>
 
             </li>
-          <li class="list-group-item p-4">
-    <a class="nav-link text-center align-items-center rounded btn btn-secondary px-3"
-        style="font-size: 18px; padding: 6px; color:white; background-color: #6c757d; display: block;"
-        href="/hod/logout">Logout</a>
-</li>
+            {{!-- <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item ">
+                <a class=" nav-link " href="/hod/add-notice">Notice bord</a>
+
+            </li>
+            --}}
+
+            <li class="list-group-item p-4">
+                <a class=" text-center rounded btn btn-secondary px-3"
+                    style="font-size: 18px; padding: 6px; color:white; display: block;" href="/hod/logout">Logout</a>
+            </li>
 
 
 
-            
+
         </div>
     </div>
     <!-- Page content wrapper-->
@@ -73,6 +83,4 @@
 
             </div>
         </nav>
-    <style>
-           
-    </style>
+        
