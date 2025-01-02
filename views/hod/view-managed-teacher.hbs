@@ -1,0 +1,343 @@
+<section>
+  <div class="container mt-5">
+    <!-- Home Link with Style -->
+    <a href="/hod" class="home-link text-decoration-none">
+      <i class="bi bi-house-door me-2"></i>Home
+    </a>
+    {{!--
+    {{#each subjects}}
+    <h1>{{this}}</h1>
+    {{/each}} --}}
+
+    <!-- Teacher Details Section -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow-lg border-0 bg-light rounded">
+          <div class="card-body p-4">
+            <!-- Table to Display Teacher's Details -->
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped shadow-sm">
+                <thead class="thead-light">
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Class Teacher</th>
+                    <th>Teacher ID</th>
+                    <th>Subjects</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Teacher's Information Row -->
+                  <tr>
+                    <td>{{teacherData.name}}</td>
+                    <td>{{teacherData.email}}</td>
+                    <td>{{teacherData.class_teacher}}</td>
+                    <td>{{teacherData.teacher_id}}</td>
+                    <td>{{teacherData.subjects}}</td>
+                    <td>
+                      <button class="btn btn-outline-primary btn-sm shadow-lg" data-bs-toggle="modal"
+                        data-bs-target="#teacherModal"
+                        onclick="editTeacherDetails('{{teacherData.teacher_id}}', '{{teacherData.name}}', '{{teacherData.email}}', '{{teacherData.class_teacher}}', {{subjects}})">
+                        <i class="bi bi-pencil me-2"></i>Edit
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Teachers Button -->
+    <div class="container text-center">
+      <a href="/hod/view-teachers" class="btn btn-primary mb-3">Go back</a>
+    </div>
+
+
+
+    <!-- Modal for Teacher Details -->
+    <div class="modal fade" id="teacherModal" tabindex="-1" aria-labelledby="teacherModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="teacherModalLabel">Manage Teacher Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="error-message" class="alert alert-danger d-none" role="alert">
+              <!-- Error message will appear here -->
+            </div>
+            <form id="teacherForm">
+              <!-- Teacher Name -->
+              <div class="mb-3">
+                <label for="teacherName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="teacherName" required value="{{teacherData.name}}">
+              </div>
+
+              <!-- Teacher Email -->
+              <div class="mb-3">
+                <label for="teacherEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="teacherEmail" value="{{teacherData.email}}" readonly>
+              </div>
+
+              <!-- Teacher ID -->
+              <div class="mb-3">
+                <label for="teacherId" class="form-label">Teacher ID</label>
+                <input type="text" class="form-control" id="teacherId" value="{{teacherData.teacher_id}}">
+              </div>
+
+              <!-- Class Teacher -->
+              <div class="mb-3">
+                <label for="classTeacher" class="form-label">Class Teacher</label>
+                <select class="form-select" id="classTeacher">
+                  <option value="" {{#if (eq teacherData.class_teacher 0)}}selected{{/if}}>Not class teacher</option>
+                  <option value="1" {{#if (eq teacherData.class_teacher 1)}}selected{{/if}}>1st Year</option>
+                  <option value="2" {{#if (eq teacherData.class_teacher 2)}}selected{{/if}}>2nd Year</option>
+                  <option value="3" {{#if (eq teacherData.class_teacher 3)}}selected{{/if}}>3rd Year</option>
+                </select>
+              </div>
+
+              <!-- Subjects -->
+              <div class="mb-3">
+                <label for="subjectsContainer" class="form-label">Subjects</label>
+                <div id="subjectsContainer">
+                  {{#each subjects}}
+                  <div class="input-group mb-2">
+                    <input type="text" name="subjects[]" class="form-control border-secondary bg-light" value="{{this}}"
+                      placeholder="Enter subject" required />
+                    <button type="button" class="btn btn-danger" onclick="removeSubjectInput(this)">Remove</button>
+                  </div>
+                  {{/each}}
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addSubjectInput()">Add Subject</button>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="saveTeacherButton"
+                  onclick="saveTeacher()">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<script>
+  // Clear modal data when the close button is clicked
+  document.querySelector('.btn-close').addEventListener('click', function () {
+    clearModalData();
+  });
+
+  // Function to clear the modal form data
+  function clearModalData() {
+    // Reset teacher form fields
+    document.getElementById('teacherForm').reset();
+
+    // Optionally, clear the subjects container
+    const subjectsContainer = document.getElementById('subjectsContainer');
+    subjectsContainer.innerHTML = '';
+
+    // If you want to reset the teacher ID field as well, you can do so here:
+    document.getElementById('teacherId').value = '';
+  }
+
+  function addSubjectInput() {
+    const subjectsContainer = document.getElementById('subjectsContainer');
+    const newInputGroup = document.createElement('div');
+    newInputGroup.classList.add('input-group', 'mb-2');
+
+    const newInput = document.createElement('input');
+    newInput.type = 'text';
+    newInput.name = 'subjects[]';
+    newInput.classList.add('form-control', 'border-secondary', 'bg-light');
+    newInput.placeholder = 'Enter subject';
+    newInput.required = true;
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.classList.add('btn', 'btn-danger');
+    removeButton.textContent = 'Remove';
+    removeButton.onclick = function () {
+      removeSubjectInput(this);
+    };
+
+    newInputGroup.appendChild(newInput);
+    newInputGroup.appendChild(removeButton);
+    subjectsContainer.appendChild(newInputGroup);
+  }
+
+  function removeSubjectInput(button) {
+    const inputGroup = button.parentElement;
+    const subjectsContainer = document.getElementById('subjectsContainer');
+
+    // Ensure at least one subject input remains
+    if (subjectsContainer.children.length > 1) {
+      inputGroup.remove();
+    } else {
+      alert('At least one subject is required.');
+    }
+  }
+
+  function editTeacherDetails(teacherId, name, email, classTeacher, subjects) {
+    // Ensure subjects is an array
+    if (!Array.isArray(subjects)) {
+      subjects = [];
+    }
+
+    document.getElementById('teacherId').value = teacherId;
+    document.getElementById('teacherName').value = name;
+    document.getElementById('teacherEmail').value = email;
+    document.getElementById('classTeacher').value = classTeacher;
+
+    const subjectsContainer = document.getElementById('subjectsContainer');
+    subjectsContainer.innerHTML = ''; // Clear previous subjects
+
+    subjects.forEach(subject => {
+      const subjectInput = document.createElement('input');
+      subjectInput.type = 'text';
+      subjectInput.name = 'subjects[]';
+      subjectInput.classList.add('form-control', 'mb-2');
+      subjectInput.value = subject;
+      subjectsContainer.appendChild(subjectInput);
+    });
+
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('teacherModal'));
+    modal.show();
+  }
+  function saveTeacher() {
+    const email = document.getElementById('teacherEmail').value.trim();
+    const teacherId = document.getElementById('teacherId').value.trim();
+    const classTeacher = document.getElementById('classTeacher').value;
+    const subjects = Array.from(
+      document.querySelectorAll('input[name="subjects[]"]')
+    ).map(input => input.value.trim());
+
+    if (!teacherId || !email || subjects.some(subject => !subject)) {
+      alert('Please fill all fields before saving.');
+      return;
+    }
+
+    const saveButton = document.getElementById('saveTeacherButton');
+    saveButton.disabled = true;
+
+    // Hide any previous error message
+    const errorMessageContainer = document.getElementById('error-message');
+    errorMessageContainer.classList.add('d-none');
+    errorMessageContainer.innerHTML = '';
+
+    $.ajax({
+      url: '/hod/edit-teacher',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        email: email,
+        teacherId: teacherId,
+        classTeacher: classTeacher,
+        subjects: subjects,
+      }),
+      success: function (data) {
+        saveButton.disabled = false;
+
+        if (data.success) {
+
+          // Close the modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('teacherModal'));
+          modal.hide();
+
+          // Reload the page to reflect changes
+          location.reload();
+        }
+      },
+      error: function (xhr, status, error) {
+        saveButton.disabled = false;
+        console.error('Error occurred:', xhr.responseText || error);
+
+        // Extract and display the error message from the response
+        const responseMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'An error occurred. Please try again.';
+
+        // Show the error message inside the modal
+        errorMessageContainer.classList.remove('d-none');
+        errorMessageContainer.innerHTML = responseMessage;
+      },
+    });
+  }
+
+
+
+</script>
+
+<!-- Styling -->
+<style>
+  .container {
+    padding: 30px;
+  }
+
+  /* Home Link Styling */
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    color: #007bff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+  }
+
+  .home-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+
+  .home-link i {
+    font-size: 1.3rem;
+    margin-right: 8px;
+  }
+
+  /* Table Styling */
+  .table {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 20px;
+  }
+
+  .table th,
+  .table td {
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
+
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #ddd;
+  }
+
+  /* Button Styling */
+  .btn-outline-primary {
+    border-color: #007bff;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #0056b3;
+    color: #fff;
+    border-color: #0056b3;
+  }
+
+  /* Card Styling */
+  .card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+</style>

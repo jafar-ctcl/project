@@ -1,0 +1,104 @@
+<section class="container mt-5">
+  <div class="card shadow border-0 bg-light">
+    <div class="card-header text-center bg-secondary text-white rounded-top">
+      <h2 class="mb-0">Manage Teacher</h2>
+    </div>
+    <div class="card-body p-4">
+      <form id="teacherForm" action="/hod/manage-teacher" method="POST" onsubmit="return validateForm()">
+        
+        <!-- Display Error Message (if any) -->
+        {{#if errorMessage}}
+          <div class="alert alert-danger">
+           {{errorMessage}}
+          </div>
+        {{/if}}
+
+        <!-- Name and Email -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label for="name" class="form-label fw-bold text-secondary">Name</label>
+            <input type="text" id="name" name="name" class="form-control border-secondary bg-light"
+              value="{{teacherData.name}}" required />
+          </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label fw-bold text-secondary">Email</label>
+            <input type="email" id="email" name="email" class="form-control border-secondary bg-light"
+              value="{{teacherData.email}}" readonly />
+          </div>
+        </div>
+
+        <!-- Teacher ID and Class Teacher -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label for="teacherId" class="form-label fw-bold text-secondary">Teacher ID</label>
+            <input type="text" id="teacherId" name="teacherId" class="form-control border-secondary bg-light"
+              value="" required/>
+          </div>
+          <div class="col-md-6">
+            <label for="classTeacher" class="form-label fw-bold text-secondary">Class Teacher</label>
+            <select id="classTeacher" name="classTeacher" class="form-select border-secondary bg-light" >
+              <option value="">Choose class teacher</option>
+              <option value="1">1st year</option>
+              <option value="2">2nd year</option>
+              <option value="3">3rd year</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Subjects -->
+        <div class="row mb-4">
+          <div class="col-md-12">
+            <label for="subjects" class="form-label fw-bold text-secondary">Subjects</label>
+            <div id="subjectInputs">
+              <div class="input-group mb-2">
+                <input type="text" name="subjects" class="form-control border-secondary bg-light" required/>
+                <button type="button" class="btn btn-danger" onclick="removeSubjectInput(this)">
+                  Remove
+                </button>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary mt-3" onclick="addSubjectInput()">Add Subject</button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-success px-4">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Function to add new subject input fields dynamically
+  function addSubjectInput() {
+    const subjectInputs = document.getElementById('subjectInputs');
+    const newInputGroup = document.createElement('div');
+    newInputGroup.classList.add('input-group', 'mb-2');
+
+    const newInput = document.createElement('input');
+    newInput.type = 'text';
+    newInput.name = 'subjects';
+    newInput.classList.add('form-control', 'border-secondary', 'bg-light');
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.classList.add('btn', 'btn-danger');
+    removeButton.textContent = 'Remove';
+    removeButton.onclick = function () {
+      removeSubjectInput(removeButton);
+    };
+
+    newInputGroup.appendChild(newInput);
+    newInputGroup.appendChild(removeButton);
+    subjectInputs.appendChild(newInputGroup);
+  }
+
+  // Function to remove a subject input field
+  function removeSubjectInput(button) {
+    button.parentElement.remove();
+  }
+</script>
