@@ -103,32 +103,43 @@ module.exports = {
         })
     },
     saveAttendance: (attendanceData) => {
-        return new Promise((resolve, reject) => {
-            // Prepare an array of values for the SQL query
-            const values = attendanceData.map(record => [
-                // record.studentId,
-                record.year,
-                record.name,
-                record.attendanceDate,
-                record.status,
-            ]);
-
-            // Create a single INSERT INTO statement with multiple rows
-            const sql = 'INSERT INTO attendance (year, name, date, status) VALUES ?';
-
-            // Execute the query with the prepared values
-            db.query(sql, [values], (err, result) => {
-                if (err) {
-                    console.error('Error inserting attendance records:', err);
-                    reject(err); // Reject the promise if there is an error
-                } else {
-                    console.log('Attendance records inserted successfully');
-                    resolve(result); // Resolve the promise after successful insertion
-                }
-            });
+      return new Promise((resolve, reject) => {
+        const { year, attendanceDate } = attendanceData[0]; // Extract year and date from the first record
+    
+        // Check if attendance for the same date and year already exists
+        const checkSql = 'SELECT COUNT(*) AS count FROM attendance WHERE year = ? AND date = ?';
+        db.query(checkSql, [year, attendanceDate], (err, result) => {
+          if (err) {
+            console.error('Error checking existing attendance records:', err);
+            return reject(err);
+          }
+    
+          if (result[0].count > 0) {
+            // Attendance already exists for the given date and year
+            return reject(new Error(`Attendance for this ${attendanceDate} already added.`));
+          }
+    
+          // If no duplicate exists, insert attendance data
+          const values = attendanceData.map(record => [
+            record.year,
+            record.name,
+            record.attendanceDate,
+            record.status,
+          ]);
+          const insertSql = 'INSERT INTO attendance (year, name, date, status) VALUES ?';
+    
+          db.query(insertSql, [values], (insertErr, insertResult) => {
+            if (insertErr) {
+              console.error('Error inserting attendance records:', insertErr);
+              return reject(insertErr);
+            }
+            console.log('Attendance records inserted successfully');
+            resolve(insertResult);
+          });
         });
+      });
     },
-   
+    
         getLastAttendance: (stdYear) => {
           return new Promise((resolve, reject) => {
             // Query to fetch the latest attendance record to get the most recent date
