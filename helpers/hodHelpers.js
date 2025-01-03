@@ -177,44 +177,62 @@ module.exports = {
 
     addTimetable: (timetableData) => {
         return new Promise((resolve, reject) => {
-            const { day, timeSlot, year, teacher, subject } = timetableData;
-
-            // Ensure all arrays (timeSlot, teacher, subject) have the same length
-            if (timeSlot.length !== teacher.length || teacher.length !== subject.length) {
-                return reject(new Error("timeSlot, teacher, and subject arrays must have the same length"));
+            const { day, year, timeslots, teachers, subjects } = timetableData;
+            console.log(" teachers.length", teachers.length);
+            console.log(" subjects.length", subjects.length);
+            console.log(" timeslots.length", timeslots.length);
+          
+            // Ensure all arrays (timeslots, teachers, subjects) have the same length
+            if (timeslots.length !== teachers.length || teachers.length !== subjects.length) {
+                return reject(new Error("timeslots, teachers, and subjects arrays must have the same length"));
             }
-
+    
             // Iterate over the arrays and insert each row into the database
-            const insertPromises = timeSlot.map((time, index) => {
-                // console.log(time,index);
-
+            const insertPromises = timeslots.map((time, index) => {
+                const currentTeacher = teachers[index];
+                const currentSubject = subjects[index];
+    
+                // Check if the combination already exists in the database
                 return new Promise((resolve, reject) => {
-                    const currentTeacher = teacher[index];
-                    const currentSubject = subject[index];
-
-
-                    // Insert each combination into the timetable
                     db.query(
-                        'INSERT INTO timetable (day, time, year, teacher, subject) VALUES (?, ?, ?, ?, ?)',
-                        [day, time, year, currentTeacher, currentSubject],
+                        'SELECT * FROM timetable WHERE day = ? AND time = ? AND year = ?  ',
+                        [day, time, year],
                         (err, result) => {
                             if (err) {
-                                console.error("Error inserting data:", err);
+                                console.error("Error checking for duplicates:", err);
                                 return reject(err);
                             }
-                            resolve(result);
+    
+                            // If a duplicate exists, reject the promise
+                            if (result.length > 0) {
+                                return reject(new Error(`Duplicate entry found for ${day} ${time} ${currentTeacher} ${currentSubject}`));
+                            }
+    
+                            // If no duplicate, insert the new timetable entry
+                            db.query(
+                                'INSERT INTO timetable (day, time, year, teacher, subject) VALUES (?, ?, ?, ?, ?)',
+                                [day, time, year, currentTeacher, currentSubject],
+                                (err, result) => {
+                                    if (err) {
+                                        console.error("Error inserting data:", err);
+                                        return reject(err);
+                                    }
+                                    // Resolve with the day and year after successful insertion
+                                    resolve();
+                                }
+                            );
                         }
                     );
                 });
             });
-
+    
             // Wait for all insert operations to complete
             Promise.all(insertPromises)
                 .then(() => resolve('Timetable data inserted successfully'))
                 .catch((err) => reject(err));
         });
     },
-
+    
 
     getTimetable: () => {
         return new Promise((resolve, reject) => {
@@ -234,26 +252,26 @@ module.exports = {
     manageTeacher: (teacherManageData) => {
         return new Promise((resolve, reject) => {
             const { name, email, teacherId, classTeacher, subjects } = teacherManageData;
-    
+
             // Ensure subjects is an array (even if it's just one subject)
             const subjectsArray = Array.isArray(subjects) ? subjects : [subjects];
-    
+
             // Convert subjects to a comma-separated string
             const subjectsString = subjectsArray.join(', ');
-    
+
             // Check if the teacher with the same email and class_teacher already exists
             db.query('SELECT * FROM teachers WHERE email = ? AND class_teacher = ?', [email, classTeacher], (err, data) => {
-    
+
                 if (data.length > 0) {
                     // Teacher already exists with the same email and class_teacher
                     console.warn("class has already been assigned");
-    
+
                     // Pass the error message to the view (e.g., Handlebars)
                     return reject(new Error(`The ${classTeacher} class has already been assigned to another teacher.`));
-    
+
                 } else {
                     // Teacher doesn't exist, update the teacher's details
-    
+
                     db.query(
                         'UPDATE teachers SET teacher_id = ?, class_teacher = ?, subjects = ?, isManaged = 1 WHERE email = ?',
                         [teacherId, classTeacher, subjectsString, email],
@@ -271,7 +289,7 @@ module.exports = {
             });
         });
     },
-    
+
     // manageTeacher: (teacherManageData) => {
     //     // console.log(teacherManageData);
 
@@ -300,7 +318,7 @@ module.exports = {
     //             }
     //             else {
     //                 // Teacher doesn't exist, update the teacher's details
-                    
+
     //                 db.query(
     //                     'UPDATE teachers SET teacher_id = ?, class_teacher = ?, subjects = ? WHERE email = ?',
     //                     [teacherId, classTeacher, subjectsString, email],
@@ -344,30 +362,51 @@ module.exports = {
     },
     updateTeacher: (teacherManageData) => {
         const { name, email, teacherId, classTeacher, subjects } = teacherManageData;
-      
+
         return new Promise((resolve, reject) => {
-          // Assuming you're using a database query here to update teacher data
-          db.query(
-            'UPDATE teachers SET teacher_id = ?, class_teacher = ?, subjects = ? WHERE email = ?',
-            [
-              teacherId,  // teacher_id to update
-              classTeacher,  // class_teacher to update
-              subjects.join(','),  // subjects as comma-separated string
-              email  // identifying teacher by email
-            ],
-            (err, result) => {
-              if (err) {
-                console.log(err);
-                
-                return reject(new Error(err.sqlMessage)); // Passing SQL error message
-              } else {
-                resolve({ result, status: true }); // If successful
-              }
-            }
-          );
+            // Assuming you're using a database query here to update teacher data
+            db.query(
+                'UPDATE teachers SET teacher_id = ?, class_teacher = ?, subjects = ? WHERE email = ?',
+                [
+                    teacherId,  // teacher_id to update
+                    classTeacher,  // class_teacher to update
+                    subjects.join(','),  // subjects as comma-separated string
+                    email  // identifying teacher by email
+                ],
+                (err, result) => {
+                    if (err) {
+                        console.log(err);
+
+                        return reject(new Error(err.sqlMessage)); // Passing SQL error message
+                    } else {
+                        resolve({ result, status: true }); // If successful
+                    }
+                }
+            );
         });
-      }
-      
-      
+    },
+    viewAllManagedTeachers: () => {
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM teachers WHERE isManaged = 1';
+
+            db.query(query, (err, result) => {
+                if (err) {
+                    console.error("Error fetching managed teachers:", err);
+                    return reject(new Error(err.sqlMessage));
+                }
+
+                // Map the result to extract only the email addresses
+                // const emails = result.map(row => row.email);
+                // console.log("Managed Teachers Emails:", emails); // Debug log
+
+                resolve(result);
+            });
+        });
+    },
+  
+
+
+
+
 }
 

@@ -1,10 +1,16 @@
-<section>
-    <div class="container  py-4 border bg-light">
-        <h2 class="text-center mb-5 text-primary">Create Timetable</h2>
 
+<section>
+    <div class="container py-4 border bg-light">
+        <h2 class="text-center mb-5 text-primary">Create Timetable</h2>
+        <!-- Display Flash Success Message -->
+    {{#if day}}
+      <div class="{{year}}alert alert-success">
+        {{year}}{{day}}
+      </div>
+    {{/if}}
         <!-- Timetable Creation Form -->
         <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-8"> <!-- Increased the width here -->
+            <div class="col-md-10 col-lg-8">
                 <form action="/hod/add-timetable" method="POST">
                     <!-- Class Selection -->
                     <div class="mb-4">
@@ -14,7 +20,6 @@
                             <option value="1">1 Year</option>
                             <option value="2">2 Year</option>
                             <option value="3">3 Year</option>
-                            <!-- <option value="4">4 Year</option> -->
                         </select>
                     </div>
 
@@ -36,46 +41,43 @@
                         <div class="time-slot mb-4 border p-4 rounded shadow-sm">
                             <h5 class="text-secondary">Time Slot 1</h5>
 
-                            <!-- Time Slot Dropdown -->
+                            <!-- Time Slot Input -->
                             <div class="mb-3">
-                                <select class="form-select custom-select" name="timeSlot" required>
-                                    <option value="">Select a time slot...</option>
-                                    <option value="9:30-10:30">9:30 AM - 10:30 AM</option>
-                                    <option value="10:30-11:25">10:30 AM - 11:25 AM</option>
-                                    <option value="11:35-12:30">11:35 AM - 12:30 PM</option>
-                                    <option value="1:30-2:30">1:30 PM - 2:30 PM</option>
-                                    <option value="2:30-3:30">2:30 PM - 3:30 PM</option>
-                                </select>
+                                <label for="timeSlot1" class="form-label">Time Slot</label>
+                                <input type="text" id="timeSlot1" class="form-control custom-input" name="timeslots"
+                                    placeholder="eg: 9:30 AM - 10:00 AM" required>
                             </div>
 
                             <!-- Teacher Selection -->
                             <div class="mb-3">
                                 <label class="form-label fs-5">Teacher</label>
-                                <select class="form-select custom-select" name="teacher" required>
+                                <select id="teacherDropdown" class="form-select custom-select" name="teachers" required>
                                     <option value="">Choose a teacher...</option>
                                     {{#each teachersInfo}}
-                                     <option value="{{this.name}}">{{this.name}}</option>
-                                    {{!-- <option value="aswathi">Aswathi</option>
-                                    <option value="aswani">Aswani</option>
-                                    <option value="sajith">Sajith</option>
-                                    <option value="jency">Jency</option>
-                                    <option value="keerthana">Keerthana</option> --}}
+                                    <option value="{{this.name}}" data-subjects="{{this.subjects}}">{{this.name}}
+                                    </option>
                                     {{/each}}
                                 </select>
                             </div>
 
-                            <!-- Subject Input -->
+                            <!-- Subject Dropdown -->
                             <div class="mb-3">
                                 <label for="subject" class="form-label fs-5">Subject</label>
-                                <input type="text" class="form-control custom-input" name="subject" placeholder="Enter subject name" required>
+                                <select id="subjectDropdown" class="form-select custom-select" name="subjects" required>
+                                    <option value="">Choose a subject...</option>
+                                </select>
                             </div>
+
+
                         </div>
                     </div>
 
                     <!-- Add/Remove Buttons -->
                     <div class="text-center mb-4">
-                        <button type="button" class="btn btn-outline-success me-3" id="addTimeSlot">Add More Time Slots</button>
-                        <button type="button" class="btn btn-outline-danger" id="removeTimeSlot">Remove Last Slot</button>
+                        <button type="button" class="btn btn-outline-success me-3" id="addTimeSlot">Add More Time
+                            Slots</button>
+                        <button type="button" class="btn btn-outline-danger" id="removeTimeSlot">Remove Last
+                            Slot</button>
                     </div>
 
                     <!-- Submit Button -->
@@ -87,68 +89,104 @@
         </div>
     </div>
 </section>
-<style>
-    .custom-select {
-    max-width: 100%; /* Ensure the select elements don’t expand too wide */
-}
 
-.custom-input {
-    max-width: 100%; /* Reduce width of input fields */
-}
-
-</style>
 
 <script>
-    document.getElementById('addTimeSlot').addEventListener('click', function () {
-        const timeSlotSection = document.getElementById('timeSlotSection');
-        const timeSlotCount = timeSlotSection.getElementsByClassName('time-slot').length + 1;
-        if(timeSlotCount < 6){
+    // Get references to the existing dropdowns
+const teacherDropdown = document.getElementById('teacherDropdown');
+const subjectDropdown = document.getElementById('subjectDropdown');
 
-            const newTimeSlot = document.createElement('div');
-            newTimeSlot.className = 'time-slot mb-3 border p-3';
-            newTimeSlot.innerHTML = `
-                <h5>Time Slot ${timeSlotCount}</h5>
-                <div class="mb-3">
-                    {{!-- <label class="form-label">Time Slot</label> --}}
-                    <select class="form-select" name="timeSlot" required>
-                        <option value="">Select a time slot...</option>
-                        <option value="9:30-10:30">9:30 AM - 10:30 AM</option>
-                        <option value="10:30-11:25">10:30 AM - 11:25 AM</option>
-                        <option value="11:35-12:30">11:35 AM - 12:30 PM</option>
-                        <option value="1:30-2:30">1:30 PM - 2:30 PM</option>
-                        <option value="2:30-3:30">2:30 PM - 3:30 PM</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Teacher</label>
-                    <select class="form-select" name="teacher" required>
-                        <option value="">Choose a teacher...</option>
-                       {{#each teachersInfo}}
-                                     <option value="{{this.name}}">{{this.name}}</option>
-                                 
-                                    {{/each}}
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="subject" class="form-label">Subject</label>
-                    <input type="text" class="form-control" name="subject" placeholder="Enter subject name" required>
-                </div>
-            `;
-
-            timeSlotSection.appendChild(newTimeSlot);
-        } else {
-            alert('You have already used five time slots.');
-        }
+// Listen for changes on the teacher dropdown for the first time slot
+if (teacherDropdown) {
+    teacherDropdown.addEventListener('change', function () {
+        updateSubjectDropdown(subjectDropdown, teacherDropdown);
     });
+}
 
-    document.getElementById('removeTimeSlot').addEventListener('click', function () {
-        const timeSlotSection = document.getElementById('timeSlotSection');
-        const timeSlots = timeSlotSection.getElementsByClassName('time-slot');
-        if (timeSlots.length > 1) {
-            timeSlotSection.removeChild(timeSlots[timeSlots.length - 1]);
-        } else {
-            alert('You must have at least one time slot.');
-        }
-    });
+// Function to update the subject dropdown based on selected teacher
+function updateSubjectDropdown(subjectDropdown, teacherDropdown) {
+    // Clear the subject dropdown
+    subjectDropdown.innerHTML = '<option value="">Choose a subject...</option>';
+
+    // Get the selected teacher's subjects
+    const selectedTeacher = teacherDropdown.options[teacherDropdown.selectedIndex];
+    const subjects = selectedTeacher.getAttribute('data-subjects');
+
+    if (subjects) {
+        // Split the subjects and populate the dropdown
+        const subjectsArray = subjects.split(','); // Assumes subjects are comma-separated
+        subjectsArray.forEach((subject) => {
+            const option = document.createElement('option');
+            option.value = subject.trim();
+            option.textContent = subject.trim();
+            subjectDropdown.appendChild(option);
+        });
+    }
+}
+
+// Add Time Slot
+document.getElementById("addTimeSlot").addEventListener("click", function () {
+    const timeSlotSection = document.getElementById("timeSlotSection");
+    const timeSlotCount = timeSlotSection.getElementsByClassName("time-slot").length + 1;
+
+  //  if (timeSlotCount <= 5) {
+        const newTimeSlot = document.createElement("div");
+        newTimeSlot.className = "time-slot mb-4 border p-4 rounded shadow-sm";
+        newTimeSlot.innerHTML = `
+            <h5 class="text-secondary">Time Slot ${timeSlotCount}</h5>
+            <div class="mb-3">
+                <label for="timeSlot${timeSlotCount}" class="form-label">Time Slot</label>
+                <input type="text" id="timeSlot${timeSlotCount}" class="form-control custom-input" name="timeslots" placeholder="eg: 9:30 AM - 10:00 AM" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fs-5">Teacher</label>
+                <select class="teacher-dropdown form-select custom-select" name="teachers" required>
+                    <option value="">Choose a teacher...</option>
+                    {{#each teachersInfo}}
+                    <option value="{{this.name}}" data-subjects="{{this.subjects}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="subject" class="form-label fs-5">Subject</label>
+                <select class="subject-dropdown form-select custom-select" name="subjects" required>
+                    <option value="">Choose a subject...</option>
+                </select>
+            </div>
+        `;
+        timeSlotSection.appendChild(newTimeSlot);
+
+        // Get the newly added dropdowns
+        const newTeacherDropdown = newTimeSlot.querySelector(".teacher-dropdown");
+        const newSubjectDropdown = newTimeSlot.querySelector(".subject-dropdown");
+
+        // Add event listener for teacher dropdown in the new time slot
+        newTeacherDropdown.addEventListener("change", function () {
+            updateSubjectDropdown(newSubjectDropdown, newTeacherDropdown);
+        });
+    /*} else {
+        alert("You can only add up to 5 time slots.");
+    }*/
+});
+
+// Remove Time Slot
+document.getElementById("removeTimeSlot").addEventListener("click", function () {
+    const timeSlotSection = document.getElementById("timeSlotSection");
+    const timeSlots = timeSlotSection.getElementsByClassName("time-slot");
+    if (timeSlots.length > 1) {
+        timeSlotSection.removeChild(timeSlots[timeSlots.length - 1]);
+    } else {
+        alert("You must have at least one time slot.");
+    }
+});
+
+
+
 </script>
+
+<style>
+    .custom-select,
+    .custom-input {
+        max-width: 100%;
+    }
+</style>
