@@ -66,7 +66,7 @@ router.post('/signup',(req,res)=>{
 
 router.get('/logout', (req, res) => {
   req.session.destroy()
-  res.redirect('/studetn')
+  res.redirect('/student')
 })
 router.get('/student',verifyLogin,(req,res)=>{
   // console.log(req.session.student[0]);
