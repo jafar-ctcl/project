@@ -1,4 +1,49 @@
-<div class="container mt-5">
+<div class="container py-4 ">
+  {{#if students}}
+  <h2 class="text-center">{{monthName}}</h2>
+
+  <table class="attendance-table">
+    <thead>
+      <tr>
+        <th>Student Name</th>
+        {{#each daysInMonth}}
+          <th>{{this}}</th>
+        {{/each}}
+      </tr>
+    </thead>
+    <tbody>
+      {{#each students}}
+        <tr>
+          <td>{{this.name}}</td>
+          {{#each this.attendance}}
+            <td>{{this}}</td>
+          {{/each}}
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <div class="no-attendance-message">
+    <h1>No Attendance Records for {{monthName}} {{year}} </h1>
+    <p>No attendance has been marked for this month. Please check back later or add the records.</p>
+  </div>
+{{/if}}
+
+  {{!-- {{/else}} --}}
+ <div class="card shadow-lg p-4 mb-5 mt-5">
+      <h4 class="text-center mb-4 text-primary">Filter Attendance</h4>
+      <form id="attendanceForm" method="POST" action="/teacher/monthly-attendance">
+        <!-- Year Selection -->
+       <div class="mb-3">
+  <label for="attendanceYear" class="form-label">Select Year</label>
+  <select class="form-select" id="attendanceYear" name="year" required>
+    <option value="" disabled selected>Choose a Year...</option>
+    {{#each availableYears}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+</div>
+{{!-- <div class="container mt-5">
   {{#each attendanceData}}
 
     <h3>{{year}} </h3>
@@ -28,7 +73,7 @@
       </table>
     {{/each}}
   {{/each}}
-</div>
+</div> --}}
 
 {{!-- <div class="container mt-5">
   {{#each attendanceData}}
