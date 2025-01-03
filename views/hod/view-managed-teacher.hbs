@@ -29,6 +29,7 @@
                 </thead>
                 <tbody>
                   <!-- Teacher's Information Row -->
+                  
                   <tr>
                     <td>{{teacherData.name}}</td>
                     <td>{{teacherData.email}}</td>
@@ -50,12 +51,11 @@
         </div>
       </div>
     </div>
-
-    <!-- View Teachers Button -->
-    <div class=" text-center mt-5">
-      <a href="/hod/view-teachers" class="btn btn-primary mb-3">Go back</a>
-    </div>
-
+ <!-- View Teachers Button -->
+<div class="text-center mt-5">
+  
+    <a href="/hod/view-teachers" class="btn btn-primary mb-3 mx-2">Teachers list</a>
+</div>
 
 <!-- Modal for Teacher Details -->
 <div class="modal fade" id="teacherModal" tabindex="-1" aria-labelledby="teacherModalLabel" aria-hidden="true">
@@ -91,7 +91,7 @@
             <div class="col-md-6 mb-3">
               <label for="classTeacher" class="form-label">Class Teacher</label>
               <select class="form-select" id="classTeacher">
-                <option value="" {{#if (eq teacherData.class_teacher 0)}}selected{{/if}}>Not class teacher</option>
+                <option value="" {{#if (eq teacherData.class_teacher NULL)}}selected{{/if}}>Not class teacher</option>
                 <option value="1" {{#if (eq teacherData.class_teacher 1)}}selected{{/if}}>1st Year</option>
                 <option value="2" {{#if (eq teacherData.class_teacher 2)}}selected{{/if}}>2nd Year</option>
                 <option value="3" {{#if (eq teacherData.class_teacher 3)}}selected{{/if}}>3rd Year</option>

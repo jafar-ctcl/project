@@ -8,12 +8,12 @@
           <!-- Table Header -->
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="fw-bold text-dark">Teachers List</h4>
-            <a href="/view-all-teachers" class="btn btn-outline-info btn-lg shadow-lg hover-effect rounded-0">
-              <i class="bi bi-person-lines-fill me-2"></i> View All Teachers
+            <a href="/hod/view-all-teachers" class="btn btn-outline-info btn-lg shadow-lg hover-effect rounded-0">
+              <i class="bi bi-person-lines-fill me-2"></i> Manage All Teachers
             </a>
           </div>
 
-          <table class="table table-striped table-bordered shadow-lg">
+          <table class="table table-striped table-bordered ">
             <thead>
               <tr>
                 <th>Full Name</th>
@@ -59,11 +59,10 @@
         <p class="card-text">Currently, there are no teachers available for management. Please approve teachers to begin managing them.</p>
       </div>
     </div>
-
-    <!-- Action Button outside Card -->
-    <div class="text-center mt-4">
-      <a href="/hod/approve-teacher" class="btn btn-info btn-lg">Approve Teachers</a>
-    </div>
+<!-- Action Button outside Card -->
+<div class="text-center mt-4">
+    <a href="/hod/approve-teacher" class="btn btn-primary btn-lg custom-btn">Approve Teachers</a>
+</div>
   {{/if}}
 </section>
 <style>
@@ -84,13 +83,13 @@
   background-color: #e0f7fa; /* Light Blue */
   border-radius: 12px;
   padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
 }
 
   /* Table Styling */
   .table {
     border-radius: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #c8d6e5;
     padding: 20px;
   }
 
@@ -104,9 +103,10 @@
     background-color: #f9f9f9;
   }
 
+  
   .table-bordered th, .table-bordered td {
-    border: 1px solid #ddd;
-  }
+  border: 1.05px solid #c8d6e5; /* Light blue-gray for a cleaner look */
+}
 
   h4 {
     font-size: 1.8rem;
@@ -150,15 +150,6 @@
     font-size: 16px;  /* Reduced font size */
   }
 
-  .btn-info {
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-  }
-
-  .btn-info:hover {
-    background-color: #138496;
-    border-color: #138496;
-  }
 
   .btn-outline-info:hover {
     background-color: #138496;
@@ -166,9 +157,7 @@
     border-color: #138496;
   }
 
-  .hover-effect:hover {
-    background-color: #138496 !important;
-  }
+  
 
   .shadow-lg {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
