@@ -8,8 +8,9 @@
           <th scope="col">Full Name</th>
           {{!-- <th scope="col">Date of Birth</th> --}}
           <th scope="col">Gender</th>
-          {{!-- <th scope="col">Course</th> --}}
-          <th scope="col">Year</th>
+          <th scope="col">Course</th>
+          {{!-- <th scope="col">Year</th> --}}
+          <th scope="col">Semester</th>
           <th scope="col">Email</th>
           {{!-- <th scope="col">Password</th> --}}
           <th scope="col">Phone</th>
@@ -25,8 +26,9 @@
         <td>{{name}}</td>
         {{!-- <td>{{dob}}</td> --}}
         <td>{{gender}}</td>
-        {{!-- <td>{{course}}</td> --}}
-        <td>{{year}}</td>
+        <td>{{course}}</td>
+        {{!-- <td>{{year}}</td> --}}
+        <td>{{semester}}</td>
         <td>{{email}}</td>
         {{!-- <td>{{password}}</td> --}}
         <td>{{phone}}</td>
@@ -46,3 +48,140 @@
     </table>
   </div>
 </section>
+<style>
+  .container {
+    padding: 20px 40px;
+  }
+
+  /* Section background and border radius styling */
+  /*.section-background {
+    background-color: #f0f8ff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+*/
+
+  .section-background {
+  background-color: #e0f7fa; /* Light Blue */
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+
+  /* Table Styling */
+  .table {
+    border-radius: 8px;
+    border: 1px solid #c8d6e5;
+    padding: 20px;
+  }
+
+  .table th, .table td {
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
+
+  
+  .table-bordered th, .table-bordered td {
+  border: 1.05px solid #c8d6e5; /* Light blue-gray for a cleaner look */
+}
+
+  h4 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  /* Hover effect for table rows */
+  .table tbody tr:hover {
+    background-color: #17a2b8; /* Hover background color */
+    color: #fff; /* Text color on hover */
+  }
+
+  /* Add animation for new rows */
+  .new-row {
+    animation: fadeInRow 2s ease-in-out forwards;
+  }
+
+  /* Animation for the background color change */
+  @keyframes fadeInRow {
+    0% {
+      background-color: #fff;
+    }
+    50% {
+      background-color: #d1ecf1; /* Light blue color for "new" effect */
+    }
+    100% {
+      background-color: #f9f9f9; /* Final background color (similar to the odd row) */
+    }
+  }
+
+  /* Button Styling for View All Teachers and Approve Teachers */
+  .btn-lg {
+    padding: 8px 20px;  /* Reduced padding */
+    font-size: 16px; /* Reduced font size */
+  }
+
+  /* Specific button styling for View All Teachers */
+  .btn-outline-info {
+    padding: 8px 20px;  /* Reduced padding for this button */
+    font-size: 16px;  /* Reduced font size */
+  }
+
+
+  .btn-outline-info:hover {
+    background-color: #138496;
+    color: #fff;
+    border-color: #138496;
+  }
+
+  
+
+  .shadow-lg {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Icon Styling */
+  .me-2 {
+    margin-right: 8px;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .btn-lg {
+      font-size: 14px;
+      padding: 10px 20px;
+    }
+
+    .container {
+      padding: 15px;
+    }
+
+    .btn-primary {
+      padding: 12px 25px;
+      font-size: 16px;
+    }
+  }
+
+  /* Card styling */
+  .card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-select {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-control {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+</style>
