@@ -15,7 +15,7 @@
 
 </head>
 <style>
-    #wrapper {
+     #wrapper {
         overflow-x: hidden;
     }
 
@@ -30,7 +30,7 @@
         font-size: 1.2rem;
     }
 
-    #sidebar-wrapper .list-group {
+    #sidebar-wrapper .accordion {
         width: 14rem;
     }
 
@@ -55,55 +55,79 @@
         body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
             margin-left: -14rem;
         }
+         /* Styling for the links inside the accordion */
+  .accordion-item ul li {
+    margin-bottom: 10px;
+  }
+
+  /* Link styling */
+  .accordion-item ul li a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 16px;
+    padding: 5px 0;
+    display: block;
+    transition: all 0.3s ease;
+  }
+
+  /* Hover effect for the links */
+  .accordion-item ul li a:hover {
+    color: #0056b3;
+    border-bottom: 2px solid #0056b3; /* Adds an underline */
+  }
+
+  /* Adding left arrow on each list item */
+  .accordion-item ul li a::before {
+    content: "\2192"; /* Right arrow (→) */
+    margin-right: 10px;
+    font-size: 18px;
+    color: #007bff;
+  }
+
+  /* Accordion button styling */
+  .accordion-button {
+    font-weight: bold;
+    padding: 1rem;
+  }
+
+  .accordion-button:hover {
+    background-color: #f8f9fa;
+  }
+  
+ 
+
     }
 </style>
-
 <body>
+    <!-- Dynamic Header Section -->
     {{#if hod}}
-    {{>hod-header}}
-
+        {{>hod-header}}
     {{/if}}
     {{#if student}}
-    {{>student-header}}
+        {{>student-header}}
+    {{/if}}
+    {{#if teacher}}
+        {{>teacher-header}}
     {{/if}}
 
-    {{#if teacher}}
-    {{>teacher-header}}
-    {{/if}}
+    <!-- Dynamic Body Content -->
     {{{body}}}
 
-
-
-    <!-- Bootstrap JS (at the bottom for faster page load) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    <!-- Bootstrap and Other Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
             crossorigin="anonymous"></script>
-    <!-- Core theme JS-->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <!-- Bootstrap core JS-->
     <script>
-
-        window.addEventListener('DOMContentLoaded', event => {
-
-            // Toggle the side navigation
-            const sidebarToggle = document.body.querySelector('#sidebarToggle');
+        document.addEventListener("DOMContentLoaded", () => {
+            const sidebarToggle = document.querySelector("#sidebarToggle");
             if (sidebarToggle) {
-                // Uncomment Below to persist sidebar toggle between refreshes
-                // if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
-                //     document.body.classList.toggle('sb-sidenav-toggled');
-                // }
-                sidebarToggle.addEventListener('click', event => {
-                    event.preventDefault();
-                    document.body.classList.toggle('sb-sidenav-toggled');
-                    localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+                sidebarToggle.addEventListener("click", () => {
+                    document.body.classList.toggle("sb-sidenav-toggled");
                 });
             }
-
         });
     </script>
-
-
-
 </body>
 
 </html>
