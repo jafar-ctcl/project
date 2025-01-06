@@ -17,7 +17,7 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Class Teacher</th>
-                                    <th>Teacher ID</th>
+                                    <th>class</th>
                                     <th>Subjects</th>
                                     <th>Action</th>
                                 </tr>
@@ -28,8 +28,15 @@
                                 <tr>
                                     <td>{{this.name}}</td>
                                     <td>{{this.email}}</td>
-                                    <td>{{this.class_teacher}}</td>
-                                    <td>{{this.teacher_id}}</td>
+                                   {{#if (eq this.class_teacher 0)}}
+                                   <td></td>
+                                   {{else}}
+                                    <td>
+                                      {{this.class_teacher}}
+                                    </td>
+                                   {{/if}}
+                                    {{!-- <td>{{this.class_teacher}}</td> --}}
+                                    <td>{{this.course}}</td>
                                     <td>{{this.subjects}}</td>
                                     <td>
                                         <a href="/hod/view-managed-teacher/{{this.email}}"

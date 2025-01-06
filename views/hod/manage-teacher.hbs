@@ -27,27 +27,35 @@
           </div>
         </div>
 
-        <!-- Teacher ID and Class Teacher -->
+        <!-- Course and Semester -->
         <div class="row mb-4">
           <div class="col-md-6">
-            <label for="teacherId" class="form-label fw-bold text-secondary">Teacher ID</label>
-            <input type="text" id="teacherId" name="teacherId" class="form-control border-secondary bg-light"
-              value="" required/>
+            <label for="course" class="form-label fw-bold text-secondary">Course</label>
+            <select id="course" name="course" class="form-select border-secondary bg-light">
+              <option value="">Choose a course</option>
+              <option value="BCA">BCA</option>
+              <option value="CS">CS</option>
+            </select>
           </div>
+
           <div class="col-md-6">
             <label for="classTeacher" class="form-label fw-bold text-secondary">Class Teacher</label>
-            <select id="classTeacher" name="classTeacher" class="form-select border-secondary bg-light" >
-              <option value="">Choose class teacher</option>
-              <option value="1">1st year</option>
-              <option value="2">2nd year</option>
-              <option value="3">3rd year</option>
+            <select id="classTeacher" name="classTeacher" class="form-select border-secondary bg-light">
+              <option value="">Choose Semester</option>
+              <option value="1">1st Sem</option>
+              <option value="2">2nd Sem</option>
+              <option value="3">3rd Sem</option>
+              <option value="4">4th Sem</option>
+              <option value="5">5th Sem</option>
+              <option value="6">6th Sem</option>
             </select>
           </div>
         </div>
 
-        <!-- Subjects -->
-        <div class="row mb-4">
-          <div class="col-md-12">
+       
+         <!-- Subjects -->
+        <div class="row mb-4 ">
+          <div class="col-md-12 ">
             <label for="subjects" class="form-label fw-bold text-secondary">Subjects</label>
             <div id="subjectInputs">
               <div class="input-group mb-2">
@@ -62,8 +70,8 @@
         </div>
 
         <!-- Submit Button -->
-        <div class="text-center">
-          <button type="submit" class="btn btn-success px-4">
+        <div class="text-center mb-4">
+          <button type="submit" class="btn btn-success">
             Save Changes
           </button>
         </div>
@@ -71,6 +79,7 @@
     </div>
   </div>
 </section>
+
 
 <script>
   // Function to add new subject input fields dynamically

@@ -22,24 +22,29 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Class Teacher</th>
-                    <th>Teacher ID</th>
+                    <th>Course</th>
                     <th>Subjects</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <!-- Teacher's Information Row -->
-                  
+
                   <tr>
                     <td>{{teacherData.name}}</td>
                     <td>{{teacherData.email}}</td>
+                    {{#if (eq teacherData.class_teacher 0)}}
+                    <td></td>
+                    {{else}}
                     <td>{{teacherData.class_teacher}}</td>
-                    <td>{{teacherData.teacher_id}}</td>
+
+                    {{/if}}
+                    <td>{{teacherData.course}}</td>
                     <td>{{teacherData.subjects}}</td>
                     <td>
                       <button class="btn btn-outline-primary btn-sm shadow-lg" data-bs-toggle="modal"
                         data-bs-target="#teacherModal"
-                        onclick="editTeacherDetails('{{teacherData.teacher_id}}', '{{teacherData.name}}', '{{teacherData.email}}', '{{teacherData.class_teacher}}', {{subjects}})">
+                        onclick="editTeacherDetails('{{teacherData.course}}', '{{teacherData.name}}', '{{teacherData.email}}', '{{teacherData.class_teacher}}', {{subjects}})">
                         <i class="bi bi-pencil me-2"></i>Edit
                       </button>
                     </td>
@@ -51,87 +56,95 @@
         </div>
       </div>
     </div>
- <!-- View Teachers Button -->
-<div class="text-center mt-5">
-  
-    <a href="/hod/view-teachers" class="btn btn-primary mb-3 mx-2">Teachers list</a>
-</div>
+    <!-- View Teachers Button -->
+    <div class="text-center mt-5">
 
-<!-- Modal for Teacher Details -->
-<div class="modal fade" id="teacherModal" tabindex="-1" aria-labelledby="teacherModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg"> <!-- Increased modal width -->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="teacherModalLabel">Manage Teacher Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="error-message" class="alert alert-danger d-none" role="alert">
-          <!-- Error message will appear here -->
-        </div>
-        <form id="teacherForm">
-          <!-- Teacher Name and Email Row -->
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="teacherName" class="form-label">Name</label>
-              <input type="text" class="form-control" id="teacherName" required value="{{teacherData.name}}">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="teacherEmail" class="form-label">Email</label>
-              <input type="email" class="form-control" id="teacherEmail" value="{{teacherData.email}}" readonly>
-            </div>
+      <a href="/hod/view-teachers" class="btn btn-primary mb-3 mx-2">Teachers list</a>
+    </div>
+
+    <!-- Modal for Teacher Details -->
+    <div class="modal fade" id="teacherModal" tabindex="-1" aria-labelledby="teacherModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg"> <!-- Increased modal width -->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="teacherModalLabel">Manage Teacher Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-
-          <!-- Teacher ID and Class Teacher Row -->
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="teacherId" class="form-label">Teacher ID</label>
-              <input type="text" class="form-control" id="teacherId" value="{{teacherData.teacher_id}}">
+          <div class="modal-body">
+            <div id="error-message" class="alert alert-danger d-none" role="alert">
+              <!-- Error message will appear here -->
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="classTeacher" class="form-label">Class Teacher</label>
-              <select class="form-select" id="classTeacher">
-                <option value="" {{#if (eq teacherData.class_teacher NULL)}}selected{{/if}}>Not class teacher</option>
-                <option value="1" {{#if (eq teacherData.class_teacher 1)}}selected{{/if}}>1st Year</option>
-                <option value="2" {{#if (eq teacherData.class_teacher 2)}}selected{{/if}}>2nd Year</option>
-                <option value="3" {{#if (eq teacherData.class_teacher 3)}}selected{{/if}}>3rd Year</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Subjects Row -->
-          <div class="row">
-            <div class="col-md-12 mb-3">
-              <label for="subjectsContainer" class="form-label">Subjects</label>
-              <div id="subjectsContainer">
-                {{#each subjects}}
-                <div class="input-group mb-2">
-                  <input
-                    type="text"
-                    name="subjects[]"
-                    class="form-control border-secondary bg-light"
-                    value="{{this}}"
-                    placeholder="Enter subject"
-                    required
-                  />
-                  <button type="button" class="btn btn-danger" onclick="removeSubjectInput(this)">Remove</button>
+            <form id="teacherForm">
+              <!-- Teacher Name and Email Row -->
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="teacherName" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="teacherName" required value="{{teacherData.name}}">
                 </div>
-                {{/each}}
+                <div class="col-md-6 mb-3">
+                  <label for="teacherEmail" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="teacherEmail" value="{{teacherData.email}}" readonly>
+                </div>
               </div>
-              <button type="button" class="btn btn-primary" onclick="addSubjectInput()">Add Subject</button>
-            </div>
-          </div>
 
-          <!-- Modal Footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-success" id="saveTeacherButton" onclick="saveTeacher()">Save</button>
+              <!-- Teacher ID and Class Teacher Row -->
+              <div class="row">
+                {{!-- <div class="col-md-6 mb-3">
+                  <label for="teacherId" class="form-label">Teacher ID</label>
+                  <input type="text" class="form-control" id="teacherId" value="{{teacherData.teacher_id}}">
+                </div> --}}
+                <div class="col-md-6 mb-3">
+                  <label for="course" class="form-label fw-bold text-secondary">Course</label>
+                  <select id="course" name="course" class="form-select border-secondary bg-light">
+                    <option value="">Choose a class</option>
+                    <option value="BCA" {{#if (eq teacherData.course "BCA" )}}selected{{/if}}>BCA</option>
+                    <option value="CS" {{#if (eq teacherData.course "CS" )}}selected{{/if}}>CS</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="classTeacher" class="form-label">Class Teacher</label>
+                  <select class="form-select" id="classTeacher" name="classTeacher">
+                    <option value="">Not class teacher</option>
+                    <option value="1" {{#if (eq teacherData.class_teacher "1" )}}selected{{/if}}>1st Sem</option>
+                    <option value="2" {{#if (eq teacherData.class_teacher "2" )}}selected{{/if}}>2nd Sem</option>
+                    <option value="3" {{#if (eq teacherData.class_teacher "3" )}}selected{{/if}}>3rd Sem</option>
+                    <option value="4" {{#if (eq teacherData.class_teacher "4" )}}selected{{/if}}>4th Sem</option>
+                    <option value="5" {{#if (eq teacherData.class_teacher "5" )}}selected{{/if}}>5th Sem</option>
+                    <option value="6" {{#if (eq teacherData.class_teacher "6" )}}selected{{/if}}>6th Sem</option>
+                  </select>
+                </div>
+
+              </div>
+
+              <!-- Subjects Row -->
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <label for="subjectsContainer" class="form-label">Subjects</label>
+                  <div id="subjectsContainer">
+                    {{#each subjects}}
+                    <div class="input-group mb-2">
+                      <input type="text" name="subjects[]" class="form-control border-secondary bg-light"
+                        value="{{this}}" placeholder="Enter subject" required />
+                      <button type="button" class="btn btn-danger" onclick="removeSubjectInput(this)">Remove</button>
+                    </div>
+                    {{/each}}
+                  </div>
+                  <button type="button" class="btn btn-primary" onclick="addSubjectInput()">Add Subject</button>
+                </div>
+              </div>
+
+              <!-- Modal Footer -->
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="saveTeacherButton"
+                  onclick="saveTeacher()">Save</button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
 
 
@@ -153,7 +166,7 @@
     subjectsContainer.innerHTML = '';
 
     // If you want to reset the teacher ID field as well, you can do so here:
-    document.getElementById('teacherId').value = '';
+    document.getElementById('course').value = '';
   }
 
   function addSubjectInput() {
@@ -193,13 +206,14 @@
     }
   }
 
-  function editTeacherDetails(teacherId, name, email, classTeacher, subjects) {
+  function editTeacherDetails(course, name, email, classTeacher, subjects) {
     // Ensure subjects is an array
     if (!Array.isArray(subjects)) {
       subjects = [];
     }
 
-    document.getElementById('teacherId').value = teacherId;
+    //  document.getElementById('teacherId').value = teacherId;
+    document.getElementById('course').value = course;
     document.getElementById('teacherName').value = name;
     document.getElementById('teacherEmail').value = email;
     document.getElementById('classTeacher').value = classTeacher;
@@ -222,16 +236,15 @@
   }
   function saveTeacher() {
     const email = document.getElementById('teacherEmail').value.trim();
-    const teacherId = document.getElementById('teacherId').value.trim();
+    const course = document.getElementById('course').value.trim();
     const classTeacher = document.getElementById('classTeacher').value;
     const subjects = Array.from(
       document.querySelectorAll('input[name="subjects[]"]')
     ).map(input => input.value.trim());
-
-    if (!teacherId || !email || subjects.some(subject => !subject)) {
-      alert('Please fill all fields before saving.');
-      return;
-    }
+  //  if (!course || !email || subjects.some(subject => !subject)) {
+    //  alert('Please fill all fields before saving.');
+      //return;
+    //}
 
     const saveButton = document.getElementById('saveTeacherButton');
     saveButton.disabled = true;
@@ -247,7 +260,7 @@
       contentType: 'application/json',
       data: JSON.stringify({
         email: email,
-        teacherId: teacherId,
+        course: course,
         classTeacher: classTeacher,
         subjects: subjects,
       }),
@@ -284,14 +297,16 @@
 
 <!-- Styling -->
 <style>
-   /* Set background color for the entire page */
- 
+  /* Set background color for the entire page */
+
   /* Container Styling */
   .container {
-   padding: 25px;
-    background-color: #e0f7fa; /* Keep the container background white */
+    padding: 25px;
+    background-color: #e0f7fa;
+    /* Keep the container background white */
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for container */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for container */
   }
 
   /* Home Link Styling */
@@ -320,7 +335,8 @@
     border-radius: 8px;
     border: 1px solid #ddd;
     padding: 20px;
-    background-color: #ffffff; /* Keep the table background white */
+    background-color: #ffffff;
+    /* Keep the table background white */
   }
 
   .table th,
@@ -350,7 +366,7 @@
     border-color: #0056b3;
   }
 
-  
+
   /* Increase modal width */
   .modal-lg {
     max-width: 900px;
