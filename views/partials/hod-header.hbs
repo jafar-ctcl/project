@@ -1,86 +1,106 @@
+  
+
 <div class="d-flex" id="wrapper">
-    <!-- Sidebar-->
-    <div class="border-end bg-white" id="sidebar-wrapper">
-        <div class="sidebar-heading border-bottom bg-light fw-bold"><a href="/hod"
-                style="text-decoration: none;">ADMIN</a></div>
-        <div class="list-group list-group-flush">
-            {{!-- <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Dashboard</a>
-            --}}
-            {{!--
-            <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
-                <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Student</a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="/hod/add-student">Add student</a>
-                    <a class="dropdown-item" href="/hod/view-student">View student</a>
-                </div>
-            </li> --}}
-
-            <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
-                <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Teacher</a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="/hod/approve-teacher">approve teacher</a>
-                    <a class="dropdown-item" href="/hod/view-teachers">View teacher</a>
-                </div>
-            </li>
-             {{!-- <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item ">
-                <a class=" nav-link " href="/hod/approve-teacher">Teacher</a>
-
-            </li> --}}
-            <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
-                <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Student</a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="/hod/approve-students">Approve student</a>
-                    <a class="dropdown-item" href="/hod/view-students">View student</a>
-                </div>
-            </li>
-
-            <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
-                <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Timetable</a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="/hod/add-timetable">Add Timetable</a>
-                    <a class="dropdown-item" href="/hod/view-timetable">View Timetable</a>
-                </div>
-            </li>
-            <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item dropdown">
-                <a class=" nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Event</a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="/hod/add-event">Add Event</a>
-                    <a class="dropdown-item" href="/hod/view-event">View Event</a>
-                </div>
-            </li>
-            <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item ">
-                <a class=" nav-link " href="/hod/view-mark">Mark</a>
-
-            </li>
-            {{!-- <li class="list-group-item list-group-item-action list-group-item-light p-3 nav-item ">
-                <a class=" nav-link " href="/hod/add-notice">Notice bord</a>
-
-            </li>
-            --}}
-
-            <li class="list-group-item p-4">
-                <a class=" text-center rounded btn btn-secondary px-3"
-                    style="font-size: 18px; padding: 6px; color:white; display: block;" href="/hod/logout">Logout</a>
-            </li>
+  <div class="bg-light border-end" id="sidebar-wrapper">
+  <div class="sidebar-heading border-bottom bg-light text-center ">
+    <a href="/hod" class="fw-bold text-decoration-none">ADMIN</a>
+  </div>
 
 
-
-
-        </div>
+    
+    <!-- Accordion for Sidebar Links -->
+    <div class="accordion" id="sidebarAccordion">
+    
+<div class="accordion-item">
+  <h2 class="accordion-header" id="headingTeacher">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseTeacher" aria-expanded="false" aria-controls="collapseTeacher">
+      Teacher
+    </button>
+  </h2>
+  <div id="collapseTeacher" class="accordion-collapse collapse" aria-labelledby="headingTeacher"
+       data-bs-parent="#sidebarAccordion">
+    <div class="accordion-body">
+      <ul class="list-unstyled mb-0">
+        <li><a href="/hod/approve-teacher">Approve Teacher</a></li>
+        <li><a href="/hod/view-teachers">View Teacher</a></li>
+      </ul>
     </div>
-    <!-- Page content wrapper-->
+  </div>
+</div>
 
-    <div id="page-content-wrapper">
-        <!-- Top navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <div class="container-fluid">
-                <button class="btn btn-light" id="sidebarToggle"> <span class="navbar-toggler-icon"></span></button>
+<!-- Student Section -->
+<div class="accordion-item">
+  <h2 class="accordion-header" id="headingStudent">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseStudent" aria-expanded="false" aria-controls="collapseStudent">
+      Student
+    </button>
+  </h2>
+  <div id="collapseStudent" class="accordion-collapse collapse" aria-labelledby="headingStudent"
+       data-bs-parent="#sidebarAccordion">
+    <div class="accordion-body">
+      <ul class="list-unstyled mb-0">
+        <li><a href="/hod/approve-students">Approve Student</a></li>
+        <li><a href="/hod/view-students">View Student</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 
-            </div>
-        </nav>
-        
+<!-- Timetable Section -->
+<div class="accordion-item">
+  <h2 class="accordion-header" id="headingTimetable">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseTimetable" aria-expanded="false" aria-controls="collapseTimetable">
+      Timetable
+    </button>
+  </h2>
+  <div id="collapseTimetable" class="accordion-collapse collapse" aria-labelledby="headingTimetable"
+       data-bs-parent="#sidebarAccordion">
+    <div class="accordion-body">
+      <ul class="list-unstyled mb-0">
+        <li><a href="/hod/add-timetable">Add Timetable</a></li>
+        <li><a href="/hod/view-timetable">View Timetable</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Event Section -->
+<div class="accordion-item">
+  <h2 class="accordion-header" id="headingEvent">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseEvent" aria-expanded="false" aria-controls="collapseEvent">
+      Event
+    </button>
+  </h2>
+  <div id="collapseEvent" class="accordion-collapse collapse" aria-labelledby="headingEvent"
+       data-bs-parent="#sidebarAccordion">
+    <div class="accordion-body">
+      <ul class="list-unstyled mb-0">
+        <li><a href="/hod/add-event">Add Event</a></li>
+        <li><a href="/hod/view-event">View Event</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Logout -->
+      <div class="p-4">
+        <a class="text-center rounded btn btn-secondary px-3 w-100" style="font-size: 18px; padding: 6px; color:white;" href="/hod/logout">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <div id="page-content-wrapper" class="flex-grow-1 " >
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom  ">
+      <div class="container-fluid">
+        <button class="btn btn-light" id="sidebarToggle">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+ 
