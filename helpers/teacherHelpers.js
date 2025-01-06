@@ -12,7 +12,7 @@ module.exports = {
             db.query(' INSERT INTO login_data (name,type, email, password, phone, gender, status)  VALUES (?,?, ?, ?, ?, ?,?)', [name, type = "teacher", email, password, phone, gender, 0], (err, results) => {
                 if (err) {
                     console.error('Error inserting into database:', err.message);
-                    return reject(err); // Reject the promise on error
+                    return reject(new Error("already assigned  email")); // Reject the promise on error
                 }
                 resolve(results); // Resolve the promise with query results
             });
@@ -95,20 +95,28 @@ module.exports = {
             })
         })
     },
-    getStudents: (year) => {
-        return new Promise((resolve, reject) => {
-            db.query('select * from students where year=?', [year],(err, data) => {
-                resolve(data)
-            })
-        })
-    },
+    getStudents : (sem,course) => {
+      return new Promise((resolve, reject) => {
+          const query = 'SELECT * FROM students WHERE semester = ? AND course = ?';
+          db.query(query, [sem,course], (err, results) => {
+              if (err) {
+                  console.error('Database error:', err);
+                  reject(err);
+              } else {
+                  console.log('Query results:', results);
+                  resolve(results);
+              }
+          });
+      });
+  },
+  
     saveAttendance: (attendanceData) => {
       return new Promise((resolve, reject) => {
-        const { year, attendanceDate } = attendanceData[0]; // Extract year and date from the first record
+        const { sem, attendanceDate } = attendanceData[0]; // Extract year and date from the first record
     
         // Check if attendance for the same date and year already exists
-        const checkSql = 'SELECT COUNT(*) AS count FROM attendance WHERE year = ? AND date = ?';
-        db.query(checkSql, [year, attendanceDate], (err, result) => {
+        const checkSql = 'SELECT COUNT(*) AS count FROM attendance WHERE semester = ? AND date = ?';
+        db.query(checkSql, [sem, attendanceDate], (err, result) => {
           if (err) {
             console.error('Error checking existing attendance records:', err);
             return reject(err);
@@ -121,12 +129,12 @@ module.exports = {
     
           // If no duplicate exists, insert attendance data
           const values = attendanceData.map(record => [
-            record.year,
+            record.sem,
             record.name,
             record.attendanceDate,
             record.status,
           ]);
-          const insertSql = 'INSERT INTO attendance (year, name, date, status) VALUES ?';
+          const insertSql = 'INSERT INTO attendance (semester, name, date, status) VALUES ?';
     
           db.query(insertSql, [values], (insertErr, insertResult) => {
             if (insertErr) {
@@ -140,7 +148,7 @@ module.exports = {
       });
     },
     
-        getLastAttendance: (stdYear) => {
+        getLastAttendance: (sem) => {
           return new Promise((resolve, reject) => {
             // Query to fetch the latest attendance record to get the most recent date
             db.query('SELECT * FROM attendance    ORDER BY date DESC LIMIT 1 ', (err, result) => {
@@ -154,7 +162,7 @@ module.exports = {
                   const lastAttendanceDate = lastAttendance.date;
       
                   // Query to fetch all attendance records for the last attendance date
-                  db.query('SELECT * FROM attendance WHERE date = ? AND year = ?', [lastAttendanceDate,stdYear], (err, allRecords) => {
+                  db.query('SELECT * FROM attendance WHERE date = ? AND semester = ?', [lastAttendanceDate,sem], (err, allRecords) => {
                     if (err) {
                       console.error('Error fetching all attendance for the last date:', err);
                       reject(err);
@@ -178,10 +186,10 @@ module.exports = {
         
       
     },
-    getAttendance: (date,year, ) => {
+    getAttendance: (date,sem) => {
         return new Promise((resolve, reject) => {
             // console.log("helpers", year, date);
-            db.query('SELECT * FROM attendance WHERE year = ? AND date = ?', [year, date], (err, data) => {
+            db.query('SELECT * FROM attendance WHERE semester = ? AND date = ?', [sem, date], (err, data) => {
                 if (err) {
                   console.log("error", err);
                   return;
@@ -298,17 +306,17 @@ module.exports = {
           });
         });
       },
-      getMonthAttendance: (month, year, stdYear) => {
+      getMonthAttendance: (month, year, sem) => {
         return new Promise((resolve, reject) => {
           console.log("Month and Year:", month, year);
       
           const query = `
             SELECT * FROM attendance
-            WHERE YEAR(date) = ? AND MONTH(date) = ? AND year = ?
+            WHERE YEAR(date) = ? AND MONTH(date) = ? AND semester = ?
             ORDER BY date
           `;
       
-          db.query(query, [year, month, stdYear], (err, results) => {
+          db.query(query, [year, month, sem], (err, results) => {
             if (err) {
               console.error("Error fetching attendance data:", err);
               return reject("Error fetching attendance data");
@@ -346,16 +354,16 @@ module.exports = {
         });
       },
       
-      getAvailableYears: (stdYear) => {
+      getAvailableYears: (sem) => {
         return new Promise((resolve, reject) => {
           const query = `
             SELECT DISTINCT YEAR(date) AS year 
             FROM attendance 
-            WHERE year = ? 
+            WHERE semester = ? 
             ORDER BY year DESC;
           `;
         
-          db.query(query, [stdYear], (err, results) => {
+          db.query(query, [sem], (err, results) => {
             if (err) {
               console.log("Error fetching years:", err);
               return reject("Error fetching years");
