@@ -237,8 +237,8 @@ router.post('/add-timetable', (req, res) => {
     // Pass the data as an object under teacherData
     res.render('hod/manage-teacher', { teacherData: { name, email } });
   });
-  router.post('/manage-teacher', (req, res) => {
-    console.log(req.body);
+  router.post('/manage-teacher' ,(req, res) => {
+    console.log("manage teachers",req.body);
 
     const teacherManageData = req.body; // Get data from form submission
 
@@ -261,7 +261,7 @@ router.post('/add-timetable', (req, res) => {
 
   router.get('/view-managed-teacher/:email', verifyLogin, (req, res) => {
     // console.log("teacher email", req.session.teacherData[0].email);
-    console.log(req.params);
+    // console.log(req.params);
 
     let { email } = req.params
     hodHelpers.viewManagedTeacher(email).then((resp) => {
@@ -277,7 +277,7 @@ router.post('/add-timetable', (req, res) => {
   });
 
   router.post('/edit-teacher', (req, res) => {
-    console.log(req.body);
+     console.log(req.body);
 
     const teacherManageData = req.body; // Get data from form submission
 
