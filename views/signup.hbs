@@ -14,10 +14,10 @@
 
                     <div data-mdb-input-init class="form-outline mb-4">
                         <label class="form-label" for="name">Name</label>
-                        <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Enter your name"
-                            required />
+                        <input type="text" id="name" name="name" class="form-control form-control-lg"
+                            placeholder="Enter your name" required />
                     </div>
-                      
+
 
                     <div data-mdb-input-init class="form-outline mb-4">
                         <label for="course" class="form-label">Courses</label>
@@ -32,17 +32,30 @@
                             <option value="BA ECO">BA ECO</option> --}}
                         </select>
                     </div>
-                        <div data-mdb-input-init class="form-outline mb-4">
+
+                    {{!-- <div data-mdb-input-init class="form-outline mb-4">
                         <label for="year" class="form-label">Year</label>
                         <select class="form-select" name="year" id="year" required>
-                             <option value="">Select Year</option>
+                            <option value="">Select Year</option>
                             <option value="1">1st Year</option>
                             <option value="2">2nd Year</option>
                             <option value="3">3rd Year</option>
                             <option value="4">4th Year</option>
-                        </select>  
+                        </select>
+                    </div> --}}
+                      <div data-mdb-input-init class="form-outline mb-4">
+                        <label for="sem" class="form-label">Semester</label>
+                        <select class="form-select" name="sem" id="sem" required>
+                            <option value="">Select Year</option>
+                            <option value="1">1st SEM</option>
+                            <option value="2">2nd SEM</option>
+                            <option value="3">3rd SEM</option>
+                            <option value="4">4th SEM</option>
+                            <option value="5">5th SEM</option>
+                            <option value="6">6th SEM</option>
+                        </select>
                     </div>
-                   
+
 
                     <!-- Email input -->
                     <div data-mdb-input-init class="form-outline mb-4">
@@ -50,7 +63,7 @@
                         <input type="email" name="email" id="email" class="form-control form-control-lg"
                             placeholder="Enter a valid email address" required />
                     </div>
-                      <div data-mdb-input-init class="form-outline mb-3">
+                    <div data-mdb-input-init class="form-outline mb-3">
                         <label class="form-label" for="passwd">Password</label>
                         <input type="password" name="password" id="passwd" class="form-control form-control-lg"
                             placeholder="Enter password" required />
@@ -62,24 +75,24 @@
                         <input type="number" name="phone" id="phone" class="form-control form-control-lg"
                             placeholder="Enter phone number" required />
                     </div>
-                      <div data-mdb-input-init class="form-outline mb-4">
+                    <div data-mdb-input-init class="form-outline mb-4">
                         <label class="form-label" for="dob">Date of birth</label>
                         <input type="date" id="dob" name="dob" class="form-control form-control-lg"
                             placeholder="Enter Date Of Birth" required />
                     </div>
-                      <!-- Password input -->
-                  
-                      <div data-mdb-input-init class="form-outline mb-4">
+                    <!-- Password input -->
+
+                    <div data-mdb-input-init class="form-outline mb-4">
                         <label class="form-label" for="aadhar">Aadhar</label>
                         <p id="a-msg" class="text-center text-danger d-none">Please enter a valid 12-digit aadhar
                             number. </p>
                         <input type="number" name="aadhar" id="aadhar" class="form-control form-control-lg"
                             placeholder="Enter aadhar number" required />
                     </div>
-                     {{!-- <div data-mdb-input-init class="form-outline mb-4">
+                    {{!-- <div data-mdb-input-init class="form-outline mb-4">
                         <label class="form-label" for="abcd">ABCD Id</label>
-                        <input type="text" id="abcd" name="abcd" class="form-control form-control-lg" placeholder="Enter your ABCD Id"
-                            required />
+                        <input type="text" id="abcd" name="abcd" class="form-control form-control-lg"
+                            placeholder="Enter your ABCD Id" required />
                     </div> --}}
 
                     <!-- Email input -->
@@ -95,9 +108,11 @@
                         <br>
                         <input type="radio" id="male" name="gender" value="male" class="form-check-input" required />
                         <label for="male">Male</label>
-                        <input type="radio" id="female" name="gender" value="female" class="form-check-input" required />
+                        <input type="radio" id="female" name="gender" value="female" class="form-check-input"
+                            required />
                         <label for="female">Female</label>
-                        <input type="radio" id="others" name="gender" value="others" class="form-check-input" required />
+                        <input type="radio" id="others" name="gender" value="others" class="form-check-input"
+                            required />
                         <label for="others">Others</label>
                     </div>
 
@@ -107,7 +122,7 @@
                         <!-- <a href="#!" class="text-body">Forgot password?</a> -->
                     </div>
 
-                    <div class="text-center align-item-center text-lg-start mt-4 pt-2 " >
+                    <div class="text-center align-item-center text-lg-start mt-4 pt-2 ">
                         <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
                             style="padding-left:2.5rem; padding-right: 2.5rem,">Signup</button>
 

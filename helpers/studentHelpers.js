@@ -10,15 +10,18 @@ module.exports = {
     // Make sure you have a MySQL connection pool or client setup
 
     doSignup: (loginData) => {
-        const { name, course, year, phone, email, password,dob, aadhar, gender } = loginData;
+        console.log("signup data",loginData);
         
+        // const { name, course, year, phone, email, password,dob, aadhar, gender } = loginData;
+        const { name, course,sem, phone, email, password,dob, aadhar, gender } = loginData;
+
         // console.log(loginData);
         
         return new Promise((resolve, reject) => {
             // Define the SQL query
             // const query = 'INSERT INTO students (name,type, course ,year, email, password,gender) VALUES (?, ?, ?, ?, ?,?,?)';
             // Execute the query
-            db.query('INSERT INTO login_data (name, type, course, year, phone, email, password,dob, aadhar, gender,status) VALUES (?, ?, ?,?, ?, ?,?,?,?,?,?)', [name, type="student", course, year, phone, email, password,dob, aadhar, gender, 0], (err, results) => {
+            db.query('INSERT INTO login_data (name, type, course,semester, phone, email, password,dob, aadhar, gender,status) VALUES (?, ?, ?,?, ?, ?,?,?,?,?,?)', [name, type="student", course,sem, phone, email, password,dob, aadhar, gender, 0], (err, results) => {
                 if (err) {
                     console.error('Error inserting into database:', err);
                     throw err
