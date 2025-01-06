@@ -15,7 +15,7 @@ router.get('/', verifyLogin, function (req, res, next) {
  let  email = req.session.teacher.email
   teacherHelpers.getTeacher(email).then((resp)=>{
     req.session.teacherData = resp[0]
-//  console.log("teaches", req.session.teacherData.name);
+ console.log("teaches", req.session.teacherData);
 
   
 res.render('teacher/dashboard', { title: 'SASC', teacher, name: req.session.teacherData.name });
@@ -58,35 +58,68 @@ router.get('/signup', (req, res) => {
   res.render('teacher/signup')
 })
 router.post('/signup', (req, res) => {
-  // console.log(req.body);
-  teacherHelpers.doSignup(req.body).then(() => {
-    res.render('teacher/login')
-  })
-})
+  // Destructure necessary data from the request body
+  const { name, email, password, phone, gender } = req.body;
+
+  // Input validation (optional but recommended)
+  if (!name || !email || !password || !phone || !gender) {
+      return res.status(400).render('teacher/signup', {
+          errorMessage: 'Please fill out all required fields.'
+      });
+  }
+
+  // Call the signup helper function
+  teacherHelpers.doSignup(req.body)
+      .then(() => {
+          // Successful signup, redirect to login page
+          res.render('teacher/login', {
+              successMessage: 'Sign up successful! Please log in.'
+          });
+      })
+      .catch((err) => {
+          // Handle errors during signup
+          console.error("Error during signup:", err);
+          res.status(500).render('teacher/signup', {
+              errorMessage: 'An error occurred during signup. Please try again later.'
+          });
+      });
+});
+
 // 
 router.get('/logout', (req, res) => {
   req.session.destroy()
   res.redirect('/teacher')
 })
-router.get('/students',(req,res)=>{
-  let year = req.session.teacherData.class_teacher
-  teacherHelpers.getStudents(year).then((resp)=>{
+router.get('/students',verifyLogin,(req,res)=>{
+  const teacherData = req.session.teacherData;
+
+  console.log("Session teacherData:", teacherData);
+  
+  let sem = req.session.teacherData.class_teacher
+  let course = req.session.teacherData.course
+  
+  console.log("studens year",sem);
+  
+  teacherHelpers.getStudents(sem,course).then((resp)=>{
     res.render('teacher/students',{teacher,name:req.session.teacherData.name,students:resp})
   })
 })
 router.get('/add-attendance', verifyLogin, (req, res) => {
-  console.log(req.session.teacherData.class_teacher);
- let year = req.session.teacherData.class_teacher
-  teacherHelpers.getStudents(year).then((resp) => {
+   console.log(req.session.teacherData);
+ let sem = req.session.teacherData.class_teacher
+ let course = req.session.teacherData.course
+ console.log("req.session",sem,course);
+ 
+  teacherHelpers.getStudents(sem,course).then((resp) => {
 
-//  console.log("studetns",resp);
+ console.log("studetns",resp);
  let students = resp
 
     // Render the template and pass separated student data
     res.render('teacher/add-attendance', {
       teacher,
       name: req.session.teacher.name,
-      year,
+      sem,
       students,
       // firstYearStudents,
       // secondYearStudents,
@@ -100,18 +133,19 @@ router.get('/add-attendance', verifyLogin, (req, res) => {
 });
 
 router.post('/add-attendance', (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   
-  const { attendanceDate, year, ...attendanceData } = req.body;
+  const { attendanceDate, sem, ...attendanceData } = req.body;
 
   const attendanceRecords = [];
   for (let key in attendanceData) {
     if (attendanceData.hasOwnProperty(key)) {
       const studentId = key.match(/\d+/)[0];
       const [status, name] = attendanceData[key].split('|');
-      attendanceRecords.push({ name, year, status, attendanceDate });
+      attendanceRecords.push({ name, sem, status, attendanceDate });
     }
   }
+console.log(attendanceRecords);
 
   teacherHelpers
     .saveAttendance(attendanceRecords)
@@ -121,7 +155,7 @@ router.post('/add-attendance', (req, res) => {
     .catch((err) => {
       res.render('teacher/add-attendance', {
         errorMessage: err.message, // Pass the error message to the template
-        year,
+        sem,
         students: req.body.students, // Pass existing data back to the template
       });
     });
@@ -142,16 +176,16 @@ router.get('/view-attendance',verifyLogin, (req, res) => {
 
 
 router.post('/view-attendance',verifyLogin, (req, res) => {
-  const year = req.session.teacherData.class_teacher
+  const sem = req.session.teacherData.class_teacher
 
   const { date } = req.body; // Expecting `year` and `date` in the POST body
   // console.log("Year:", year, "Date:", date);
 
-  teacherHelpers.getAttendance(date,year).then((resp) => {
+  teacherHelpers.getAttendance(date,sem).then((resp) => {
     // console.log("Attendance Data:", resp);
 
     // Render the view with the attendance data and year
-    res.render('teacher/view-attendance', {attendance: resp, year,teacher,name:req.session.teacherData.name});
+    res.render('teacher/view-attendance', {attendance: resp, sem,teacher,name:req.session.teacherData.name});
   })
 });
 router.post('/edit-attendance/:id', (req, res) => {
@@ -174,14 +208,14 @@ router.post('/edit-attendance/:id', (req, res) => {
 });
 
 router.get('/monthly-attendance', verifyLogin, (req, res) => {
-  const stdYear = req.session.teacherData.class_teacher;
+  const sem = req.session.teacherData.class_teacher;
   const date = new Date();
   const monthNumber = date.getMonth() + 1; // Get current month number (1-12)
   const year = date.getFullYear(); // Get current year
 
-  teacherHelpers.getAvailableYears(stdYear) // Fetch the available years
+  teacherHelpers.getAvailableYears(sem) // Fetch the available years
     .then((availableYears) => {
-      teacherHelpers.getMonthAttendance(monthNumber, year, stdYear)
+      teacherHelpers.getMonthAttendance(monthNumber, year, sem)
         .then((data) => {
           const students = data.students; // Data returned by the helper function
           const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1); // Days of the month (1-31)
