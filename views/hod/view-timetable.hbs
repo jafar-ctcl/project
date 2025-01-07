@@ -1,437 +1,44 @@
+<section class="timetable-view-section">
+    <div class="container py-4 border bg-light">
+        <h2 class="text-center mb-5 text-primary">View Timetable</h2>
 
-<section class="timetable-view-section py-3"
-    style="
-    background-color: #f9f9f9;;
-    {{!-- background: linear-gradient(to right, #e3f2fd, #bbdefb);  --}}
-    min-height: 100vh;">
-    <div class="container py-5">
-        <h2 class="text-center mb-4 fw-bold" style="color: #0d47a1; font-family: 'Poppins', sans-serif;">Timetable</h2>
-
-        <!-- Year Dropdown -->
-        <div class="mb-4">
-            <label class="form-label fw-semibold" style="font-size: 18px; color: #0d47a1;">Select Year</label>
-            <select class="form-select form-select-lg border-2 shadow-sm" id="yearSelect" name="year" required>
-                <option value="" disabled selected>Choose a Year...</option>
-                <option value="1">1 Year</option>
-                <option value="2">2 Year</option>
-                <option value="3">3 Year</option>
-            </select>
+        <!-- Displaying Timetable Data -->
+        {{#each timetable}}
+        <div class="timetable-section mb-5">
+            <h3>{{this.course}} - Semester {{this.semester}}</h3>
+            
+            {{#each this.days}}
+            <div class="day-section mb-4">
+                <h4>{{this.day}}</h4>
+                
+                <!-- Time Slots -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Teacher</th>
+                            <th>Subject</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each this.timeSlots}}
+                        <tr>
+                            <td>{{this.time}}</td>
+                            <td>{{this.teacher}}</td>
+                            <td>{{this.subject}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+            {{/each}}
         </div>
-
-        <!-- Year Tables -->
-        <div class="year-table" id="year-1" style="display: none;">
-
-            <!-- Monday -->
-            {{#if mondayByYear.firstYear}}
-            <h3>Monday</h3>
-            <table class="table table-hover shadow-sm">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Subject</th>
-                        <th>Teacher</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each mondayByYear.firstYear}}
-                    <tr>
-                        <td>{{time}}</td>
-                        <td>{{subject}}</td>
-                        <td>{{teacher}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-            {{else}}
-            <p class="no-timetable">No timetable available for Monday.</p>
-            {{/if}}
-
-            <!-- Tuesday -->
-            {{#if tuesdayByYear.firstYear}}
-            <h3>Tuesday</h3>
-            <table class="table table-hover shadow-sm">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Subject</th>
-                        <th>Teacher</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each tuesdayByYear.firstYear}}
-                    <tr>
-                        <td>{{time}}</td>
-                        <td>{{subject}}</td>
-                        <td>{{teacher}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-            {{else}}
-            <p class="no-timetable">No timetable available for Tuesday.</p>
-            {{/if}}
-
-            <!-- Wednesday -->
-            {{#if wednesdayByYear.firstYear}}
-            <h3>Wednesday</h3>
-            <table class="table table-hover shadow-sm">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Subject</th>
-                        <th>Teacher</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each wednesdayByYear.firstYear}}
-                    <tr>
-                        <td>{{time}}</td>
-                        <td>{{subject}}</td>
-                        <td>{{teacher}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-            {{else}}
-            <p class="no-timetable">No timetable available for Wednesday.</p>
-            {{/if}}
-
-            <!-- Thursday -->
-            {{#if thursdayByYear.firstYear}}
-            <h3>Thursday</h3>
-            <table class="table table-hover shadow-sm">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Subject</th>
-                        <th>Teacher</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each thursdayByYear.firstYear}}
-                    <tr>
-                        <td>{{time}}</td>
-                        <td>{{subject}}</td>
-                        <td>{{teacher}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-            {{else}}
-            <p class="no-timetable">No timetable available for Thursday.</p>
-            {{/if}}
-
-            <!-- Friday -->
-            {{#if fridayByYear.firstYear}}
-            <h3>Friday</h3>
-            <table class="table table-hover shadow-sm">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Subject</th>
-                        <th>Teacher</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each fridayByYear.firstYear}}
-                    <tr>
-                        <td>{{time}}</td>
-                        <td>{{subject}}</td>
-                        <td>{{teacher}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-            {{else}}
-            <p class="no-timetable">No timetable available for Friday.</p>
-            {{/if}}
-
-        </div>
-        <div class="year-table" id="year-2" style="display: none;">
-    <!-- Monday -->
-    {{#if mondayByYear.secondYear}}
-    <h3>Monday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each mondayByYear.secondYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Monday.</p>
-    {{/if}}
-
-    <!-- Tuesday -->
-    {{#if tuesdayByYear.secondYear}}
-    <h3>Tuesday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each tuesdayByYear.secondYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Tuesday.</p>
-    {{/if}}
-
-    <!-- Wednesday -->
-    {{#if wednesdayByYear.secondYear}}
-    <h3>Wednesday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each wednesdayByYear.secondYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Wednesday.</p>
-    {{/if}}
-
-    <!-- Thursday -->
-    {{#if thursdayByYear.secondYear}}
-    <h3>Thursday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each thursdayByYear.secondYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Thursday.</p>
-    {{/if}}
-
-    <!-- Friday -->
-    {{#if fridayByYear.secondYear}}
-    <h3>Friday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each fridayByYear.secondYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Friday.</p>
-    {{/if}}
-</div>
-
-<div class="year-table" id="year-3" style="display: none;">
-    <!-- Monday -->
-    {{#if mondayByYear.thirdYear}}
-    <h3>Monday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each mondayByYear.thirdYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Monday.</p>
-    {{/if}}
-
-    <!-- Tuesday -->
-    {{#if tuesdayByYear.thirdYear}}
-    <h3>Tuesday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each tuesdayByYear.thirdYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Tuesday.</p>
-    <div class="text-center create-timetable-btn">
-        <a href="/hod/add-timetable" class="btn btn-primary">Create New Timetable</a>
-    </div>
-    {{/if}}
-
-    <!-- Wednesday -->
-    {{#if wednesdayByYear.thirdYear}}
-    <h3>Wednesday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each wednesdayByYear.thirdYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Wednesday.</p>
-    {{/if}}
-
-    <!-- Thursday -->
-    {{#if thursdayByYear.thirdYear}}
-    <h3>Thursday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each thursdayByYear.thirdYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Thursday.</p>
-    <div class="text-center create-timetable-btn">
-        <a href="/hod/add-timetable" class="btn btn-primary">Create New Timetable</a>
-    </div>
-    {{/if}}
-
-    <!-- Friday -->
-    {{#if fridayByYear.thirdYear}}
-    <h3>Friday</h3>
-    <table class="table table-hover shadow-sm">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each fridayByYear.thirdYear}}
-            <tr>
-                <td>{{time}}</td>
-                <td>{{subject}}</td>
-                <td>{{teacher}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{else}}
-    <p class="no-timetable">No timetable available for Friday.</p>
-    {{/if}}
-</div>
-
-
+        {{/each}}
     </div>
 </section>
 
-<script>
-    document.getElementById('yearSelect').addEventListener('change', function () {
-        // Get selected year
-        var selectedYear = this.value;
-
-        // Hide all year tables
-        var yearTables = document.querySelectorAll('.year-table');
-        yearTables.forEach(function (table) {
-            table.style.display = 'none';
-        });
-
-        // Show the selected year table
-        if (selectedYear) {
-            document.getElementById('year-' + selectedYear).style.display = 'block';
-        }
-    });
-</script>
-
 <style>
-
-    
+    /* General timetable section heading styling */
     .timetable-view-section h3 {
         color: #1565c0;
         font-family: 'Poppins', sans-serif;
@@ -440,14 +47,17 @@
         margin-top: 30px;
     }
 
+    /* Table styling within timetable */
     .timetable-view-section table {
         border-collapse: separate;
         border-spacing: 0;
         border-radius: 10px;
         overflow: hidden;
         background-color: #ffffff;
+        width: 100%;
     }
 
+    /* Table headers */
     .timetable-view-section th {
         background-color: #1565c0;
         color: #ffffff;
@@ -456,6 +66,7 @@
         font-size: 16px;
     }
 
+    /* Table cells */
     .timetable-view-section td {
         text-align: center;
         padding: 10px;
@@ -463,36 +74,21 @@
         color: #424242;
     }
 
+    /* Odd rows in the table */
     .timetable-view-section tr:nth-child(odd) {
         background-color: #e3f2fd;
     }
 
+    /* Hover effect for rows */
     .timetable-view-section tr:hover {
         background-color: #bbdefb;
         cursor: pointer;
     }
 
-    .no-timetable {
-        color: #d32f2f;
-        font-size: 16px;
-        font-style: italic;
-    }
-
-    .form-select {
-        padding: 10px;
-        border-radius: 8px;
-        border: 2px solid #0d47a1;
-        font-size: 16px;
-        color: #424242;
-        transition: all 0.3s;
-    }
-
-    .form-select:focus {
-        border-color: #1565c0;
-        box-shadow: 0 0 10px rgba(21, 101, 192, 0.2);
-    }
-
-    .form-select option {
-        color: #424242;
+    /* Day section heading styling */
+    .day-section h4 {
+        font-size: 18px;
+        color: #007bff;
+        margin-bottom: 15px;
     }
 </style>

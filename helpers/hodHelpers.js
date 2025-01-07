@@ -77,13 +77,13 @@ module.exports = {
                                 } else {
                                     db.query(
                                         'INSERT INTO students (name, email,semester,dob,course,phone, gender) VALUES (?,?,?,?, ?, ?, ?)',
-                                        [user.name, user.email,user.semester, user.dob, user.course, user.phone, user.gender],
+                                        [user.name, user.email, user.semester, user.dob, user.course, user.phone, user.gender],
                                         (err, Result) => {
                                             if (err) {
                                                 // return reject(err)
                                                 console.log(err);
                                             }
-                                                
+
                                         })
 
                                 }
@@ -178,65 +178,113 @@ module.exports = {
 
         })
     },
+    getTimetableData: () => {
+        return new Promise((resolve, reject) => {
+            db.query('SELECT * FROM teachers', (err, result) => {
+                if (err) return reject(err);
+    
+                // Create an array to hold teacher names and their subjects
+                const teachersInfo = result.map((teacher) => ({
+                    name: teacher.name,
+                    subjects: teacher.subjects,
+                }));
+    
+                // Create sets to store unique courses and class teachers
+                const uniqueCourses = new Set();
+                const uniqueClassTeachers = new Set();
+    
+                // Loop through the result to add unique courses and class teachers to the sets
+                result.forEach((teacher) => {
+                    if (teacher.course) {
+                        uniqueCourses.add(teacher.course); // Add course to uniqueCourses set
+                    }
+                    if (teacher.class_teacher) {
+                        uniqueClassTeachers.add(teacher.class_teacher); // Add class_teacher to uniqueClassTeachers set
+                    }
+                });
+    
+                // Convert sets to arrays to pass them to Handlebars
+                const courses = Array.from(uniqueCourses);
+                const classTeachers = Array.from(uniqueClassTeachers);
+            //    console.log("courses",courses);
+            //    console.log("classTeachers",classTeachers);
+            //    console.log("teachersInfo",teachersInfo);
+               
+                // Resolve with the filtered data: teachers' names and subjects, and unique courses/class teachers
+                resolve({ teachersInfo, courses, classTeachers });
+            });
+        });
+    
+    
+    },
 
     addTimetable: (timetableData) => {
         return new Promise((resolve, reject) => {
-            const { day, year, timeslots, teachers, subjects } = timetableData;
-            console.log(" teachers.length", teachers.length);
-            console.log(" subjects.length", subjects.length);
-            console.log(" timeslots.length", timeslots.length);
-          
-            // Ensure all arrays (timeslots, teachers, subjects) have the same length
+            console.log("Received timetable data:", timetableData); // Log the full data
+            const { course, semester, day, timeslots, teachers, subjects } = timetableData;
+    
+            // Ensure the arrays (timeslots, teachers, subjects) are defined and have the same length
+            if (!timeslots || !teachers || !subjects) {
+                return reject(new Error("Missing one or more required fields: timeslots, teachers, or subjects"));
+            }
+    
             if (timeslots.length !== teachers.length || teachers.length !== subjects.length) {
                 return reject(new Error("timeslots, teachers, and subjects arrays must have the same length"));
             }
     
-            // Iterate over the arrays and insert each row into the database
+            // Loop through each time slot, teacher, and subject to insert into the database
             const insertPromises = timeslots.map((time, index) => {
-                const currentTeacher = teachers[index];
-                const currentSubject = subjects[index];
+                const teacher = teachers[index];
+                const subject = subjects[index];
     
-                // Check if the combination already exists in the database
+                // Check if the same day, time, and course already exists
+                const checkQuery = `SELECT * FROM timetable WHERE day = '${day}' AND time = '${time}' AND semester = ${semester} AND course = '${course}'`;
                 return new Promise((resolve, reject) => {
-                    db.query(
-                        'SELECT * FROM timetable WHERE day = ? AND time = ? AND year = ?  ',
-                        [day, time, year],
-                        (err, result) => {
-                            if (err) {
-                                console.error("Error checking for duplicates:", err);
-                                return reject(err);
-                            }
-    
-                            // If a duplicate exists, reject the promise
+                    db.query(checkQuery, (err, result) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            // If data exists, reject the promise with an error message
                             if (result.length > 0) {
-                                return reject(new Error(`Duplicate entry found for ${day} ${time} ${currentTeacher} ${currentSubject}`));
-                            }
-    
-                            // If no duplicate, insert the new timetable entry
-                            db.query(
-                                'INSERT INTO timetable (day, time, year, teacher, subject) VALUES (?, ?, ?, ?, ?)',
-                                [day, time, year, currentTeacher, currentSubject],
-                                (err, result) => {
+                                reject(new Error(`Timetable entry for ${day} at ${time} for course ${course} already exists.`));
+                            } else {
+                                // If no duplicate, proceed with inserting the new timetable entry
+                                const insertQuery = `INSERT INTO timetable (day, time, semester, teacher, subject, course) 
+                                                     VALUES ('${day}', '${time}', ${semester}, '${teacher}', '${subject}', '${course}')`;
+                                db.query(insertQuery, (err, result) => {
                                     if (err) {
-                                        console.error("Error inserting data:", err);
-                                        return reject(err);
+                                        reject(err);
+                                    } else {
+                                        resolve(result);
                                     }
-                                    // Resolve with the day and year after successful insertion
-                                    resolve();
-                                }
-                            );
+                                });
+                            }
                         }
-                    );
+                    });
                 });
             });
     
             // Wait for all insert operations to complete
             Promise.all(insertPromises)
-                .then(() => resolve('Timetable data inserted successfully'))
+                .then(() => resolve('Timetable entries added successfully'))
                 .catch((err) => reject(err));
         });
     },
+    // timetableData:()=>{
+    //     return new Promise((resolve, reject) => {
+    //         const query = "SELECT * FROM timetable WHERE course = ? AND semester = ?";  // Query for the timetable
     
+    //         db.query(query, [course, semester], (err, result) => {
+    //             if (err) {
+    //                 reject(err);  // Reject if error occurs
+    //             } else {
+    //                 resolve(result);  // Resolve with the result if no error
+    //             }
+    //         });
+    //     });
+    // },
+
+
 
     getTimetable: () => {
         return new Promise((resolve, reject) => {
@@ -246,7 +294,7 @@ module.exports = {
                     console.error("Error fetching data:", err);
                     return reject(err); // Reject the promise if fetching data fails
                 }
-
+                // console.log("timetable data",data);
                 // Resolve the promise with the fetched data
                 resolve(data);
             });
@@ -255,15 +303,15 @@ module.exports = {
     },
     manageTeacher: (teacherManageData) => {
         return new Promise((resolve, reject) => {
-            const { name, email,classTeacher,course, subjects } = teacherManageData;
-    
+            const { name, email, classTeacher, course, subjects } = teacherManageData;
+
             // Handle subjects as an array and convert to a string
             const subjectsArray = Array.isArray(subjects) ? subjects : [subjects];
             const subjectsString = subjectsArray.join(', ');
-    
+
             // Check if `classTeacher` is empty or only whitespace, and set to null
             const classTeacherValue = (classTeacher && classTeacher.trim() !== "") ? classTeacher : null;
-    
+
             // Check if the teacher with the same teacherId or classTeacher already exists
             db.query(
                 'SELECT * FROM teachers WHERE course = ? AND class_teacher = ?',
@@ -273,22 +321,22 @@ module.exports = {
                         console.error("Error checking teacher existence:", err);
                         return reject(new Error("Error checking teacher existence."));
                     }
-    
+
                     if (data.length > 0) {
                         console.warn("course or Class Teacher is already assigned.");
                         return reject(new Error("course or Class Teacher is already assigned."));
                     }
-    
+
                     // Update the teacher's details
                     db.query(
                         'UPDATE teachers SET  class_teacher = ?,course = ?, subjects = ?, isManaged = 1 WHERE email = ?',
-                        [ classTeacherValue,course, subjectsString, email], // Use the determined value
+                        [classTeacherValue, course, subjectsString, email], // Use the determined value
                         (err, result) => {
                             if (err) {
                                 console.error("Error updating teacher details:", err);
                                 return reject(new Error("Error updating teacher details."));
                             }
-    
+
                             resolve(result);
                         }
                     );
@@ -296,8 +344,8 @@ module.exports = {
             );
         });
     },
-    
-    
+
+
 
     // manageTeacher: (teacherManageData) => {
     //     // console.log(teacherManageData);
@@ -372,21 +420,21 @@ module.exports = {
     updateTeacher: (teacherManageData) => {
         return new Promise((resolve, reject) => {
             const { name, email, course, classTeacher, subjects } = teacherManageData;
-        
+
             // Convert subjects to a comma-separated string
             const subjectList = Array.isArray(subjects) ? subjects.join(', ') : subjects;
-        
+
             // Build the query and parameters dynamically
             let query = 'SELECT * FROM teachers WHERE course = ? AND class_teacher = ? AND email != ?';
             let params = [course, classTeacher, email]; // Exclude the current teacher
-        
+
             // First, check for duplicate entry with the same `course` and `class_teacher` (excluding the current teacher)
             db.query(query, params, (err, data) => {
                 if (err) {
                     console.error("Error checking teacher existence:", err);
                     return reject(new Error("Error checking teacher existence."));
                 }
-        
+
                 if (data.length > 0) {
                     // Conflict found: `course` and `class_teacher` are already assigned to another teacher
                     console.warn("Duplicate course and class_teacher detected:", data);
@@ -396,7 +444,7 @@ module.exports = {
                         )
                     );
                 }
-        
+
                 // No conflicts, proceed to update the teacher's data
                 db.query(
                     'UPDATE teachers SET course = ?, class_teacher = ?, subjects = ? WHERE email = ?',
@@ -406,14 +454,14 @@ module.exports = {
                             console.error("Error updating teacher details:", err);
                             return reject(new Error("Error updating teacher details."));
                         }
-        
+
                         if (result.affectedRows === 0) {
                             // No teacher found with the given email to update
                             return reject(
                                 new Error("No teacher found with the provided email to update.")
                             );
                         }
-        
+
                         // Successfully updated
                         resolve({
                             message: 'Teacher updated successfully.',
@@ -425,9 +473,9 @@ module.exports = {
             });
         });
     },
-    
-    
-    
+
+
+
     // updateTeacher: (teacherManageData) => {
     //     const { name, email, teacherId, classTeacher, subjects } = teacherManageData;
 
@@ -471,7 +519,7 @@ module.exports = {
             });
         });
     },
-  
+
 
 
 
