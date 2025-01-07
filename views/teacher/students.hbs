@@ -1,4 +1,5 @@
 <section class="container mt-4">
+  {{#if students}}
   <h2 class="text-center mb-4">Students</h2>
   <div class="table-responsive">
     <table class="table table-striped table-bordered">
@@ -37,4 +38,7 @@
       </tbody>
     </table>
   </div>
+  {{else}}
+  <h5>students is not available</h5>
+  {{/if}}
 </section>
