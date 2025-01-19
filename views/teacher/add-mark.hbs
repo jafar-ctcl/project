@@ -1,23 +1,193 @@
-<section>
-    <div class="container mt-5">
-        <h2 class="mb-4">Mark a Teacher</h2>
-        <form action="/teacher/add-mark" method="POST">
-            <div class="mb-3">
-                <label for="teacher" class="form-label">Teacher</label>
-                <select class="form-select" id="teacher" name="teacher" required>
-                    <option value="">Select Teacher</option>
-                    {{#each teachers}}
-                    <option value="{{email}}">{{name}}</option>
-                    {{/each}}
-                </select>
-            </div>
+<section class="students-list-section">
+  {{#if students}}
+  <div class="container">
+    <h2 class="text-center mb-4">Add Marks</h2>
 
-            <div class="mb-3">
-                <label for="marks" class="form-label">Marks</label>
-                <input type="number" class="form-control" id="marks" name="marks" required placeholder="Enter Marks">
-            </div>
-
-            <button type="submit" class="btn btn-primary">Submit Marks</button>
-        </form>
+    <!-- Display Course and Semester -->
+    <div class="text-center mb-3">
+      <h4>Course: <span>{{course}}</span> - Semester: <span>{{semester}}</span></h4>
+      <h5>Subject: <span>{{subject}}</span></h5>
     </div>
+
+  
+
+    <!-- Form for Adding Marks -->
+    <form action="/teacher/add-mark" method="POST">
+      <input type="hidden" name="subject" value="{{subject}}">
+      <input type="hidden" name="semester" value="{{semester}}">
+      <input type="hidden" name="course" value="{{course}}">
+
+      <!-- Table for Listing Students -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Marks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each students}}
+          <tr>
+            <input type="hidden" name="name" value="{{this.name}}">
+            <input type="hidden" name="email" value="{{this.email}}">
+            <td>{{this.name}}</td>
+            <td>
+              <input type="number" name="marks" class="form-control" min="0" max="100" placeholder="Enter Marks">
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <!-- Submit Button -->
+      <div class="text-center mt-3">
+        <button type="submit" class="btn btn-primary">Submit Marks</button>
+      </div>
+    </form>
+  </div>
+  {{else}}
+    <!-- Display Error Message -->
+    {{#if errorMessage}}
+      <div class="alert alert-danger text-center">
+        <p>{{errorMessage}}</p>
+        <a href="/teacher/students-list" class="btn btn-primary">Retry</a>
+      </div>
+    {{else}}
+    <!-- No Data Found Message -->
+    <div class="no-data-message text-center">
+      <h2>No Data Found</h2>
+      <p class="lead">It seems there are no students available for the selected course and semester.</p>
+    </div>
+    {{/if}}
+  {{/if}}
 </section>
+
+<style>
+  /* General Styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+
+  /* Headings */
+  h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  h4, h5 {
+    font-size: 1.1rem;
+    color: #555;
+  }
+
+  span {
+    font-weight: bold;
+  }
+
+  /* Table Styles */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  .table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
+  .table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .table td {
+    background-color: #fff;
+  }
+
+  .table input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  /* Button Styles */
+  .btn {
+    color: #fff;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .
+  /* Alert Styles */
+  .alert-danger {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+  }
+
+  /* No Data Found Styles */
+  .no-data-message {
+    margin-top: 50px;
+    padding: 30px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .no-data-message h2 {
+    font-size: 2rem;
+    color: #721c24;
+  }
+
+  .no-data-message p {
+    font-size: 1.1rem;
+    color: #721c24;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      width: 95%;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+    }
+
+    .table th, .table td {
+      padding: 8px;
+    }
+
+    .table input {
+      font-size: 0.9rem;
+    }
+
+    .no-data-message h2 {
+      font-size: 1.8rem;
+    }
+
+    .no-data-message p {
+      font-size: 1rem;
+    }
+  }
+</style>
