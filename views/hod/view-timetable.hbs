@@ -1,45 +1,65 @@
-<section class="timetable-view-section">
+{{!-- <section class="timetable-view-section">
     <div class="container py-4 border bg-light">
-        <h2 class="text-center mb-5 text-primary">View Timetable</h2>
+        {{#if timetable}}
+        <h2 class="text-center mb-5 text-primary">Timetable</h2>
 
         <!-- Displaying Timetable Data -->
         {{#each timetable}}
-        <div class="timetable-section mb-5">
-            <h3>{{this.course}} - Semester {{this.semester}}</h3>
-            
-            {{#each this.days}}
-            <div class="day-section mb-4">
-                <h4>{{this.day}}</h4>
-                
-                <!-- Time Slots -->
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Teacher</th>
-                            <th>Subject</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each this.timeSlots}}
-                        <tr>
-                            <td>{{this.time}}</td>
-                            <td>{{this.teacher}}</td>
-                            <td>{{this.subject}}</td>
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
+        <div class="semester-section mb-5">
+            <h3 class="semester-title">Semester {{this.semester}}</h3>
+
+            <!-- Courses for this semester -->
+            {{#each this.courses}}
+            <div class="course-section mb-4">
+                <h4 class="text-center">{{this.course}}</h4>
+
+                <!-- Days for this course -->
+                {{#each this.days}}
+                <div class="day-section mb-4">
+                    <h5>{{this.day}}</h5>
+
+                    <!-- Time Slots -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Teacher</th>
+                                <th>Subject</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each this.timeSlots}}
+                            <tr>
+                                <td>{{this.time}}</td>
+                                <td>{{this.teacher}}</td>
+                                <td>{{this.subject}}</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                {{/each}}
             </div>
             {{/each}}
         </div>
         {{/each}}
+        {{else}}
+        <h2 class="text-center text-danger">NO timetable here</h2>
+        {{/if}}
     </div>
 </section>
 
 <style>
     /* General timetable section heading styling */
     .timetable-view-section h3 {
+        color: #1565c0;
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        margin-top: 30px;
+    }
+
+    .semester-title {
         color: #1565c0;
         font-family: 'Poppins', sans-serif;
         font-size: 24px;
@@ -55,6 +75,7 @@
         overflow: hidden;
         background-color: #ffffff;
         width: 100%;
+        margin-top: 15px;
     }
 
     /* Table headers */
@@ -86,9 +107,335 @@
     }
 
     /* Day section heading styling */
-    .day-section h4 {
+    .day-section h5 {
         font-size: 18px;
         color: #007bff;
         margin-bottom: 15px;
+    }
+
+    /* Course section title styling */
+    .course-section h4 {
+        font-size: 20px;
+        color: #1565c0;
+    }
+</style> --}}
+<section class="timetable-view-section">
+    <div class="container py-4 border bg-light">
+
+       {{#if timetable}}
+  <h2 class="text-center mb-5 text-primary">Timetable</h2>
+
+  {{#each timetable}}
+  <div class="semester-section mb-5" id="semester-{{this.semester}}">
+    <h3 class="semester-title" id="semester-{{this.semester}}">Semester {{this.semester}}</h3>
+
+    {{#each this.courses}}
+    <div class="course-section mb-4" id="course-{{this.course}}">
+      <h4 class="text-center">Course: {{this.course}}</h4>
+
+      {{#each this.days}}
+      <div class="day-section mb-4">
+        <h5>Day: {{this.day}}</h5>
+
+        <!-- Time Slots -->
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Teacher</th>
+              <th>Subject</th>
+              {{!-- <th>Course</th>
+              <th>semester</th> --}}
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this.timeSlots}}
+            <tr>
+              <td>{{this.time}}</td>
+              <td>{{this.teacher}}</td>
+              <td>{{this.subject}}</td>
+              {{!-- <td>{{this.course}}</td> <!-- Debug: Directly display course here -->
+              <td>{{this.semester}}</td> <!-- Debug: Directly display course here --> --}}
+              <td>
+                <button class="btn btn-warning btn-sm edit-btn" data-time="{{this.time}}"
+                  data-teacher="{{this.teacher}}" data-subject="{{this.subject}}"
+                  data-day="{{../day}}" data-course="{{this.course}}" data-semester="{{this.semester}}">
+                  Edit
+                </button>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{/each}}
+    </div>
+    {{/each}}
+  </div>
+  {{/each}}
+
+{{else}}
+  <h2 class="text-center text-danger">No timetable available</h2>
+{{/if}}
+
+
+    </div>
+</section>
+<!-- Modal for Editing Timetable -->
+<div id="editModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h3>Edit Timetable</h3>
+        <div id="error-message" class="d-none alert alert-danger"></div> <!-- Error message container -->
+        <form id="editForm" method="POST">
+            <input type="hidden" name="semester" id="editSemester">
+            <input type="hidden" name="course" id="editCourse">
+            <input type="hidden" name="day" id="editDay">
+            <div class="form-group">
+                <label for="editTime">Time:</label>
+                <input type="text" id="editTime" name="time" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editTeacher">Teacher:</label>
+                <input type="text" id="editTeacher" name="teacher" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="editSubject">Subject:</label>
+                <input type="text" id="editSubject" name="subject" class="form-control">
+            </div>
+            <button type="button" id="saveButton" class="btn btn-primary" onclick="saveTimetable()">Save
+                Changes</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            // Get data attributes from the clicked button
+            const time = this.getAttribute('data-time');
+            const teacher = this.getAttribute('data-teacher');
+            const subject = this.getAttribute('data-subject');
+            const day = this.getAttribute('data-day');
+            const course = this.getAttribute('data-course');
+            const semester = this.getAttribute('data-semester');
+
+            // Log the values to the console for debugging
+            console.log('Edit Timetable Data:', { time, teacher, subject, day, course, semester });
+
+            // You can now use the data in your modal or elsewhere
+            document.getElementById('editTime').value = time;
+            document.getElementById('editTeacher').value = teacher;
+            document.getElementById('editSubject').value = subject;
+            document.getElementById('editDay').value = day;
+            document.getElementById('editCourse').value = course;
+            document.getElementById('editSemester').value = semester;
+
+            // Show the modal
+            document.getElementById('editModal').style.display = 'flex';
+        });
+    });
+
+
+    // Close modal
+    function closeModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Save the edited timetable data
+    function saveTimetable() {
+        // Get values from the modal form
+        const time = document.getElementById('editTime').value.trim();
+        const teacher = document.getElementById('editTeacher').value.trim();
+        const subject = document.getElementById('editSubject').value.trim();
+        const day = document.getElementById('editDay').value.trim();
+        const course = document.getElementById('editCourse').value.trim();
+        const semester = document.getElementById('editSemester').value.trim();
+
+        // Log the data object for debugging
+        console.log('Data to be sent:', {
+            time: time,
+            teacher: teacher,
+            subject: subject,
+            day: day,
+            course: course,
+            semester: semester
+        });
+
+        const saveButton = document.getElementById('saveButton');
+        saveButton.disabled = true;  // Disable the save button to prevent multiple submissions
+
+        // Hide any previous error message
+        const errorMessageContainer = document.getElementById('error-message');
+        errorMessageContainer.classList.add('d-none');
+        errorMessageContainer.innerHTML = '';
+
+        // Send data via AJAX to save the timetable edit
+        $.ajax({
+            url: '/hod/edit-timetable',  // Endpoint for updating the timetable
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                time: time,
+                teacher: teacher,
+                subject: subject,
+                day: day,
+                course: course,
+                semester: semester,
+            }),
+            success: function (data) {
+                saveButton.disabled = false;  // Re-enable the save button
+
+                if (data.success) {
+                    // Close the modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                    modal.hide();
+
+                    // Reload the page to reflect changes
+                    location.reload();
+                }
+            },
+            error: function (xhr, status, error) {
+                saveButton.disabled = false;  // Re-enable the save button
+                console.error('Error occurred:', xhr.responseText || error);
+
+                // Extract and display the error message from the response
+                const responseMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'An error occurred. Please try again.';
+
+                // Show the error message inside the modal
+                errorMessageContainer.classList.remove('d-none');
+                errorMessageContainer.innerHTML = responseMessage;
+            },
+        });
+    }
+
+</script>
+
+
+<style>
+    /* General timetable section heading styling */
+    .timetable-view-section h3 {
+        color: #1565c0;
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        margin-top: 30px;
+    }
+
+    .semester-title {
+        color: #1565c0;
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        margin-top: 30px;
+    }
+
+    /* Table styling within timetable */
+    .timetable-view-section table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #ffffff;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    /* Table headers */
+    .timetable-view-section th {
+        background-color: #1565c0;
+        color: #ffffff;
+        text-align: center;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    /* Table cells */
+    .timetable-view-section td {
+        text-align: center;
+        padding: 10px;
+        font-size: 15px;
+        color: #424242;
+    }
+
+    /* Odd rows in the table */
+    .timetable-view-section tr:nth-child(odd) {
+        background-color: #e3f2fd;
+    }
+
+    /* Hover effect for rows */
+    .timetable-view-section tr:hover {
+        background-color: #bbdefb;
+        cursor: pointer;
+    }
+
+    /* Day section heading styling */
+    .day-section h5 {
+        font-size: 18px;
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    /* Course section title styling */
+    .course-section h4 {
+        font-size: 20px;
+        color: #1565c0;
+    }
+
+    /* Modal Styling */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 40px;
+        border-radius: 8px;
+        max-width: 500px;
+        width: 80%;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .close-btn {
+        font-size: 30px;
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+    }
+
+    /* Form elements inside the modal */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        padding: 12px;
+        font-size: 16px;
+        width: 100%;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .form-group label {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        font-size: 16px;
+        padding: 12px 20px;
+        border-radius: 5px;
     }
 </style>

@@ -114,17 +114,63 @@ router.get('/view-teachers', verifyLogin, (req, res) => {
   })
 
 })
-router.get('/add-timetable', verifyLogin, (req, res) => {
- 
-  
-  hodHelpers.getTimetableData().then(({ teachersInfo, courses, classTeachers }) => {
-    // Render the template with the teachers' info, unique courses, and class teachers
-    // console.log("courses",courses);
-    // console.log("classTeachers",classTeachers);
-    // console.log("teachersInfo",teachersInfo);
+// router.get('/set-timetable',async (req, res) => {
+//   let period = await hodHelpers.getPeriod()
+//   //  console.log("period",period);
 
-    res.render('hod/add-timetable',verifyLogin, {
+//    hodHelpers.getTimetableData()
+//      .then(({ courses, classTeachers }) => {
+//        // console.log("Class Teachers:", classTeachers);
+//        // console.log("Courses:", courses);
+
+//        res.render('hod/set-timetable', {
+//          hod,    
+//          period,         // Assuming 'hod' is available in the scope
+//          courses,         // Pass unique courses
+//          classTeachers    // Pass class teachers
+//        });
+//      })
+//      .catch((error) => {
+//        console.error("Error fetching timetable data:", error);
+//        res.status(500).send("An error occurred while fetching timetable data.");
+//      });
+//  });
+router.post('/set-timetable', (req, res) => {
+  const periods = req.body.periods; // Period data sent from the client
+  console.log('Received periods data:', periods);
+
+  hodHelpers.setTimetable(periods)
+    .then((response) => {
+      console.log(response.message);
+
+      // Respond with a success message and flag (for AJAX)
+      res.json({
+        success: true,
+        message: 'Periods saved successfully!',
+      });
+    })
+    .catch((error) => {
+      console.error('Error saving periods:', error);
+
+      // Respond with failure (for AJAX)
+      res.status(500).json({
+        success: false,
+        message: 'Failed to save periods. Please try again.',
+      });
+    });
+});
+
+
+router.get('/add-timetable', verifyLogin, async (req, res) => {
+  let period = await hodHelpers.getPeriod()
+  //  console.log("periods",period);
+
+  hodHelpers.getTimetableData().then(({ teachersInfo, courses, classTeachers }) => {
+
+
+    res.render('hod/add-timetable', {
       hod,
+      period,
       teachersInfo,   // Pass teacher names and subjects
       courses,        // Pass unique courses
       classTeachers,  // Pass unique class teachers
@@ -135,60 +181,28 @@ router.get('/add-timetable', verifyLogin, (req, res) => {
   });
 });
 router.post('/add-timetable', (req, res) => {
-  console.log(req.body); // Log the incoming request data
+  const timetableData = req.body;
+  // console.log(timetableData);
 
-  // Call the helper function to insert the timetable data
-  hodHelpers.addTimetable(req.body).then((resp) => {
-    // On success, redirect to the same page or any other desired page
-    res.redirect('/hod/add-timetable');
-  }).catch((err) => {
-    console.error("Error:", err);
-    res.status(500).send("Error inserting timetable data");
-  });
-});
+  hodHelpers
+    .addTimetable(timetableData)
+    .then((message) => {
+      res.redirect('/hod/add-timetable');
+    })
+    .catch((error) => {
+      // console.error('Error:', error.message);
 
-
-
-router.get('/view-timetable', verifyLogin, (req, res) => {
-  hodHelpers.getTimetable().then((resp) => {
-    console.log("timetable data", resp);
-
-    // Group data by course
-    const groupedData = resp.reduce((acc, current) => {
-      // Create a new entry for each course if it doesn't exist
-      if (!acc[current.course]) {
-        acc[current.course] = {
-          course: current.course,
-          semester: current.semester,
-          days: [] // array to store days for each course
-        };
-      }
-
-      // Check if the day already exists for the current course
-      let dayObj = acc[current.course].days.find(day => day.day === current.day);
-
-      if (!dayObj) {
-        // If the day does not exist, create a new day object
-        dayObj = {
-          day: current.day,
-          timeSlots: []
-        };
-        acc[current.course].days.push(dayObj);
-      }
-
-      // Add the time slot to the day
-      dayObj.timeSlots.push({
-        time: current.time,
-        teacher: current.teacher,
-        subject: current.subject
+      // General error handling
+      res.render('hod/add-timetable', {
+        hod: true,
+        errorMessage: error.message, // Pass the error message
       });
 
-      return acc;
-    }, {});
+    });
+});
 
-    // Convert groupedData to an array to pass to the view
-    const timetableData = Object.values(groupedData);
-
+router.get('/view-timetable', verifyLogin, (req, res) => {
+  hodHelpers.getTimetable().then((timetableData) => {
     // Pass the grouped data to the view
     res.render('hod/view-timetable', { timetable: timetableData });
   }).catch(err => {
@@ -199,83 +213,23 @@ router.get('/view-timetable', verifyLogin, (req, res) => {
 
 
 
+// Handle POST request for editing timetable
+router.post('/edit-timetable', (req, res) => {
+  console.log("Edit Timetable Data:", req.body);
 
-// router.get('/view-timetable2', verifyLogin, (req, res) => {
-//   hodHelpers.getTimetable().then((resp) => {
+  // Example: Assume we're saving the timetable data to the database
+  const { time, teacher, subject, day, course, semester } = req.body;
 
-//     // console.log("view timetable ", resp);
-//     let timetableInfo = resp
-//     // // Separate data by day (Monday to Friday)
-//     // const mondayData = resp.filter(item => item.day === 'monday');
-//     // const tuesdayData = resp.filter(item => item.day === 'tuesday');
-//     // const wednesdayData = resp.filter(item => item.day === 'wednesday');
-//     // const thursdayData = resp.filter(item => item.day === 'thursday');
-//     // const fridayData = resp.filter(item => item.day === 'friday');
+  // Simulate a database update operation here (e.g., update timetable in a database)
+  // Replace this with your actual database logic
+  const success = true; // Change this depending on your DB operation success
 
-//     // // Group data by year for each day
-//     // const mondayByYear = {
-//     //   firstYear: mondayData.filter(item => item.year === 1),
-//     //   secondYear: mondayData.filter(item => item.year === 2),
-//     //   thirdYear: mondayData.filter(item => item.year === 3)
-//     // };
-
-//     // const tuesdayByYear = {
-//     //   firstYear: tuesdayData.filter(item => item.year === 1),
-//     //   secondYear: tuesdayData.filter(item => item.year === 2),
-//     //   thirdYear: tuesdayData.filter(item => item.year === 3)
-//     // };
-
-//     // const wednesdayByYear = {
-//     //   firstYear: wednesdayData.filter(item => item.year === 1),
-//     //   secondYear: wednesdayData.filter(item => item.year === 2),
-//     //   thirdYear: wednesdayData.filter(item => item.year === 3)
-//     // };
-
-//     // const thursdayByYear = {
-//     //   firstYear: thursdayData.filter(item => item.year === 1),
-//     //   secondYear: thursdayData.filter(item => item.year === 2),
-//     //   thirdYear: thursdayData.filter(item => item.year === 3)
-//     // };
-
-//     // const fridayByYear = {
-//     //   firstYear: fridayData.filter(item => item.year === 1),
-//     //   secondYear: fridayData.filter(item => item.year === 2),
-//     //   thirdYear: fridayData.filter(item => item.year === 3)
-//     // };
-
-//     // console.log("Monday Data by Year:", mondayByYear);
-//     // console.log("Tuesday Data by Year:", tuesdayByYear);
-//     // console.log("Wednesday Data by Year:", wednesdayByYear);
-//     // console.log("Thursday Data by Year:", thursdayByYear);
-//     // console.log("Friday Data by Year:", fridayByYear);
-
-//     // Pass the grouped data to the template
-//     res.render('hod/view-timetable2', {
-//       hod,
-//       timetableInfo,
-//       // mondayByYear,
-//       // tuesdayByYear,
-//       // wednesdayByYear,
-//       // thursdayByYear,
-//       // fridayByYear
-//     });
-//   })
-
-// })
-// router.post('/manage-teacher', (req, res) => {
-//   console.log("...........", req.body);
-
-//   const teacherManageData = req.body;  // Get all the form data
-
-//   // Call the helper function to manage the teacher
-//   hodHelpers.manageTeacher(teacherManageData)
-//     .then((resp) => {
-//       res.status(200).json({ success: true, message: 'Teacher saved successfully!' });
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ success: false, message: 'Failed to save teacher data', error: error });
-//     });
-// });
+  if (success) {
+    res.json({ success: true, message: 'Timetable updated successfully!' });
+  } else {
+    res.status(500).json({ success: false, message: 'Error updating timetable. Please try again.' });
+  }
+});
 router.get('/manage-teacher/:name/:email', verifyLogin, (req, res) => {
   const { name, email } = req.params; // Destructure name and email from params
 
@@ -310,11 +264,7 @@ router.get('/view-managed-teacher/:email', verifyLogin, (req, res) => {
 
   let { email } = req.params
   hodHelpers.viewManagedTeacher(email).then((resp) => {
-    // console.log("response", resp);
-
     let teacherData = resp[0];
-    // console.log("Subjects:", resp[0].subjects);
-
     // Pass teacherData and subjects to the view
     let subjects = resp[0].subjects.split(",").map(subject => subject.trim()); // Convert subjects to array if it's a comma-separated string
     res.render('hod/view-managed-teacher', { teacherData, subjects });
@@ -323,7 +273,6 @@ router.get('/view-managed-teacher/:email', verifyLogin, (req, res) => {
 
 router.post('/edit-teacher', (req, res) => {
   console.log(req.body);
-
   const teacherManageData = req.body; // Get data from form submission
 
   hodHelpers.updateTeacher(teacherManageData)
@@ -362,5 +311,6 @@ router.get('/view-mark', (req, res) => {
 })
 
 
-
 module.exports = router;
+
+

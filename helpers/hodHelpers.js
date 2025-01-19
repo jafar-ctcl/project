@@ -182,17 +182,19 @@ module.exports = {
         return new Promise((resolve, reject) => {
             db.query('SELECT * FROM teachers', (err, result) => {
                 if (err) return reject(err);
-    
+                //    console.log("get timetable teachers",result);
+
                 // Create an array to hold teacher names and their subjects
                 const teachersInfo = result.map((teacher) => ({
                     name: teacher.name,
                     subjects: teacher.subjects,
+                    email: teacher.email,
                 }));
-    
+
                 // Create sets to store unique courses and class teachers
                 const uniqueCourses = new Set();
                 const uniqueClassTeachers = new Set();
-    
+
                 // Loop through the result to add unique courses and class teachers to the sets
                 result.forEach((teacher) => {
                     if (teacher.course) {
@@ -202,105 +204,121 @@ module.exports = {
                         uniqueClassTeachers.add(teacher.class_teacher); // Add class_teacher to uniqueClassTeachers set
                     }
                 });
-    
+
                 // Convert sets to arrays to pass them to Handlebars
                 const courses = Array.from(uniqueCourses);
                 const classTeachers = Array.from(uniqueClassTeachers);
-            //    console.log("courses",courses);
-            //    console.log("classTeachers",classTeachers);
-            //    console.log("teachersInfo",teachersInfo);
-               
+                //    console.log("courses",courses);
+                //    console.log("classTeachers",classTeachers);
+                //    console.log("teachersInfo",teachersInfo);
+
                 // Resolve with the filtered data: teachers' names and subjects, and unique courses/class teachers
                 resolve({ teachersInfo, courses, classTeachers });
             });
         });
-    
-    
     },
+
 
     addTimetable: (timetableData) => {
         return new Promise((resolve, reject) => {
-            console.log("Received timetable data:", timetableData); // Log the full data
-            const { course, semester, day, timeslots, teachers, subjects } = timetableData;
-    
-            // Ensure the arrays (timeslots, teachers, subjects) are defined and have the same length
-            if (!timeslots || !teachers || !subjects) {
-                return reject(new Error("Missing one or more required fields: timeslots, teachers, or subjects"));
+          const   { course, semester, day, periods, teachers, teacherEmails, subjects } = timetableData
+          const checkQuery = `SELECT * FROM timetable WHERE semester = ? AND course = ? AND day = ?`;
+          db.query(checkQuery, [semester, course, day], (err, existing) => {
+            if (err) {
+              console.error("Error checking existing timetable entry", err);
+              return reject({ message: "Error checking existing timetable entry", error: err });
             }
-    
-            if (timeslots.length !== teachers.length || teachers.length !== subjects.length) {
-                return reject(new Error("timeslots, teachers, and subjects arrays must have the same length"));
+            console.log("Existing entries found:", existing); // Log existing entries for debugging
+      
+            // If an entry already exists, reject
+            if (existing.length > 0) {
+              return reject({ message: "Entry exists for this semester, course, and day" });
             }
-    
-            // Loop through each time slot, teacher, and subject to insert into the database
-            const insertPromises = timeslots.map((time, index) => {
-                const teacher = teachers[index];
-                const subject = subjects[index];
-    
-                // Check if the same day, time, and course already exists
-                const checkQuery = `SELECT * FROM timetable WHERE day = '${day}' AND time = '${time}' AND semester = ${semester} AND course = '${course}'`;
-                return new Promise((resolve, reject) => {
-                    db.query(checkQuery, (err, result) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            // If data exists, reject the promise with an error message
-                            if (result.length > 0) {
-                                reject(new Error(`Timetable entry for ${day} at ${time} for course ${course} already exists.`));
-                            } else {
-                                // If no duplicate, proceed with inserting the new timetable entry
-                                const insertQuery = `INSERT INTO timetable (day, time, semester, teacher, subject, course) 
-                                                     VALUES ('${day}', '${time}', ${semester}, '${teacher}', '${subject}', '${course}')`;
-                                db.query(insertQuery, (err, result) => {
-                                    if (err) {
-                                        reject(err);
-                                    } else {
-                                        resolve(result);
-                                    }
-                                });
-                            }
-                        }
-                    });
+      
+            // Insert data for each period
+            const insertPromises = periods.map((period, i) => {
+              const query = `INSERT INTO timetable (course, semester, day, time, teacher, email, subject) 
+                             VALUES (?, ?, ?, ?, ?, ?, ?)`;
+              return new Promise((resolve, reject) => {
+                db.query(query, [course, semester, day, period, teachers[i], teacherEmails[i], subjects[i]], (err) => {
+                  if (err) {
+                    console.error("Error inserting timetable entry for period:", period, err);
+                    return reject({ message: "Error inserting timetable entry", error: err });
+                  }
+                  resolve();
                 });
+              });
             });
-    
-            // Wait for all insert operations to complete
+      
+            // Wait for all insertions to complete
             Promise.all(insertPromises)
-                .then(() => resolve('Timetable entries added successfully'))
-                .catch((err) => reject(err));
+              .then(() => resolve("Timetable inserted successfully"))
+              .catch(reject);
+          });
         });
-    },
-    // timetableData:()=>{
-    //     return new Promise((resolve, reject) => {
-    //         const query = "SELECT * FROM timetable WHERE course = ? AND semester = ?";  // Query for the timetable
-    
-    //         db.query(query, [course, semester], (err, result) => {
-    //             if (err) {
-    //                 reject(err);  // Reject if error occurs
-    //             } else {
-    //                 resolve(result);  // Resolve with the result if no error
-    //             }
-    //         });
-    //     });
-    // },
-
-
+      }, 
 
     getTimetable: () => {
         return new Promise((resolve, reject) => {
-            // Fetch all timetable data from the database after insertion
-            db.query('SELECT * FROM timetable', (err, data) => {
-                if (err) {
-                    console.error("Error fetching data:", err);
-                    return reject(err); // Reject the promise if fetching data fails
-                }
-                // console.log("timetable data",data);
-                // Resolve the promise with the fetched data
-                resolve(data);
-            });
-
-        })
-    },
+          // Fetch all timetable data from the database
+          db.query('SELECT * FROM timetable', (err, data) => {
+            if (err) {
+              console.error("Error fetching data:", err);
+              return reject(err); // Reject the promise if fetching data fails
+            }
+            
+            // Grouping data by semester, course, and day
+            const groupedData = data.reduce((acc, current) => {
+              // Create a new entry for each semester if it doesn't exist
+              if (!acc[current.semester]) {
+                acc[current.semester] = {
+                  semester: current.semester,
+                  courses: [] // Array to store courses for each semester
+                };
+              }
+            
+              // Check if the course already exists for the current semester
+              let courseObj = acc[current.semester].courses.find(course => course.course === current.course);
+            
+              if (!courseObj) {
+                // If the course does not exist, create a new course object
+                courseObj = {
+                  course: current.course,
+                  days: [] // Array to store days for the current course
+                };
+                acc[current.semester].courses.push(courseObj);
+              }
+            
+              // Check if the day already exists for the current course
+              let dayObj = courseObj.days.find(day => day.day === current.day);
+            
+              if (!dayObj) {
+                // If the day does not exist, create a new day object
+                dayObj = {
+                  day: current.day,
+                  timeSlots: [] // Array to store time slots for the day
+                };
+                courseObj.days.push(dayObj);
+              }
+            
+              // Add the time slot to the day
+              dayObj.timeSlots.push({
+                time: current.time,
+                teacher: current.teacher,
+                subject: current.subject,
+                course: current.course,
+                semester: current.semester
+              });
+            
+              return acc;
+            }, {});
+      
+            // Resolve the promise with the grouped data
+            resolve(Object.values(groupedData)); // Convert to array for easy rendering
+          });
+        });
+      },
+      
     manageTeacher: (teacherManageData) => {
         return new Promise((resolve, reject) => {
             const { name, email, classTeacher, course, subjects } = teacherManageData;
@@ -519,9 +537,72 @@ module.exports = {
             });
         });
     },
+    setTimetable: (periodData) => {
+        return new Promise((resolve, reject) => {
+            console.log("setTimetable", periodData);
 
+            // Create an array to hold all the promises for the database operations
+            const promises = [];
 
+            periodData.forEach((period) => {
+                const checkQuery = 'SELECT * FROM periods WHERE period_name = ? OR time = ?';
+                const values = [period.period_name, period.time];
 
+                // Check if the period and time already exist
+                const periodPromise = new Promise((resolvePeriod, rejectPeriod) => {
+                    db.query(checkQuery, values, (err, result) => {
+                        if (err) {
+                            console.error('Error checking existing periods:', err);
+                            return rejectPeriod(err); // Reject if there's an error
+                        }
+
+                        console.log("length", result.length);
+
+                        // If no matching period exists, insert a new period
+                        if (result.length === 0) {
+                            const insertQuery = 'INSERT INTO periods (period_name, time) VALUES (?, ?)';
+                            db.query(insertQuery, values, (err) => {
+                                if (err) {
+                                    console.error('Error inserting period:', err);
+                                    return rejectPeriod(err); // Reject if there's an error
+                                }
+                                console.log(`Inserted: ${period.period_name} - ${period.time}`);
+                                resolvePeriod(); // Resolve when insertion is successful
+                            });
+                        } else {
+                            console.log(`Duplicate entry for: ${period.period_name} - ${period.time}`);
+                            resolvePeriod(); // Resolve even if it's a duplicate (no insertion)
+                        }
+                    });
+                });
+
+                // Add the promise to the promises array
+                promises.push(periodPromise);
+            });
+
+            // Wait for all promises to resolve before resolving the outer promise
+            Promise.all(promises)
+                .then(() => {
+                    // Return success response with a message after all periods are saved
+                    resolve({ success: true, message: 'Timetable set successfully' });
+                })
+                .catch((err) => {
+                    // Log the error and send failure response
+                    console.error('Error in saving timetable:', err);
+                    reject({ success: false, message: 'Failed to save timetable' });
+                });
+        });
+    },
+    getPeriod: () => {
+        return new Promise((resolve, reje) => {
+            db.query('SELECT *FROM periods', (err, result) => {
+                if (err) reject(err)
+                // console.log("result",result);
+
+                resolve(result)
+            })
+        })
+    }
 
 
 }
