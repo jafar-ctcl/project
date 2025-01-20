@@ -6,10 +6,10 @@
             </div> --}}
             <div class="col-md-8 col-lg-6 col-xl-10 offset-xl-1">
                 <h3 class="text-center">Sign up</h3>
-                {{log result}}
-                {{#if result}}
-                <p class="text-danger">Email Already Exist.</p>
-                {{/if}}
+                
+            {{#if result}}
+            <p class="text-danger text-center">{{result}}</p>
+            {{/if}}
                 <form autocomplete="off" action="/signup" method="post" autocomplete="on">
 
                     <div data-mdb-input-init class="form-outline mb-4">
@@ -89,19 +89,7 @@
                         <input type="number" name="aadhar" id="aadhar" class="form-control form-control-lg"
                             placeholder="Enter aadhar number" required />
                     </div>
-                    {{!-- <div data-mdb-input-init class="form-outline mb-4">
-                        <label class="form-label" for="abcd">ABCD Id</label>
-                        <input type="text" id="abcd" name="abcd" class="form-control form-control-lg"
-                            placeholder="Enter your ABCD Id" required />
-                    </div> --}}
-
-                    <!-- Email input -->
-                    {{!-- <div data-mdb-input-init class="form-outline mb-4">
-                        <label class="form-label" for="aadhar">Aadhar</label>
-                        <input type="number" name="aadhar" id="aadhar" class="form-control form-control-lg"
-                            placeholder="Enter aadhar number" required />
-                    </div> --}}
-
+                 
                     <!-- Gender input -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <label for="" class="form-label">Gender</label>

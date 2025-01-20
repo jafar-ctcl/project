@@ -9,28 +9,64 @@ module.exports = {
     // }
     // Make sure you have a MySQL connection pool or client setup
 
-    doSignup: (loginData) => {
-        console.log("signup data",loginData);
+    // doSignup: (loginData) => {
+    //     console.log("signup data",loginData);
         
-        // const { name, course, year, phone, email, password,dob, aadhar, gender } = loginData;
-        const { name, course,sem, phone, email, password,dob, aadhar, gender } = loginData;
+    //     // const { name, course, year, phone, email, password,dob, aadhar, gender } = loginData;
+    //     const { name, course,sem, phone, email, password,dob, aadhar, gender } = loginData;
 
-        // console.log(loginData);
+    //     // console.log(loginData);
         
+    //     return new Promise((resolve, reject) => {
+    //         // Define the SQL query
+    //         // const query = 'INSERT INTO students (name,type, course ,year, email, password,gender) VALUES (?, ?, ?, ?, ?,?,?)';
+    //         // Execute the query
+    //         db.query('INSERT INTO login_data (name, type, course,semester, phone, email, password,dob, aadhar, gender,status) VALUES (?, ?, ?,?, ?, ?,?,?,?,?,?)', [name, type="student", course,sem, phone, email, password,dob, aadhar, gender, 0], (err, results) => {
+    //             if (err) {
+    //                 console.error('Error inserting into database:', err);
+    //                 throw err
+    //                 // Reject the promise on error
+    //             }
+    //             resolve()
+    //         });
+    //     });
+    // },
+    doSignup: (loginData) => {
+        console.log("Signup data:", loginData);
+    
+        const { name, course, sem, phone, email, password, dob, aadhar, gender } = loginData;
+    
         return new Promise((resolve, reject) => {
-            // Define the SQL query
-            // const query = 'INSERT INTO students (name,type, course ,year, email, password,gender) VALUES (?, ?, ?, ?, ?,?,?)';
+            // SQL query to insert new user
+            const query = `
+                INSERT INTO login_data 
+                (name, type, course, semester, phone, email, password, dob, aadhar, gender, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+    
             // Execute the query
-            db.query('INSERT INTO login_data (name, type, course,semester, phone, email, password,dob, aadhar, gender,status) VALUES (?, ?, ?,?, ?, ?,?,?,?,?,?)', [name, type="student", course,sem, phone, email, password,dob, aadhar, gender, 0], (err, results) => {
-                if (err) {
-                    console.error('Error inserting into database:', err);
-                    throw err
-                    // Reject the promise on error
+            db.query(
+                query,
+                [name, "student", course, sem, phone, email, password, dob, aadhar, gender, 0],
+                (err, results) => {
+                    if (err) {
+                        if (err.code === 'ER_DUP_ENTRY') {
+                            // Duplicate email error
+                            console.error('Duplicate email error:', err);
+                            reject({ message: 'Email already exists. Please use a different email.' });
+                        } else {
+                            // Other database errors
+                            console.error('Error inserting into database:', err);
+                            reject({ message: 'An error occurred while processing your request. Please try again.' });
+                        }
+                    } else {
+                        resolve({ message: 'Signup successful!' });
+                    }
                 }
-                resolve()
-            });
+            );
         });
     },
+    
     doLogin: (loginData) => {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM login_data WHERE email = ?';

@@ -57,12 +57,25 @@ router.post('/login', (req, res) => {
 router.get('/signup',(req,res)=>{
   res.render('signup')
 })
-router.post('/signup',(req,res)=>{
+// router.post('/signup',(req,res)=>{
+//   console.log(req.body);
+//   studentHelpers.doSignup(req.body).then(()=>{
+//         res.redirect('/login')
+//   })
+// })
+router.post('/signup', (req, res) => {
   console.log(req.body);
-  studentHelpers.doSignup(req.body).then(()=>{
-        res.redirect('/login')
-  })
-})
+  studentHelpers
+      .doSignup(req.body)
+      .then(() => {
+          res.redirect('/login'); // Redirect to the login page on success
+      })
+      .catch((error) => {
+          console.error('Signup error:', error);
+          // Render the signup page with the error message
+          res.render('/signup', { result: error.message });
+      });
+});
 
 router.get('/logout', (req, res) => {
   req.session.destroy()
