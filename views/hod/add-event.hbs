@@ -1,54 +1,163 @@
-<!-- add-event.hbs -->
 <section class="container mt-5">
   <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">Add New Event</h1>
 
   <!-- Event Form -->
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div class="card border-0 shadow-sm">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card border-light shadow-lg">
         <div class="card-body">
-          <form id="eventForm">
-            <div class="mb-3">
-              <label for="eventTitle" class="form-label">Event Title</label>
-              <input type="text" class="form-control" id="eventTitle" required>
+          <form id="eventForm" action="/hod/add-event" method="POST">
+
+            <!-- Event Title -->
+            <div class="mb-4">
+              <label for="eventTitle" class="form-label fs-5 fw-semibold">Event Title</label>
+              <input type="text" class="form-control border-0 shadow-sm" id="eventTitle" name="eventTitle" required>
             </div>
-            <div class="mb-3">
-              <label for="eventDate" class="form-label">Event Date</label>
-              <input type="date" class="form-control" id="eventDate" required>
+
+            <!-- Event Date -->
+            <div class="mb-4">
+              <label for="eventDate" class="form-label fs-5 fw-semibold">Event Date</label>
+              <input type="date" class="form-control border-0 shadow-sm" id="eventDate" name="eventDate" required>
             </div>
-            <button type="submit" class="btn btn-primary">Add Event</button>
+
+            <!-- Start Time -->
+            <div class="mb-4">
+              <label for="startTime" class="form-label fs-5 fw-semibold">Start Time</label>
+              <div class="d-flex">
+                <input type="time" class="form-control border-0 shadow-sm" id="startTime" name="startTime" required>
+                <select class="form-control ms-2 shadow-sm" id="startAmPm" name="startAmPm" required>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- End Time -->
+            <div class="mb-4">
+              <label for="endTime" class="form-label fs-5 fw-semibold">End Time</label>
+              <div class="d-flex">
+                <input type="time" class="form-control border-0 shadow-sm" id="endTime" name="endTime" required>
+                <select class="form-control ms-2 shadow-sm" id="endAmPm" name="endAmPm" required>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dynamic Guest Fields Container -->
+            <div id="guestsContainer"></div>
+
+            <!-- Add Guest Button -->
+            <div class="mb-4 text-center">
+              <button type="button" id="addGuestBtn" class="btn btn-outline-primary shadow-sm">Add Guest</button>
+            </div>
+
+            <!-- Event Place -->
+            <div class="mb-4">
+              <label for="eventPlace" class="form-label fs-5 fw-semibold">Event Place</label>
+              <input type="text" class="form-control border-0 shadow-sm" id="eventPlace" name="eventPlace" required>
+            </div>
+
+            <!-- Hidden Guest Names Field -->
+            <input type="hidden" id="guestNames" name="guestNames">
+
+            <!-- Submit Button -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary w-100 shadow-sm">Add Event</button>
+            </div>
           </form>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Navigation Button -->
   <div class="mt-5 text-center">
-    <a href="/hod/view-event" class="btn btn-secondary">Go to Event Calendar</a>
+    <a href="/hod/view-event" class="btn btn-outline-secondary">Go to Event Calendar</a>
   </div>
 </section>
 
-<!-- Include FullCalendar JS -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
-
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Event Form Submission
-    const eventForm = document.getElementById('eventForm');
-    eventForm.addEventListener('submit', function(event) {
-      event.preventDefault();
+ document.addEventListener("DOMContentLoaded", function () {
+  const addGuestBtn = document.getElementById('addGuestBtn');
+  const guestsContainer = document.getElementById('guestsContainer');
+  const guestNamesInput = document.getElementById('guestNames');
 
-      // Get event data from the form
-      const eventTitle = document.getElementById('eventTitle').value;
-      const eventDate = document.getElementById('eventDate').value;
+  addGuestBtn.addEventListener('click', function () {
+    const guestIndex = guestsContainer.children.length + 1;
 
-      // Send the event data to your backend for storage (AJAX request or other)
-      // For now, we'll simulate adding the event to the calendar
+    const guestSection = document.createElement('div');
+    guestSection.classList.add('mb-4');
+    guestSection.setAttribute('id', `guest${guestIndex}`);
+    guestSection.classList.add('row', 'align-items-center');
 
-      alert(`Event "${eventTitle}" added for ${eventDate}`);
+    // Guest Name
+    const guestNameCol = document.createElement('div');
+    guestNameCol.classList.add('col-md-5');
+    const guestNameLabel = document.createElement('label');
+    guestNameLabel.setAttribute('for', `guestName${guestIndex}`);
+    guestNameLabel.textContent = `Guest ${guestIndex} Name`;
+    const guestNameInput = document.createElement('input');
+    guestNameInput.classList.add('form-control', 'border-0', 'shadow-sm');
+    guestNameInput.setAttribute('id', `guestName${guestIndex}`);
+    guestNameInput.setAttribute('type', 'text');
 
-      // Reset the form after submission
-      eventForm.reset();
+    guestNameCol.appendChild(guestNameLabel);
+    guestNameCol.appendChild(guestNameInput);
+
+    // Guest Image
+    const guestImageCol = document.createElement('div');
+    guestImageCol.classList.add('col-md-5');
+    const guestImageLabel = document.createElement('label');
+    guestImageLabel.setAttribute('for', `guestImage${guestIndex}`);
+    guestImageLabel.textContent = `Guest ${guestIndex} Image`;
+    const guestImageInput = document.createElement('input');
+    guestImageInput.classList.add('form-control', 'border-0', 'shadow-sm');
+    guestImageInput.setAttribute('id', `guestImage${guestIndex}`);
+    guestImageInput.setAttribute('type', 'file');
+    guestImageInput.setAttribute('accept', 'image/*');
+
+    guestImageCol.appendChild(guestImageLabel);
+    guestImageCol.appendChild(guestImageInput);
+
+    // Remove Guest Button
+    const removeBtnCol = document.createElement('div');
+    removeBtnCol.classList.add('col-md-2');
+    const removeGuestBtn = document.createElement('button');
+    removeGuestBtn.classList.add('btn', 'btn-outline-danger', 'shadow-sm');
+    removeGuestBtn.textContent = 'Remove';
+    removeGuestBtn.addEventListener('click', function () {
+      guestSection.remove();
+      updateGuestNames();
     });
+
+    removeBtnCol.appendChild(removeGuestBtn);
+
+    guestSection.appendChild(guestNameCol);
+    guestSection.appendChild(guestImageCol);
+    guestSection.appendChild(removeBtnCol);
+
+    guestsContainer.appendChild(guestSection);
+
+    updateGuestNames();
   });
+
+  // Function to update the hidden input with guest names
+  function updateGuestNames() {
+    const guestNames = [];
+    const guestInputs = document.querySelectorAll('[id^="guestName"]');
+    guestInputs.forEach(input => {
+      if (input.value && !guestNames.includes(input.value)) {
+        guestNames.push(input.value); // Add only unique names
+      }
+    });
+    guestNamesInput.value = guestNames.join(','); // Store guest names as comma-separated
+  }
+
+  // Update guest names when the form is submitted
+  document.getElementById('eventForm').addEventListener('submit', function (e) {
+    updateGuestNames(); // Ensure guest names are updated before form submission
+  });
+});
+
 </script>
