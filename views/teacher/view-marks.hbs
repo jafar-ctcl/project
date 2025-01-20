@@ -1,6 +1,5 @@
 <section class="marks-view">
-  <div class="container py-5">
-    <h2 class="text-center mb-4 text-primary font-weight-bold">Marks List</h2>
+  <div class="container ">
 
     {{#each groupedMarks}}
     <div class="course-section mb-5">
@@ -33,6 +32,55 @@
       </div>
     </div>
     {{/each}}
+
+
+    <div class="card shadow-lg p-4 mb-4 ">
+      <h4 class="text-center mb-4 text-primary">Marks List</h4>
+      <form action="/teacher/view-marks" method="POST" class="border p-4 bg-light rounded shadow-sm">
+
+        <!-- Select Course -->
+        <div class="mb-3">
+          <label for="course" class="form-label">Course</label>
+          <select id="course" name="course" class="form-select" required>
+            <option value="" disabled selected>Select a Course</option>
+            {{#each course}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Select Semester -->
+        <div class="mb-3">
+          <label for="semester" class="form-label">Semester</label>
+          <select id="semester" name="semester" class="form-select" required>
+            <option value="" disabled selected>Select a Semester</option>
+            {{#each semester}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Select Subject -->
+        <div class="mb-3">
+          <label for="subject" class="form-label">Subject</label>
+          <select id="subject" name="subject" class="form-select" required>
+            <option value="" disabled selected>Select a Subject</option>
+            {{#each subject}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="row mt-4">
+          <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary btn-lg px-4 py-2 shadow-lg hover-effect">Get Students</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+
   </div>
 </section>
 
@@ -70,10 +118,14 @@
   .course-title {
     font-size: 24px;
     font-weight: 700;
-    color: #1565c0; /* Blue color */
-    margin: 0; /* Remove default margin */
-    text-align: left; /* Align to the start (left) */
-    letter-spacing: 1px; /* Add slight spacing for readability */
+    color: #1565c0;
+    /* Blue color */
+    margin: 0;
+    /* Remove default margin */
+    text-align: left;
+    /* Align to the start (left) */
+    letter-spacing: 1px;
+    /* Add slight spacing for readability */
   }
 
   .card-body {
@@ -126,6 +178,4 @@
       padding: 12px;
     }
   }
-
- 
 </style>

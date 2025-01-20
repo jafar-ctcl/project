@@ -389,17 +389,26 @@ module.exports = {
         });
       },
       
-      getMarks: () => {
+      getMarks: (stdData) => {
+        const { course, semester, subject } = stdData;
         return new Promise((resolve, reject) => {
-          const query = "SELECT * FROM mark";  // Adjust query to filter if needed
-          db.query(query, (err, result) => {
+          const query = "SELECT * FROM mark WHERE course = ? AND semester = ? AND subject = ?";  // Fixed the query
+          db.query(query, [course, semester, subject], (err, result) => {
             if (err) {
               return reject(err);
             }
-            resolve(result);  // Resolving with the marks data
+            const groupedMarks = result.reduce((acc, mark) => {
+              if (!acc[mark.course]) {
+                acc[mark.course] = [];
+              }
+              acc[mark.course].push(mark);
+              return acc;
+            }, {});
+            resolve(groupedMarks);  // Resolving with the marks data
           });
         });
       },
+      
       
       
       
