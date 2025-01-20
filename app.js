@@ -14,29 +14,50 @@ const session = require('express-session');
 var app = express();
 var hbs = require('express-handlebars');
 
-// Register eq helper globally
-hbs.create({
-  helpers: {
-    eq: (a, b) => a === b,
-  },
-});
+// Register custom helpers
+const customHelpers = {
+  eq: (a, b) => a === b, // Check if two values are equal
+  increment: (value) => parseInt(value) + 1, // Increment a value by 1
+};
 
-
-// view engine setup
+// Set up view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
 app.engine(
   'hbs',
   hbs.engine({
-    extname: 'hbs',
-    defaultLayout: 'layout',
-    layoutsDir: __dirname + '/views/layout/',
-    partialsDir: __dirname + '/views/partials/',
-    helpers: {
-      eq: (a, b) => a === b, // Ensure eq helper is registered here
-    },
+    extname: 'hbs', // File extension for templates
+    defaultLayout: 'layout', // Default layout file
+    layoutsDir: path.join(__dirname, 'views', 'layout/'), // Directory for layouts
+    partialsDir: path.join(__dirname, 'views/partials/'), // Directory for partials
+    helpers: customHelpers, // Register helpers globally
   })
 );
+// // Register eq helper globally
+// hbs.create({
+//   helpers: {
+//     eq: (a, b) => a === b,
+//   },
+// });
+
+
+// // view engine setup
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'hbs');
+// app.engine(
+//   'hbs',
+//   hbs.engine({
+//     extname: 'hbs',
+//     defaultLayout: 'layout',
+//     layoutsDir: __dirname + '/views/layout/',
+//     partialsDir: __dirname + '/views/partials/',
+//     helpers: {
+//       eq: (a, b) => a === b, // Ensure eq helper is registered here
+//     },
+    
+//   })
+// );
 
 
 // db connection
