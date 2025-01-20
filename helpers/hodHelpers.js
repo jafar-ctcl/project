@@ -318,6 +318,33 @@ module.exports = {
           });
         });
       },
+      editTimetable: (editTimetableData) => {
+        return new Promise((resolve, reject) => {
+            const { time, teacher,teacherEmails, subject, day, course, semester } = editTimetableData;
+            
+            // SQL query to update the timetable
+            const query = `
+                UPDATE timetable 
+                SET teacher = ?, subject = ? , email = ?
+                WHERE time = ? AND day = ? AND course = ? AND semester = ?
+            `;
+    
+            // Values for the query
+            const values = [teacher, subject, teacherEmails,time, day, course, semester];
+    
+            // Execute the query
+            db.query(query, values, (err, result) => {
+                if (err) {
+                    console.error("Error updating timetable:", err);
+                    return reject({ message: "Error updating timetable entry", error: err });
+                }
+    
+                // Resolve with success if the query executes properly
+                resolve({ message: "Timetable updated successfully", result });
+            });
+        });
+    },
+    
       
     manageTeacher: (teacherManageData) => {
         return new Promise((resolve, reject) => {

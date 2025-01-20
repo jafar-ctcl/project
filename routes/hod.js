@@ -21,24 +21,32 @@ router.get('/', verifyLogin, async (req, res) => {
   //   hodHelpers.getAllTeachers()
   // ]);
   // console.log("teachers", teachers);
+let students =await hodHelpers.getAllStudents()
+let teachers =await hodHelpers.getAllTeachers()
 
-  hodHelpers.getAllStudents().then((resp) => {
-    const students = resp
-    hodHelpers.getAllTeachers().then((resp) => {
-      req.session.teacherData = resp
-      const teachers = resp
-      //  console.log(req.session.teacherData);
+res.render('hod/dashboard', {
 
-      // Render the dashboard once both promises are resolved
-      res.render('hod/dashboard', {
+  hod,
+  students,
+  teachers
+});
+  // hodHelpers.getAllStudents().then((resp) => {
+  //   const students = resp
+  //   hodHelpers.getAllTeachers().then((resp) => {
+  //     req.session.teacherData = resp
+  //     const teachers = resp
+  //     //  console.log(req.session.teacherData);
 
-        hod,
-        students,
-        teachers
-      });
+  //     // Render the dashboard once both promises are resolved
+  //     res.render('hod/dashboard', {
 
-    })
-  })
+  //       hod,
+  //       students,
+  //       teachers
+  //     });
+
+  //   })
+  // })
 
 
 });
@@ -201,10 +209,14 @@ router.post('/add-timetable', (req, res) => {
     });
 });
 
-router.get('/view-timetable', verifyLogin, (req, res) => {
+router.get('/view-timetable',verifyLogin,async (req, res) => {
+  let teacherData =await hodHelpers.getTimetableData()
+  // console.log("teacherData",teacherData.teachersInfo);
+  
+  
   hodHelpers.getTimetable().then((timetableData) => {
     // Pass the grouped data to the view
-    res.render('hod/view-timetable', { timetable: timetableData });
+    res.render('hod/view-timetable', { timetable: timetableData ,teachersInfo:teacherData.teachersInfo});
   }).catch(err => {
     console.error(err);
     res.status(500).send('Error fetching timetable data');
@@ -217,19 +229,23 @@ router.get('/view-timetable', verifyLogin, (req, res) => {
 router.post('/edit-timetable', (req, res) => {
   console.log("Edit Timetable Data:", req.body);
 
-  // Example: Assume we're saving the timetable data to the database
-  const { time, teacher, subject, day, course, semester } = req.body;
+  // Destructure data from the request body
+  // const { time, teacher, subject, day, course, semester } = req.body;
 
-  // Simulate a database update operation here (e.g., update timetable in a database)
-  // Replace this with your actual database logic
-  const success = true; // Change this depending on your DB operation success
-
-  if (success) {
-    res.json({ success: true, message: 'Timetable updated successfully!' });
-  } else {
-    res.status(500).json({ success: false, message: 'Error updating timetable. Please try again.' });
-  }
+  // Call the editTimetable method
+  hodHelpers
+      .editTimetable(req.body)
+      .then((response) => {
+          // Send success message back to the client
+         res.redirect('/hod/view-timetable')
+      })
+      .catch((error) => {
+          console.error("Error updating timetable:", error);
+          // Send error message back to the client
+          res.status(500).json({ message: "Failed to update timetable.", error });
+      });
 });
+
 router.get('/manage-teacher/:name/:email', verifyLogin, (req, res) => {
   const { name, email } = req.params; // Destructure name and email from params
 
