@@ -47,7 +47,34 @@
         <h2 class="text-center text-danger">NO timetable here</h2>
         {{/if}}
     </div>
+    {{!-- <!-- Teacher Dropdown -->
+    <div class="mb-3">
+        <label class="form-label fs-5">Teacher</label>
+        <select id="teacherDropdown{{@index}}" class="form-select custom-select" name="teacher" required>
+            <option value="">Choose a teacher...</option>
+            {{#each teachersInfo}} <!-- Use ../ to reference the teachersInfo in the parent context -->
+            <option value="{{this.name}}" data-email="{{this.email}}" data-subjects="{{this.subjects}}">
+                {{this.name}}
+            </option>
+            {{else}}
+            <option disabled>No teachers available</option>
+            {{/each}}
+        </select>
+
+        <!-- Hidden email input field -->
+        <input type="hidden" name="teacherEmails" id="teacherEmailInput{{@index}}">
+    </div>
+
+    <!-- Subject Dropdown -->
+    <div class="mb-3">
+        <label for="subjectDropdown{{@index}}" class="form-label fs-5">Subject</label>
+        <select id="subjectDropdown{{@index}}" class="form-select custom-select" name="subject" required>
+            <option value="">Choose a subject...</option>
+        </select>
+    </div>
+
 </section>
+
 
 <style>
     /* General timetable section heading styling */
@@ -122,62 +149,62 @@
 <section class="timetable-view-section">
     <div class="container py-4 border bg-light">
 
-       {{#if timetable}}
-  <h2 class="text-center mb-5 text-primary">Timetable</h2>
+        {{#if timetable}}
+        <h2 class="text-center mb-5 text-primary">Timetable</h2>
 
-  {{#each timetable}}
-  <div class="semester-section mb-5" id="semester-{{this.semester}}">
-    <h3 class="semester-title" id="semester-{{this.semester}}">Semester {{this.semester}}</h3>
+        {{#each timetable}}
+        <div class="semester-section mb-5" id="semester-{{this.semester}}">
+            <h3 class="semester-title" id="semester-{{this.semester}}">Semester {{this.semester}}</h3>
 
-    {{#each this.courses}}
-    <div class="course-section mb-4" id="course-{{this.course}}">
-      <h4 class="text-center">Course: {{this.course}}</h4>
+            {{#each this.courses}}
+            <div class="course-section mb-4" id="course-{{this.course}}">
+                <h4 class="text-center">Course: {{this.course}}</h4>
 
-      {{#each this.days}}
-      <div class="day-section mb-4">
-        <h5>Day: {{this.day}}</h5>
+                {{#each this.days}}
+                <div class="day-section mb-4">
+                    <h5>Day: {{this.day}}</h5>
 
-        <!-- Time Slots -->
-        <table>
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Teacher</th>
-              <th>Subject</th>
-              {{!-- <th>Course</th>
-              <th>semester</th> --}}
-              <th>Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each this.timeSlots}}
-            <tr>
-              <td>{{this.time}}</td>
-              <td>{{this.teacher}}</td>
-              <td>{{this.subject}}</td>
-              {{!-- <td>{{this.course}}</td> <!-- Debug: Directly display course here -->
-              <td>{{this.semester}}</td> <!-- Debug: Directly display course here --> --}}
-              <td>
-                <button class="btn btn-warning btn-sm edit-btn" data-time="{{this.time}}"
-                  data-teacher="{{this.teacher}}" data-subject="{{this.subject}}"
-                  data-day="{{../day}}" data-course="{{this.course}}" data-semester="{{this.semester}}">
-                  Edit
-                </button>
-              </td>
-            </tr>
+                    <!-- Time Slots -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Teacher</th>
+                                <th>Subject</th>
+                                {{!-- <th>Course</th>
+                                <th>semester</th> --}}
+                                <th>Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each this.timeSlots}}
+                            <tr>
+                                <td>{{this.time}}</td>
+                                <td>{{this.teacher}}</td>
+                                <td>{{this.subject}}</td>
+                                {{!-- <td>{{this.course}}</td> <!-- Debug: Directly display course here -->
+                                <td>{{this.semester}}</td> <!-- Debug: Directly display course here --> --}}
+                                <td>
+                                    <button class="btn btn-warning btn-sm edit-btn" data-time="{{this.time}}"
+                                        data-day="{{../day}}" data-course="{{this.course}}"
+                                        data-semester="{{this.semester}}">
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                {{/each}}
+            </div>
             {{/each}}
-          </tbody>
-        </table>
-      </div>
-      {{/each}}
-    </div>
-    {{/each}}
-  </div>
-  {{/each}}
+        </div>
+        {{/each}}
 
-{{else}}
-  <h2 class="text-center text-danger">No timetable available</h2>
-{{/if}}
+        {{else}}
+        <h2 class="text-center text-danger">No timetable available</h2>
+        {{/if}}
 
 
     </div>
@@ -188,7 +215,7 @@
         <span class="close-btn" onclick="closeModal()">&times;</span>
         <h3>Edit Timetable</h3>
         <div id="error-message" class="d-none alert alert-danger"></div> <!-- Error message container -->
-        <form id="editForm" method="POST">
+        <form id="editForm" action="/hod/edit-timetable"  method="POST">
             <input type="hidden" name="semester" id="editSemester">
             <input type="hidden" name="course" id="editCourse">
             <input type="hidden" name="day" id="editDay">
@@ -198,118 +225,93 @@
             </div>
             <div class="form-group">
                 <label for="editTeacher">Teacher:</label>
-                <input type="text" id="editTeacher" name="teacher" class="form-control">
+                <select id="teacherDropdown{{@index}}" class="form-select custom-select" name="teacher" required>
+                    <option value="">Choose a teacher...</option>
+                    {{#each teachersInfo}}
+                    <option value="{{this.name}}" data-email="{{this.email}}" data-subjects="{{this.subjects}}">
+                        {{this.name}}
+                    </option>
+                    {{else}}
+                    <option disabled>No teachers available</option>
+                    {{/each}}
+                </select>
+                <!-- Hidden email input field -->
+                <input type="hidden" name="teacherEmails" id="teacherEmailInput{{@index}}">
             </div>
             <div class="form-group">
-                <label for="editSubject">Subject:</label>
-                <input type="text" id="editSubject" name="subject" class="form-control">
+                <label for="subjectDropdown{{@index}}" class="form-label fs-5">Subject</label>
+                <select id="subjectDropdown{{@index}}" class="form-select custom-select" name="subject" required>
+                    <option value="">Choose a subject...</option>
+                </select>
             </div>
-            <button type="button" id="saveButton" class="btn btn-primary" onclick="saveTimetable()">Save
-                Changes</button>
+           <button type="submit" id="saveButton" class="btn btn-primary">Save Changes</button>
+
         </form>
     </div>
 </div>
 
-
 <script>
-    document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            // Get data attributes from the clicked button
-            const time = this.getAttribute('data-time');
-            const teacher = this.getAttribute('data-teacher');
-            const subject = this.getAttribute('data-subject');
-            const day = this.getAttribute('data-day');
-            const course = this.getAttribute('data-course');
-            const semester = this.getAttribute('data-semester');
+    // Event listener for teacher selection
+    document.getElementById('teacherDropdown{{@index}}').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const teacherEmail = selectedOption.getAttribute('data-email');
+        const teacherSubjects = selectedOption.getAttribute('data-subjects');
 
-            // Log the values to the console for debugging
-            console.log('Edit Timetable Data:', { time, teacher, subject, day, course, semester });
+        // Update the hidden email input field with the selected teacher's email
+        document.getElementById('teacherEmailInput{{@index}}').value = teacherEmail;
 
-            // You can now use the data in your modal or elsewhere
-            document.getElementById('editTime').value = time;
-            document.getElementById('editTeacher').value = teacher;
-            document.getElementById('editSubject').value = subject;
-            document.getElementById('editDay').value = day;
-            document.getElementById('editCourse').value = course;
-            document.getElementById('editSemester').value = semester;
+        // Populate the subject dropdown with the teacher's subjects
+        const subjectDropdown = document.getElementById('subjectDropdown{{@index}}');
+        subjectDropdown.innerHTML = '<option value="">Choose a subject...</option>'; // Clear existing options
 
-            // Show the modal
-            document.getElementById('editModal').style.display = 'flex';
+        // Split subjects by comma and add them as options in the dropdown
+        const subjects = teacherSubjects.split(',');
+        subjects.forEach(subject => {
+            const option = document.createElement('option');
+            option.value = subject.trim(); // Trim any extra whitespace
+            option.textContent = subject.trim();
+            subjectDropdown.appendChild(option);
         });
     });
+document.querySelectorAll('.edit-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        document.getElementById('editModal').style.display = 'flex';
+        
+        // Get data attributes from the clicked button
+        const time = this.getAttribute('data-time');
+        const teacher = this.getAttribute('data-teacher');
+        const subject = this.getAttribute('data-subject');
+        const day = this.getAttribute('data-day');
+        const course = this.getAttribute('data-course');
+        const semester = this.getAttribute('data-semester');
 
+        console.log('Edit Timetable Data:', { time, teacher, subject, day, course, semester });
 
+        // Populate the form fields
+        document.getElementById('editTime').value = time || '';
+        document.getElementById('editDay').value = day || '';
+        document.getElementById('editCourse').value = course || '';
+        document.getElementById('editSemester').value = semester || '';
+
+        // Set default values in the dropdowns if teacher and subject are provided
+        if (teacher) {
+            document.getElementById('teacherDropdown{{@index}}').value = teacher;
+        }
+        if (subject) {
+            document.getElementById('subjectDropdown{{@index}}').value = subject;
+        }
+    });
+});
+function saveTimetable() {
+    const formData = new FormData(document.getElementById('editForm'));
+
+}
     // Close modal
     function closeModal() {
         document.getElementById('editModal').style.display = 'none';
     }
+</script>
 
-    // Save the edited timetable data
-    function saveTimetable() {
-        // Get values from the modal form
-        const time = document.getElementById('editTime').value.trim();
-        const teacher = document.getElementById('editTeacher').value.trim();
-        const subject = document.getElementById('editSubject').value.trim();
-        const day = document.getElementById('editDay').value.trim();
-        const course = document.getElementById('editCourse').value.trim();
-        const semester = document.getElementById('editSemester').value.trim();
-
-        // Log the data object for debugging
-        console.log('Data to be sent:', {
-            time: time,
-            teacher: teacher,
-            subject: subject,
-            day: day,
-            course: course,
-            semester: semester
-        });
-
-        const saveButton = document.getElementById('saveButton');
-        saveButton.disabled = true;  // Disable the save button to prevent multiple submissions
-
-        // Hide any previous error message
-        const errorMessageContainer = document.getElementById('error-message');
-        errorMessageContainer.classList.add('d-none');
-        errorMessageContainer.innerHTML = '';
-
-        // Send data via AJAX to save the timetable edit
-        $.ajax({
-            url: '/hod/edit-timetable',  // Endpoint for updating the timetable
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                time: time,
-                teacher: teacher,
-                subject: subject,
-                day: day,
-                course: course,
-                semester: semester,
-            }),
-            success: function (data) {
-                saveButton.disabled = false;  // Re-enable the save button
-
-                if (data.success) {
-                    // Close the modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                    modal.hide();
-
-                    // Reload the page to reflect changes
-                    location.reload();
-                }
-            },
-            error: function (xhr, status, error) {
-                saveButton.disabled = false;  // Re-enable the save button
-                console.error('Error occurred:', xhr.responseText || error);
-
-                // Extract and display the error message from the response
-                const responseMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'An error occurred. Please try again.';
-
-                // Show the error message inside the modal
-                errorMessageContainer.classList.remove('d-none');
-                errorMessageContainer.innerHTML = responseMessage;
-            },
-        });
-    }
 
 </script>
 
