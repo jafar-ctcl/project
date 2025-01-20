@@ -41,7 +41,9 @@
                   </td>
                 {{else}}
                   <td>Inactive</td>
+                  
                   <td>
+                     <a href="/hod/teacher-change-status/{{email}}/0" class="btn btn-danger btn-sm">Reject</a>
                     <a href="/hod/teacher-change-status/{{email}}/1" class="btn btn-success btn-sm">Approve</a>
                   </td>
                 {{/if}}

@@ -1,195 +1,176 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
-<section>
-    <div class="container mt-5">
-        {{!-- <p class="text-center text-warning mt-3 mb-3">{{status}}</p> --}}
-        <table id="myTable" class="table table-hover  mt-5">
-            <thead>
-                <tr>
-                    <th scope="col">Student Name</th>
-                    <th scope="col">Gender</th>
+<section class="container mt-5 section-background">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark">Student List</h4>
+        <a href="/hod/view-students" class="btn btn-outline-info btn-lg hover-effect rounded-0">
+          <i class="bi bi-person-lines-fill me-2"></i> View Students
+        </a>
+      </div>
 
-                    <th scope="col">Email</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Semester</th>
-                    <th scope="col">Course</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Option</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each students}}
-                <tr>
-                    <td>{{name}}</td>
-                    <td>{{gender}}</td>
-
-                    <td scope="col">{{email}}</td>
-                    <td scope="col">{{phone}}</td>
-                    <td scope="col">{{semester}}</td>
-                    <td scope="col">{{course}}</td>
-                    {{#if status}}
-                    <td scope="col">Active</td>
-                    <td> <a href="/hod/change-status/{{email}}/0" class="btn btn-danger">Reject</a>
-                    </td>
-                    {{else}}
-                    <td scope="col">Inactive</td>
-                    <td>
-                        <a href="/hod/change-status/{{email}}/1" class="btn btn-success">Approve</a>
-                    </td>
-                    {{/if}}
-                    
-                </tr>
-                {{/each}}
-            </tbody>
+      <!-- Table for Students -->
+      <div class="table-responsive">
+        <table id="myTable" class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Gender</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Semester</th>
+              <th>Course</th>
+              <th>Status</th>
+              <th>Options</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each students}}
+              <tr>
+                <td>{{name}}</td>
+                <td>{{gender}}</td>
+                <td>{{email}}</td>
+                <td>{{phone}}</td>
+                <td>{{semester}}</td>
+                <td>{{course}}</td>
+                {{#if status}}
+                  <td>Active</td>
+                  <td>
+                    <a href="/hod/change-status/{{email}}/0" class="btn btn-danger btn-sm">Reject</a>
+                  </td>
+                {{else}}
+                  <td>Inactive</td>
+                  <td>
+                    <a href="/hod/change-status/{{email}}/0" class="btn btn-danger btn-sm">Reject</a>
+                    <a href="/hod/change-status/{{email}}/1" class="btn btn-success btn-sm">Approve</a>
+                  </td>
+                {{/if}}
+              </tr>
+            {{/each}}
+          </tbody>
         </table>
+      </div>
     </div>
-        
-<!-- View Teachers Button -->
-<div class="container text-center">
-    <a href="/hod/view-students" class="btn btn-primary mb-3">View students</a>
-</div>
-
+  </div>
 </section>
+
 
 <!-- Custom Styles -->
 <style>
-  .container {
-   /* Light Blue */
-    padding: 20px 40px;
-  }
-
-  /* Section background and border radius styling */
- /* .section-background {
-    background-color: #f0f8ff; 
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);*/
-  
-
-  .section-background {
-  
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-
-  /* Table Styling */
-  .table {
-    border-radius: 8px;
-    border: 1px solid #c8d6e5;
-    padding: 20px;
-  }
-
-  .table th, .table td {
-    padding: 15px;
-    text-align: center;
-    vertical-align: middle;
-  }
-
-  .table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f9f9f9;
-  }
-
- 
-  .table-bordered th, .table-bordered td {
-  border: 1px solid #c8d6e5; /* Light blue-gray for a cleaner look */
-}
-
-  h4 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #333;
-  }
-
-  /* Button Styling */
-  .btn-lg {
-    padding: 10px 20px;  /* Reduced padding */
-    font-size: 16px; /* Reduced font size */
-  }
-
-  /* Hover effect for table rows */
-  .table tbody tr:hover {
-    background-color: #17a2b8; /* Hover background color */
-    color: #fff; /* Text color on hover */
-    transition: background-color 0.3s ease; /* Smooth transition */
-  }
-
-  /* Hover effect for status change buttons */
-  .table tbody tr .btn {
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-info {
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-  }
-
-  .btn-info:hover {
-    background-color: #138496;
-    border-color: #138496;
-  }
-
-  .btn-outline-info {
-    border-color: #17a2b8;
-  }
-
-  .btn-outline-info:hover {
-    background-color: #138496;
-    color: #fff;
-    border-color: #138496;
-  }
-
-  .hover-effect:hover {
-    background-color: #138496 !important;
-  }
-
-  /* Shadow Effect */
-  .shadow-lg {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Icon Styling */
-  .me-2 {
-    margin-right: 8px;
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .btn-lg {
-      font-size: 14px;
-      padding: 10px 20px;
-    }
-
     .container {
-      padding: 15px;
+        padding: 20px 40px;
     }
 
-    .btn-primary {
-      padding: 12px 25px;
-      font-size: 16px;
+    .section-background {
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-  }
 
-  /* Card styling */
-  .card {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+    .table {
+        border-radius: 8px;
+        border: 1px solid #c8d6e5;
+        padding: 20px;
+    }
 
-  .form-select {
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
+    .table th, .table td {
+        padding: 15px;
+        text-align: center;
+        vertical-align: middle;
+    }
 
-  .form-control {
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #c8d6e5;
+    }
+
+    h4 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+
+    .table tbody tr:hover {
+        background-color: #17a2b8;
+        color: #fff;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+    .btn-info:hover {
+        background-color: #138496;
+        border-color: #138496;
+    }
+
+    .btn-outline-info {
+        border-color: #17a2b8;
+    }
+
+    .btn-outline-info:hover {
+        background-color: #138496;
+        color: #fff;
+        border-color: #138496;
+    }
+
+    .hover-effect:hover {
+        background-color: #138496 !important;
+    }
+
+    .shadow-lg {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .me-2 {
+        margin-right: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .btn-lg {
+            font-size: 14px;
+            padding: 10px 20px;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        .btn-primary {
+            padding: 12px 25px;
+            font-size: 16px;
+        }
+    }
+
+    .card {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-select {
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control {
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 </style>
+
 <script>
     let table = new DataTable('#myTable');
 </script>
