@@ -5,34 +5,34 @@
     <table class="table table-striped table-bordered">
       <thead class="table-primary">
         <tr>
-                <th scope="col">Roll no</th>
+          <th scope="col">#</th>
           <th scope="col">Full Name</th>
           {{!-- <th scope="col">Date of Birth</th> --}}
           <th scope="col">Gender</th>
 
-        {{!-- <th scope="col">ABCD_Id</th> --}}
-        <th scope="col">View</th>
-         
+          {{!-- <th scope="col">ABCD_Id</th> --}}
+          <th scope="col">View</th>
+
         </tr>
       </thead>
       <tbody>
         {{#each students}}
         <tr>
-        <th scope="row">{{id}}</th> <!-- Loop Index -->
-        <td>{{name}}</td>
-        {{!-- <td>{{dob}}</td> --}}
-        <td>{{gender}}</td>
-       
-        {{!-- <td>{{ABCD_Id}}</td> --}}
-         <td>
-              <div class="d-flex action-buttons">
-                <a href="hod/about-student" class=" m-1 btn btn-success">View</a>
-              
-              </div>
+          <th scope="row">{{increment @index}}</th> <!-- Loop Index -->
+          <td>{{name}}</td>
+          {{!-- <td>{{dob}}</td> --}}
+          <td>{{gender}}</td>
+
+          {{!-- <td>{{ABCD_Id}}</td> --}}
+          <td>
+            <div class="d-flex action-buttons">
+              <a href="hod/about-student" class=" m-1 btn btn-success">View</a>
+
+            </div>
           </td>
         </tr>
         {{/each}}
-        
+
 
         <!-- Add more rows dynamically -->
       </tbody>
