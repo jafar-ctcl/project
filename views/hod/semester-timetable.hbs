@@ -1,193 +1,158 @@
+<!-- Timetable View Section -->
 <section class="timetable-view-section">
   <div class="container py-4 border bg-light">
-    <a href="/hod">Home</a>
-    {{#each days}}
-      <h3 class="text-center mb-4">{{this}}</h3> <!-- Display the day (e.g., Monday) -->
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center">
-          <thead class="thead-dark">
-            <tr>
-              <th>Semester (Course)</th>
-              <!-- Loop through the times to display each time header -->
-              {{#each ../times}}
-                <th>{{this}}</th> <!-- Time slot header -->
-              {{/each}}
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Loop through courses for this day -->
-            {{#each (lookup ../timetable this) as |course|}} <!-- Use lookup to access day-specific timetable -->
-              {{#each course.semesters as |semester|}}
-                <tr>
-                  <td class="semester-title">{{semester.semester}} ({{course.course}})</td> <!-- Display semester and course name -->
-                  {{#each semester.subjects as |subject|}}
-                    <td>
-                      <div>{{subject.subject}} ({{subject.teacher}})</div> <!-- Display subject and teacher -->
-                      <!-- Edit Button with Font Awesome Icon -->
-                      <button class="btn btn-outline-primary btn-sm mt-2" onclick="editSubject('{{subject.subject}}', '{{subject.teacher}}')">
-                        <i class="fas fa-edit"></i> Edit
-                      </button>
-                    </td>
-                  {{/each}}
-                </tr>
-              {{/each}}
+    <a href="/hod" class="text-decoration-none text-primary">&larr; Home</a>
+    {{#each days as |day index|}} <!-- Loop over days -->
+    <h3 class="text-center mb-4">{{day}}</h3> <!-- Display the day name -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover text-center">
+        <thead class="thead-dark">
+          <tr>
+            <th>Semester (Course)</th>
+            {{#each ../times}} <!-- Loop over times -->
+            <th>{{this}}</th> <!-- Display time slot -->
             {{/each}}
-          </tbody>
-        </table>
-      </div>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each (lookup ../timetable day) as |course|}} <!-- Loop over courses for the day -->
+          {{#each course.semesters as |semester|}}
+          <tr>
+            <td class="semester-title">{{semester.semester}} ({{course.course}})</td>
+            {{#each semester.subjects as |subject|}} <!-- Loop over subjects -->
+            <td>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>{{subject.subject}} ({{subject.teacher}})</div> <!-- Display subject and teacher -->
+                <!-- Edit Button with Day Passed -->
+                <button class="btn btn-info btn-sm"
+                  data-bs-toggle="modal" data-bs-target="#editModal"
+                  onclick="editSubject('{{semester.semester}}','{{subject.time}}', '{{course.course}}', '{{day}}')">
+                  <i class="fas fa-edit"></i> 
+                </button>
+              </div>
+            </td>
+            {{/each}}
+          </tr>
+          {{/each}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
     {{/each}}
   </div>
 </section>
 
-<!-- Styling for the page -->
-<style>
-  /* General timetable section heading styling */
-  .timetable-view-section h3 {
-    color: #1565c0;
-    font-family: 'Poppins', sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    margin-top: 30px;
-  }
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Edit Subject</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Form with POST Method -->
+        <form action="/hod/edit-semester-timetable" method="POST">
+          <!-- Hidden Fields -->
+          <input type="hidden" class="form-control" id="semester" name="semester">
+          <input type="hidden" class="form-control" id="day" name="day">
+          <input type="hidden" class="form-control" id="time" name="time">
+          <input type="hidden" class="form-control" id="course" name="course">
 
-  .semester-title {
-    color: #1565c0;
-    font-family: 'Poppins', sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    margin-top: 30px;
-  }
+          <!-- Teacher Dropdown -->
+          <div class="mb-3">
+            <label for="teacherDropdown" class="form-label">Update Teacher</label>
+            <select id="teacherDropdown" class="form-select" name="teacher" required>
+              <option value="">Choose a teacher...</option>
+              {{#each teachersInfo}}
+              <option value="{{this.name}}" data-email="{{this.email}}" data-subjects="{{this.subjects}}">
+                {{this.name}}
+              </option>
+              {{else}}
+              <option disabled>No teachers available</option>
+              {{/each}}
+            </select>
+            <input type="hidden" name="teacherEmails" id="teacherEmailInput">
+          </div>
 
-  /* Table styling within timetable */
-  .timetable-view-section table {
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: #ffffff;
-    width: 100%;
-    margin-top: 15px;
-  }
+          <!-- Subject Dropdown -->
+          <div class="mb-3">
+            <label for="subjectDropdown" class="form-label">Subject</label>
+            <select id="subjectDropdown" class="form-select" name="subject" required>
+              <option value="">Choose a subject...</option>
+            </select>
+          </div>
 
-  /* Table headers */
-  .timetable-view-section th {
-    background-color: #1565c0;
-    color: #ffffff;
-    text-align: center;
-    padding: 10px;
-    font-size: 16px;
-  }
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-  /* Table cells */
-  .timetable-view-section td {
-    text-align: center;
-    padding: 10px;
-    font-size: 15px;
-    color: #424242;
-  }
-
-  /* Odd rows in the table */
-  .timetable-view-section tr:nth-child(odd) {
-    background-color: #e3f2fd;
-  }
-
-  /* Hover effect for rows */
-  .timetable-view-section tr:hover {
-    background-color: #bbdefb;
-    cursor: pointer;
-  }
-
-  /* Day section heading styling */
-  .day-section h5 {
-    font-size: 18px;
-    color: #007bff;
-    margin-bottom: 15px;
-  }
-
-  /* Course section title styling */
-  .course-section h4 {
-    font-size: 20px;
-    color: #1565c0;
-  }
-
-  /* Modal Styling */
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-content {
-    background-color: white;
-    padding: 40px;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 80%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .close-btn {
-    font-size: 30px;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-  }
-
-  /* Form elements inside the modal */
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  .form-control {
-    padding: 12px;
-    font-size: 16px;
-    width: 100%;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-
-  .form-group label {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  .btn-primary {
-    font-size: 16px;
-    padding: 12px 20px;
-    border-radius: 5px;
-  }
-
-  .fas {
-    margin-right: 5px; /* Adds space between the icon and the text */
-  }
-
-  /* Edit button styling */
-  .btn-outline-primary {
-    border: 1px solid #007bff;
-    color: #007bff;
-    background-color: transparent;
-  }
-
-  .btn-outline-primary:hover {
-    background-color: #007bff;
-    color: white;
-  }
-  
-</style>
-
-<!-- Edit button functionality -->
-<script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- FontAwesome Script -->
 <script>
-  function editSubject(subject, teacher) {
-    alert("Editing subject: " + subject + "\nTeacher: " + teacher);
-    // You can add more functionality here like opening a modal with subject details for editing.
+  // Event listener for teacher selection
+  document.getElementById('teacherDropdown').addEventListener('change', function () {
+    const selectedOption = this.options[this.selectedIndex];
+    const teacherEmail = selectedOption.getAttribute('data-email');
+    const teacherSubjects = selectedOption.getAttribute('data-subjects');
+
+    // Update the hidden email input field
+    document.getElementById('teacherEmailInput').value = teacherEmail;
+
+    // Populate the subject dropdown
+    const subjectDropdown = document.getElementById('subjectDropdown');
+    subjectDropdown.innerHTML = '<option value="">Choose a subject...</option>'; // Clear existing options
+
+    if (teacherSubjects) {
+      teacherSubjects.split(',').forEach(subject => {
+        const option = document.createElement('option');
+        option.value = subject.trim();
+        option.textContent = subject.trim();
+        subjectDropdown.appendChild(option);
+      });
+    }
+  });
+
+  // Function to populate modal fields
+  function editSubject(semester,time, course, day) {
+    console.log("Clicked",semester)
+    // Populate hidden fields
+    document.getElementById('semester').value = semester;
+    document.getElementById('day').value = day;
+    document.getElementById('time').value = time;
+    document.getElementById('course').value = course;
   }
 </script>
+
+
+
+
+<!-- CSS Styling -->
+<style>
+  .btn-info {
+    background-color: #17a2b8;
+    color: white;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-info:hover {
+    background-color: #138496;
+  }
+
+  .btn-sm {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .modal-header {
+    background-color: #1565c0;
+    color: #ffffff;
+  }
+
+  .modal-title {
+    font-family: 'Poppins', sans-serif;
+  }
+</style>

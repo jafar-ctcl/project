@@ -717,9 +717,9 @@ module.exports = {
               });
             });
       
-            console.log("Unique Days:", days);
-            console.log("Unique Times:", times);
-            console.log("Timetable:", timetable);
+            // console.log("Unique Days:", days);
+            // console.log("Unique Times:", times);
+            // console.log("Timetable:", timetable);
       
             // Resolve with the timetable data including days, times, and structured courses with semesters
             resolve({ days, times, timetable });

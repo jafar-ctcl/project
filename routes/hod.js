@@ -229,7 +229,9 @@ router.post('/edit-timetable', (req, res) => {
 });
 
 // Route to render the semester timetable
-router.get('/semester-timetable', (req, res) => {
+router.get('/semester-timetable',verifyLogin,async (req, res) => {
+  let teacherData = await hodHelpers.getTimetableData()
+  
   hodHelpers
     .getSemTimetable()  // Fetch the timetable data from the helper
     .then((timetableData) => {
@@ -242,7 +244,8 @@ router.get('/semester-timetable', (req, res) => {
       res.render('hod/semester-timetable', {
         days,        // Array of days (e.g., Monday, Tuesday)
         times,       // Array of time slots (e.g., "09:30 AM - 10:30 AM")
-        timetable    // The full timetable data with semester and course info
+        timetable, //The full timetable data with semester and course info
+        teachersInfo: teacherData.teachersInfo
       });
     })
     .catch((err) => {
@@ -250,17 +253,25 @@ router.get('/semester-timetable', (req, res) => {
       res.status(500).send('Error fetching timetable data');
     });
 });
+router.post('/edit-semester-timetable',(req,res)=>{
+  console.log("Edit semester Timetable Data:", req.body);
 
+  // Destructure data from the request body
+  // const { time, teacher, subject, day, course, semester } = req.body;
 
-
-
-
-
-
-
-
-
-
+  // Call the editTimetable method
+  hodHelpers
+    .editTimetable(req.body)
+    .then((response) => {
+      // Send success message back to the client
+      res.redirect('/hod/semester-timetable')
+    })
+    .catch((error) => {
+      console.error("Error updating timetable:", error);
+      // Send error message back to the client
+      res.status(500).json({ message: "Failed to update timetable.", error });
+    });
+});
 
 
 router.get('/manage-teacher/:name/:email', verifyLogin, (req, res) => {
