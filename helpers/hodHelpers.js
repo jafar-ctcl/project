@@ -652,10 +652,87 @@ module.exports = {
             });
         });
     },
-    
-    
-    
-
+    getTeacherTimetable : (teacherEmail)=>{
+        return new Promise((resolve,reject)=>{
+            db.query("SELECT * FROM timetable where email=?",[teacherEmail],(err,data)=>{
+                if(err)reject(err)
+                console.log("teachr timetable",data);
+                resolve(data)
+            })
+        })
+    },
+    getSemTimetable: () => {
+        return new Promise((resolve, reject) => {
+          // Query to fetch distinct days, times, courses, semesters, subjects, and teachers
+          db.query('SELECT day, time, subject, teacher, course, semester FROM timetable', (err, data) => {
+            if (err) {
+              console.error('Error fetching data:', err);
+              return reject(err);
+            }
+      
+            // Extract unique days and times
+            const days = [...new Set(data.map(row => row.day))];  // Unique days
+            const times = [...new Set(data.map(row => row.time))]; // Unique times
+      
+            // Organize timetable data by day and course with semesters
+            const timetable = {};
+      
+            days.forEach(day => {
+              timetable[day] = [];  // Initialize an array for each day
+      
+              // Group by course and semester
+              const courses = data.filter(row => row.day === day);
+      
+              courses.forEach(row => {
+                // Find or create the course entry for the day
+                let courseEntry = timetable[day].find(entry => entry.course === row.course);
+      
+                if (!courseEntry) {
+                  // If the course entry doesn't exist, create a new one
+                  courseEntry = {
+                    course: row.course,
+                    semesters: []  // Changed to 'semesters' to handle multiple semesters
+                  };
+                  timetable[day].push(courseEntry);
+                }
+      
+                // Find or create the semester entry for the course
+                let semesterEntry = courseEntry.semesters.find(semester => semester.semester === row.semester);
+      
+                if (!semesterEntry) {
+                  // If the semester entry doesn't exist, create a new one
+                  semesterEntry = {
+                    semester: row.semester,
+                    subjects: []  // Store subjects for this semester
+                  };
+                  courseEntry.semesters.push(semesterEntry);
+                }
+      
+                // Add the subject to the appropriate semester for the course
+                semesterEntry.subjects.push({
+                  subject: row.subject,
+                  teacher: row.teacher,
+                  time: row.time
+                });
+              });
+            });
+      
+            console.log("Unique Days:", days);
+            console.log("Unique Times:", times);
+            console.log("Timetable:", timetable);
+      
+            // Resolve with the timetable data including days, times, and structured courses with semesters
+            resolve({ days, times, timetable });
+          });
+        });
+      }
+      
+      
+      
+      
+      
+      
+      
 
 }
 

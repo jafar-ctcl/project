@@ -1,0 +1,193 @@
+<section class="timetable-view-section">
+  <div class="container py-4 border bg-light">
+    <a href="/hod">Home</a>
+    {{#each days}}
+      <h3 class="text-center mb-4">{{this}}</h3> <!-- Display the day (e.g., Monday) -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th>Semester (Course)</th>
+              <!-- Loop through the times to display each time header -->
+              {{#each ../times}}
+                <th>{{this}}</th> <!-- Time slot header -->
+              {{/each}}
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Loop through courses for this day -->
+            {{#each (lookup ../timetable this) as |course|}} <!-- Use lookup to access day-specific timetable -->
+              {{#each course.semesters as |semester|}}
+                <tr>
+                  <td class="semester-title">{{semester.semester}} ({{course.course}})</td> <!-- Display semester and course name -->
+                  {{#each semester.subjects as |subject|}}
+                    <td>
+                      <div>{{subject.subject}} ({{subject.teacher}})</div> <!-- Display subject and teacher -->
+                      <!-- Edit Button with Font Awesome Icon -->
+                      <button class="btn btn-outline-primary btn-sm mt-2" onclick="editSubject('{{subject.subject}}', '{{subject.teacher}}')">
+                        <i class="fas fa-edit"></i> Edit
+                      </button>
+                    </td>
+                  {{/each}}
+                </tr>
+              {{/each}}
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    {{/each}}
+  </div>
+</section>
+
+<!-- Styling for the page -->
+<style>
+  /* General timetable section heading styling */
+  .timetable-view-section h3 {
+    color: #1565c0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 30px;
+  }
+
+  .semester-title {
+    color: #1565c0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 30px;
+  }
+
+  /* Table styling within timetable */
+  .timetable-view-section table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #ffffff;
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  /* Table headers */
+  .timetable-view-section th {
+    background-color: #1565c0;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  /* Table cells */
+  .timetable-view-section td {
+    text-align: center;
+    padding: 10px;
+    font-size: 15px;
+    color: #424242;
+  }
+
+  /* Odd rows in the table */
+  .timetable-view-section tr:nth-child(odd) {
+    background-color: #e3f2fd;
+  }
+
+  /* Hover effect for rows */
+  .timetable-view-section tr:hover {
+    background-color: #bbdefb;
+    cursor: pointer;
+  }
+
+  /* Day section heading styling */
+  .day-section h5 {
+    font-size: 18px;
+    color: #007bff;
+    margin-bottom: 15px;
+  }
+
+  /* Course section title styling */
+  .course-section h4 {
+    font-size: 20px;
+    color: #1565c0;
+  }
+
+  /* Modal Styling */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 80%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .close-btn {
+    font-size: 30px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+
+  /* Form elements inside the modal */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-control {
+    padding: 12px;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .form-group label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .btn-primary {
+    font-size: 16px;
+    padding: 12px 20px;
+    border-radius: 5px;
+  }
+
+  .fas {
+    margin-right: 5px; /* Adds space between the icon and the text */
+  }
+
+  /* Edit button styling */
+  .btn-outline-primary {
+    border: 1px solid #007bff;
+    color: #007bff;
+    background-color: transparent;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+</style>
+
+<!-- Edit button functionality -->
+<script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- FontAwesome Script -->
+<script>
+  function editSubject(subject, teacher) {
+    alert("Editing subject: " + subject + "\nTeacher: " + teacher);
+    // You can add more functionality here like opening a modal with subject details for editing.
+  }
+</script>

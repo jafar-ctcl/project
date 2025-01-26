@@ -228,6 +228,41 @@ router.post('/edit-timetable', (req, res) => {
     });
 });
 
+// Route to render the semester timetable
+router.get('/semester-timetable', (req, res) => {
+  hodHelpers
+    .getSemTimetable()  // Fetch the timetable data from the helper
+    .then((timetableData) => {
+      // console.log("timetableData", timetableData);
+
+      // Deconstruct the timetable data to pass to the view
+      const { days, times, timetable } = timetableData;
+
+      // Render the view and pass timetableData to the template
+      res.render('hod/semester-timetable', {
+        days,        // Array of days (e.g., Monday, Tuesday)
+        times,       // Array of time slots (e.g., "09:30 AM - 10:30 AM")
+        timetable    // The full timetable data with semester and course info
+      });
+    })
+    .catch((err) => {
+      console.error('Error fetching timetable data:', err);
+      res.status(500).send('Error fetching timetable data');
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 router.get('/manage-teacher/:name/:email', verifyLogin, (req, res) => {
   const { name, email } = req.params; // Destructure name and email from params
 
@@ -256,16 +291,18 @@ router.post('/manage-teacher', (req, res) => {
 });
 
 
-router.get('/view-managed-teacher/:email', verifyLogin, (req, res) => {
+router.get('/view-managed-teacher/:email', verifyLogin,async (req, res) => {
   // console.log("teacher email", req.session.teacherData[0].email);
   // console.log(req.params);
-
   let { email } = req.params
+  let timetableData = await hodHelpers.getTeacherTimetable(email)
+  console.log("teacher timetable",timetableData);
+  
   hodHelpers.viewManagedTeacher(email).then((resp) => {
     let teacherData = resp[0];
     // Pass teacherData and subjects to the view
     let subjects = resp[0].subjects.split(",").map(subject => subject.trim()); // Convert subjects to array if it's a comma-separated string
-    res.render('hod/view-managed-teacher', { teacherData, subjects });
+    res.render('hod/view-managed-teacher', { teacherData, subjects, timetable: timetableData });
   });
 });
 
