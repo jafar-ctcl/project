@@ -14,11 +14,22 @@ const session = require('express-session');
 var app = express();
 var hbs = require('express-handlebars');
 
-// Register custom helpers
 const customHelpers = {
   eq: (a, b) => a === b, // Check if two values are equal
   increment: (value) => parseInt(value) + 1, // Increment a value by 1
+  json: (context) => JSON.stringify(context, null, 2), // Convert data to JSON string (pretty print)
+  
+  // Custom helper to check if two values are equal
+  ifCond: (timeSlot, time, options) => {
+    if (timeSlot === time) {
+      return options.fn(this); // Render if the times match
+    } else {
+      return options.inverse(this); // Don't render if times don't match
+    }
+  }
 };
+
+
 
 // Set up view engine
 app.set('views', path.join(__dirname, 'views'));
