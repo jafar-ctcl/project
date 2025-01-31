@@ -2,6 +2,7 @@
 <section class="timetable-view-section">
   <div class="container py-4 border bg-light">
     <a href="/hod" class="text-decoration-none text-primary">&larr; Home</a>
+    {{!-- <pre>{{json timetable}}</pre> --}}
     {{#each days as |day index|}} <!-- Loop over days -->
     <h3 class="text-center mb-4">{{day}}</h3> <!-- Display the day name -->
     <div class="table-responsive">
