@@ -1,5 +1,6 @@
 var express = require('express');
 const teacherHelpers = require('../helpers/teacherHelpers');
+const hodHelpers = require('../helpers/hodHelpers');
 var router = express.Router();
 var teacher = true
 const verifyLogin = (req, res, next) => {
@@ -90,6 +91,23 @@ router.get('/logout', (req, res) => {
   req.session.destroy()
   res.redirect('/teacher')
 })
+
+// Route to render the teacher's timetable
+router.get('/timetable', verifyLogin, (req, res) => {
+  let email = req.session.teacherData.email;
+
+  teacherHelpers.getTeacherTimetable(email)
+    .then((timetableData) => {
+      const { days, times, timetable } = timetableData
+      res.render("teacher/view-timetable", { email, days, times, timetable });
+    })
+    .catch(err => {
+      console.error("Error fetching teacher timetable:", err);
+      res.status(500).send("Error fetching timetable");
+    });
+});
+
+
 router.get('/students', verifyLogin, (req, res) => {
   const teacherData = req.session.teacherData;
 
@@ -183,16 +201,19 @@ router.post('/view-attendance', verifyLogin, (req, res) => {
   const course = req.session.teacherData.course
 
   const { date } = req.body; // Expecting `year` and `date` in the POST body
+ 
+  
   // console.log("Year:", year, "Date:", date);
 
   teacherHelpers.getAttendance(date, sem, course).then((resp) => {
     // console.log("Attendance Data:", resp);
 
     // Render the view with the attendance data and year
-    res.render('teacher/view-attendance', { attendance: resp, sem, teacher, name: req.session.teacherData.name });
+    res.render('teacher/view-attendance', { attendance: resp, sem, teacher,name: req.session.teacherData.name });
   })
 });
 router.post('/edit-attendance/:id', (req, res) => {
+
   const { id } = req.params; // Get the student ID from the URL
   const { status } = req.body; // Get the updated status from the body
 
@@ -217,7 +238,6 @@ router.get('/monthly-attendance', verifyLogin, (req, res) => {
   const date = new Date();
   const monthNumber = date.getMonth() + 1; // Get current month number (1-12)
   const year = date.getFullYear(); // Get current year
-  //  console.log("course",course);
 
   teacherHelpers.getAvailableYears(sem, course) // Fetch the available years
     .then((availableYears) => {
@@ -226,15 +246,16 @@ router.get('/monthly-attendance', verifyLogin, (req, res) => {
           const students = data.students; // Data returned by the helper function
           const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1); // Days of the month (1-31)
 
+          
           // Preprocess attendance data
           students.forEach(student => {
             student.attendance = student.attendance.map(status => {
-              if (status === 'present') return '✔';  // Replace 'present' with ✔
-              if (status === 'absent') return '✖';   // Replace 'absent' with ✖
+              if (status === 'present') return '✖';  // Replace 'present' with ✖
+              if (status === 'absent') return 'A';   // Replace 'absent' with A
+              if (status === 'half') return '/';     // Replace 'half' with /
               return '-';                             // Replace null/undefined with -
             });
           });
-
           // Render the attendance page with the required data
           res.render('teacher/monthly-attendance', {
             name: req.session.teacherData.name,
@@ -262,25 +283,59 @@ router.post('/monthly-attendance', (req, res) => {
   const { year, month } = req.body;
 
   // Log input data
-  // console.log("POST Parameters:", { year, month, stdYear,course });
+  //   // console.log("POST Parameters:", { year, month, stdYear,course });
+  //   teacherHelpers.getAvailableYears(stdYear, course) // Fetch the available years
+  //     .then((availableYears) => {
+  //       teacherHelpers.getMonthAttendance(month, year, stdYear, course)
+  //         .then((data) => {
+  //           const students = data.students;
+  //           // console.log("Fetched Students:", students); // Debug log
+
+  //           const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
+
+  //           // Preprocess attendance data
+  //           students.forEach(student => {
+  //             student.attendance = student.attendance.map(status => {
+  //               if (status === 'present') return '✖';  // Replace 'present' with ✖
+  //               if (status === 'absent') return 'A';   // Replace 'absent' with A
+  //               if (status === 'half') return '/';     // Replace 'half' with /
+  //               return '-';                             // Replace null/undefined with -
+  //             });
+  //           });
+
+  //           // Render with fetched data
+  //           res.render('teacher/monthly-attendance', {
+  //             name: req.session.teacherData.name,
+  //             monthName: new Date(year, month - 1).toLocaleString('default', { month: 'long' }),
+  //             year,
+  //             students,
+  //             daysInMonth,
+  //             availableYears,
+  //           });
+  //         })
+  //         .catch((err) => {
+  //           console.error("Error fetching attendance:", err);
+  //           res.status(500).send('Internal Server Error');
+  //         });
+  //     })
+  // });
+
   teacherHelpers.getAvailableYears(stdYear, course) // Fetch the available years
     .then((availableYears) => {
       teacherHelpers.getMonthAttendance(month, year, stdYear, course)
         .then((data) => {
           const students = data.students;
-          // console.log("Fetched Students:", students); // Debug log
-
           const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
           // Preprocess attendance data
           students.forEach(student => {
             student.attendance = student.attendance.map(status => {
-              if (status === 'present') return '✔';
-              if (status === 'absent') return '✖';
-              return '-';
+              if (status === 'present') return '✖';  // Replace 'present' with ✖
+              if (status === 'absent') return 'A';   // Replace 'absent' with A
+              if (status === 'half') return '/';     // Replace 'half' with /
+              return '-';                             // Replace null/undefined with -
             });
           });
-
           // Render with fetched data
           res.render('teacher/monthly-attendance', {
             name: req.session.teacherData.name,
@@ -296,6 +351,10 @@ router.post('/monthly-attendance', (req, res) => {
           res.status(500).send('Internal Server Error');
         });
     })
+    .catch((err) => {
+      console.error("Error fetching available years:", err);
+      res.status(500).send('Internal Server Error');
+    });
 });
 
 router.get('/students-list', verifyLogin, (req, res) => {
@@ -365,19 +424,19 @@ router.get('/view-marks', verifyLogin, (req, res) => {
     });
 });
 
-router.post('/view-marks',async(req,res)=>{
-    // console.log("viwe mark ",req.body);
-    const email = req.session.teacherData.email;
-    let teacherdtl = await teacherHelpers.getTeacherData(email)
-    const { course, semester, subject } = teacherdtl;
-    
+router.post('/view-marks', async (req, res) => {
+  // console.log("viwe mark ",req.body);
+  const email = req.session.teacherData.email;
+  let teacherdtl = await teacherHelpers.getTeacherData(email)
+  const { course, semester, subject } = teacherdtl;
+
   teacherHelpers.getMarks(req.body).then((groupedMarks) => {
     // Group marks by course
-    
+
     res.render('teacher/view-marks', {
       teacher,
       name: req.session.teacherData.name,
-      groupedMarks,course, semester, subject
+      groupedMarks, course, semester, subject
     });
   })
 })
@@ -400,7 +459,7 @@ router.post('/add-mark', (req, res) => {
 
       // Render the add-mark page with the error message and retry option
       res.render('teacher/add-mark', {
-        errorMessage: 'An error occurred while adding marks. Please check the data and try again.',
+        errorMessage: "Mark entry already exists for this students",
         teacher,
         name: req.session.teacherData.name,
       });
