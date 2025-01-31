@@ -1,26 +1,42 @@
 <div class="d-flex" id="wrapper">
   <!-- Sidebar-->
   <div class="border-end bg-white" id="sidebar-wrapper">
-    
-    {{#if name}} 
-      <div class="sidebar-heading border-bottom bg-light text-center py-3 fw-bold">{{name}}</div>
-    {{else}} 
-      <div class="sidebar-heading border-bottom bg-light text-center py-3 fw-bold">Teacher</div>
+
+    {{#if name}}
+    <div class="sidebar-heading border-bottom bg-light text-center py-3 fw-bold">{{name}}</div>
+    {{else}}
+    <div class="sidebar-heading border-bottom bg-light text-center py-3 fw-bold">Teacher</div>
     {{/if}}
-    
+
     <!-- Accordion for Sidebar Links -->
     <div class="accordion" id="sidebarAccordion">
-      
+      <!-- Timetable Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTimetable">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseTimetable" aria-expanded="false" aria-controls="collapseTimetable">
+            Timetable
+          </button>
+        </h2>
+        <div id="collapseTimetable" class="accordion-collapse collapse" aria-labelledby="headingTimetable"
+          data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body">
+            <ul class="list-unstyled mb-0">
+              <li><a href="/teacher/timetable">View Timetable</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
       <!-- Students Section -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingStudents">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseStudents">
+            data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseStudents">
             Students
           </button>
         </h2>
         <div id="collapseStudents" class="accordion-collapse collapse" aria-labelledby="headingStudents"
-             data-bs-parent="#sidebarAccordion">
+          data-bs-parent="#sidebarAccordion">
           <div class="accordion-body">
             <ul class="list-unstyled mb-0">
               <li><a href="/teacher/students">View Students</a></li>
@@ -33,12 +49,12 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingAttendance">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#collapseAttendance" aria-expanded="false" aria-controls="collapseAttendance">
+            data-bs-target="#collapseAttendance" aria-expanded="false" aria-controls="collapseAttendance">
             Attendance
           </button>
         </h2>
         <div id="collapseAttendance" class="accordion-collapse collapse" aria-labelledby="headingAttendance"
-             data-bs-parent="#sidebarAccordion">
+          data-bs-parent="#sidebarAccordion">
           <div class="accordion-body">
             <ul class="list-unstyled mb-0">
               <li><a href="/teacher/add-attendance">Add Attendance</a></li>
@@ -53,12 +69,12 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingMark">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#collapseMark" aria-expanded="false" aria-controls="collapseMark">
+            data-bs-target="#collapseMark" aria-expanded="false" aria-controls="collapseMark">
             Mark
           </button>
         </h2>
         <div id="collapseMark" class="accordion-collapse collapse" aria-labelledby="headingMark"
-             data-bs-parent="#sidebarAccordion">
+          data-bs-parent="#sidebarAccordion">
           <div class="accordion-body">
             <ul class="list-unstyled mb-0">
               <li><a href="/teacher/students-list">Add Mark</a></li>
@@ -71,7 +87,8 @@
       <!-- Logout Section -->
       <div class="accordion-item">
         <div class="accordion-body">
-          <a class="text-center rounded btn btn-secondary px-3 w-100" style="font-size: 18px; padding: 6px; color:white;" href="/teacher/logout">Logout</a>
+          <a class="text-center rounded btn btn-secondary px-3 w-100"
+            style="font-size: 18px; padding: 6px; color:white;" href="/teacher/logout">Logout</a>
         </div>
       </div>
 
@@ -88,4 +105,3 @@
         </button>
       </div>
     </nav>
-  
