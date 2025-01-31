@@ -1,0 +1,174 @@
+<div class="container ">
+  <h2 class="text-center">Timetable</h2>
+  <a href="/teacher">Home</a>
+  {{!--
+  <pre>{{json timetable}}</pre> --}}
+  {{#if days.length}}
+  <!-- Table displaying the timetable -->
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark text-center">
+      <tr>
+        <th>Day</th>
+        {{#each times}}
+        <th>{{this}}</th>
+        {{/each}}
+      </tr>
+    </thead>
+    <tbody>
+      {{#each days}} <!-- Loop over each day -->
+      <tr>
+        <td class="align-middle text-center">{{this}}</td> <!-- Display the current day -->
+        {{#if (lookup ../timetable this)}} <!-- Check if timetable exists for the current day -->
+        {{#each (lookup ../timetable this)}} <!-- Loop through time slots for the current day -->
+        {{!-- <td class="text-center align-middle">{{time}}</td> <!-- Display the time slot --> --}}
+        <td class="text-left">
+          {{#each subjects}} <!-- Loop through the subjects for that time slot -->
+          <ul class="mb-0">
+            <li><strong>{{subject}}</strong> ({{course}} - {{semester}})</li>
+          </ul>
+          {{/each}}
+        </td>
+        {{/each}}
+        {{else}}
+        <td colspan="2" class="text-center">No classes scheduled</td>
+        <!-- Display message if no classes are scheduled -->
+        {{/if}}
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{else}}
+  <p class="text-center">No timetable available for this teacher.</p>
+  {{/if}}
+</div>
+<style>
+  /* General Table Styling */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .table td,
+  .table th {
+    vertical-align: middle;
+    padding: 15px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+  }
+
+  .table th {
+    text-align: center;
+    background-color: #343a40;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  /* Add striped effect for rows */
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2;
+  }
+
+  /* Table border */
+  .table-bordered td,
+  .table-bordered th {
+    border: 1px solid #ddd;
+  }
+
+  /* Styling for table cells */
+  .table td {
+    background-color: #fff;
+    text-align: left;
+    padding: 10px;
+  }
+
+  .table td.text-center {
+    text-align: center;
+  }
+
+  /* Responsiveness: Make the table scrollable on small screens */
+  @media (max-width: 768px) {
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* Heading and Container Styles */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #343a40;
+    margin-bottom: 30px;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  /* Home link styling */
+  a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* Custom Styles for Table Rows */
+  .table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+
+  /* Styling for "No classes scheduled" cell */
+  .table td[colspan="2"] {
+    font-size: 18px;
+    font-weight: 500;
+    color: #888;
+    text-align: center;
+    background-color: #f9f9f9;
+  }
+
+  /* List styling for subjects */
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+
+  ul li {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 5px;
+  }
+
+  ul li strong {
+    font-weight: bold;
+  }
+
+  /* Styling for responsive tables */
+  .table td {
+    word-wrap: break-word;
+  }
+
+  /* Add spacing between the table and the rest of the content */
+  .mt-4 {
+    margin-top: 4rem !important;
+  }
+
+  .mb-4 {
+    margin-bottom: 4rem !important;
+  }
+</style>
