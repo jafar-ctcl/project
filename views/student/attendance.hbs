@@ -1,0 +1,191 @@
+<section class="attendance-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4 display-4 fw-bold text-primary">Your Attendance</h2>
+
+        {{#if errorMessage}}
+        <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
+            {{errorMessage}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {{/if}}
+
+        {{#if attendance}}
+        <!-- Attendance Table -->
+        <div class="table-responsive rounded-3 shadow-sm">
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">Day</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    {{#each attendance}}
+                    <tr>
+                        <td class="text-center align-middle">{{this.formattedDate}}</td>
+                        <td class="text-center align-middle">{{this.day}}</td>
+                        <td class="text-center align-middle">
+                            {{!-- <span class="badge {{#if (eq this.status 'present')}}bg-success{{else if (eq this.status 'absent')}}bg-danger{{else}}bg-warning{{/if}}"> --}}
+                                {{this.status}}
+                            </span>
+                            {{#if reason}}
+                                <small class="text-muted">({{reason}})</small>
+                                {{!-- {{#or (eq this.status "absent") (eq this.status "half")}}
+                                    <button class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#reasonModal"
+                                        onclick="setAttendanceReason('{{this.email}}', '{{this.date}}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                {{/or}} --}}
+                            {{else}}
+                                {{#or (eq this.status "absent") (eq this.status "half")}}
+                                    <button class="btn btn-sm btn-outline-warning ms-2" data-bs-toggle="modal" data-bs-target="#reasonModal"
+                                        onclick="setAttendanceReason('{{this.email}}', '{{this.date}}')">
+                                        <i class="fas fa-comment-alt"></i> Provide Reason
+                                    </button>
+                                {{/or}}
+                            {{/if}}
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal for Providing Reason -->
+        <div class="modal fade" id="reasonModal" tabindex="-1" aria-labelledby="reasonModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="reasonModalLabel">Provide Attendance Reason</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="attendanceReason" class="form-label fw-bold">Reason for Absence</label>
+                            <textarea class="form-control" id="attendanceReason" rows="4"
+                                placeholder="Enter reason here..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitAttendanceReason()">
+                            <i class="fas fa-check"></i> Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/student" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+        </div>
+        {{else}}
+        <div class="text-center mt-4">
+            <a href="/student" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+        </div>
+        {{/if}}
+    </div>
+</section>
+
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Custom CSS -->
+<style>
+    .attendance-section {
+        background-color: #f8f9fa;
+    }
+
+    .table thead th {
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.5em 0.75em;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #0d6efd;
+        color: #fff;
+    }
+
+    .btn-outline-warning:hover {
+        background-color: #ffc107;
+        color: #000;
+    }
+
+    .modal-content {
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        border-radius: 0.5rem;
+    }
+
+    .btn-lg {
+        padding: 0.5rem 1.5rem;
+        font-size: 1.1rem;
+    }
+</style>
+
+<script>
+    let currentAttendance = {}; // Store the email and date globally
+
+    // Set the attendance details when the "Provide Reason" button is clicked
+    function setAttendanceReason(email, date) {
+        currentAttendance = { email: email, date: date }; // Store the email and date for the current attendance
+    }
+
+    // Submit the reason to the backend
+    function submitAttendanceReason() {
+        const reason = document.getElementById('attendanceReason').value.trim();
+        if (!reason) {
+            alert('Please provide a reason for absence.');
+            return;
+        }
+
+        // Perform the AJAX request to submit the reason
+        $.ajax({
+            url: '/attendance-reason', // Endpoint to handle reason submission
+            method: 'POST',
+            data: {
+                email: currentAttendance.email,
+                date: currentAttendance.date,
+                reason: reason
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Close the modal after successful submission
+                    $('#reasonModal').modal('hide');
+                    alert('Reason submitted successfully!');
+                    location.reload(); // Reload the page to reflect the changes
+                } else {
+                    alert('Failed to submit reason. Please try again later.');
+                }
+            },
+            error: function(error) {
+                alert('An error occurred while submitting the reason. Please try again.');
+            }
+        });
+    }
+</script>
