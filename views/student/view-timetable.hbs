@@ -1,4 +1,105 @@
-<section>
-    <a href="/student">Home</a>
-    <h2>student timetable</h2>
+<section class="timetable-view-section">
+     <div class="container mt-4">
+        <a href="/student" class="home-link text-decoration-none">
+          <i class="bi bi-house-door me-2"></i>Home
+        </a>
+
+        <h3 class="text-center">Student Timetable</h3>
+
+        <table class="timetable-table">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    {{#each times}}
+                    <th>{{this}}</th>
+                    {{/each}}
+                </tr>
+            </thead>
+
+            <tbody>
+                {{#each timetable}} <!-- Loop through each day in the timetable -->
+                <tr>
+                    <td>{{this.day}}</td> <!-- Display the day -->
+                    {{#each this.subjects}} <!-- Loop through subjects for the current day -->
+                    <td>
+                        <p>{{subject}} ({{teacher}})</p> <!-- Display subject and teacher -->
+                    </td>
+                    {{/each}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        
+<div class="text-center py-3">
+  <a href="/student" class="btn btn-primary mb-4">Go Back</a>
+</div>
+    </div>
 </section>
+
+<!-- Updated Styling -->
+<style>
+   /* General timetable section heading styling */
+    .timetable-view-section h3 {
+        color: #1565c0;
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        margin-top: 30px;
+    }
+
+
+    /* Table styling within timetable */
+    .timetable-view-section table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #ffffff;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    /* Table headers */
+    .timetable-view-section th {
+        background-color: #1565c0;
+        color: #ffffff;
+        text-align: center;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    /* Table cells */
+    .timetable-view-section td {
+        text-align: center;
+        padding: 10px;
+        font-size: 15px;
+        color: #424242;
+    }
+
+    /* Odd rows in the table */
+    .timetable-view-section tr:nth-child(odd) {
+        background-color: #e3f2fd;
+    }
+
+    /* Hover effect for rows */
+    .timetable-view-section tr:hover {
+        background-color: #bbdefb;
+        cursor: pointer;
+    }
+
+    
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .timetable-table th,
+        .timetable-table td {
+            font-size: 14px;
+            padding: 8px;
+        }
+
+        .semester-title {
+            font-size: 20px;
+        }
+
+       
+</style>
