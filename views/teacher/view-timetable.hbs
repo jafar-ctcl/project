@@ -21,13 +21,26 @@
         {{#if (lookup ../timetable this)}} <!-- Check if timetable exists for the current day -->
         {{#each (lookup ../timetable this)}} <!-- Loop through time slots for the current day -->
         {{!-- <td class="text-center align-middle">{{time}}</td> <!-- Display the time slot --> --}}
-        <td class="text-left">
+        {{!-- <td class="text-left">
           {{#each subjects}} <!-- Loop through the subjects for that time slot -->
           <ul class="mb-0">
             <li><strong>{{subject}}</strong> ({{course}} - {{semester}})</li>
           </ul>
           {{/each}}
-        </td>
+        </td> --}}
+          <td class="text-left">
+              {{#if subjects.length}} <!-- Check if there are subjects -->
+              {{#each subjects}} <!-- Loop through the subjects for that time slot -->
+              <ul class="mb-0">
+                <li><strong>{{subject}}</strong> ({{course}} - {{semester}})</li>
+              </ul>
+              {{/each}}
+              {{else}} <!-- If no subjects are available -->
+              <ul class="mb-0">
+                <li>No class</li>
+              </ul>
+              {{/if}}
+            </td>
         {{/each}}
         {{else}}
         <td colspan="2" class="text-center">No classes scheduled</td>
