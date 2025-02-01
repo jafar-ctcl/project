@@ -1,10 +1,10 @@
 <section class="container mt-5">
-  <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">Admin Dashboard</h1>
+  <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">HOD Dashboard</h1>
 
   <!-- Dashboard Overview Cards -->
   <div class="row text-center g-4">
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #42a5f5, #1e88e5); color: #fff;">
+      <div class="card border-0 shadow-sm bg-primary text-white">
         <div class="card-body">
           <h5 class="mb-3">Total Students</h5>
           <p class="display-4 fw-bold">300</p>
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #66bb6a, #43a047); color: #fff;">
+      <div class="card border-0 shadow-sm bg-success text-white">
         <div class="card-body">
           <h5 class="mb-3">Total Faculty</h5>
           <p class="display-4 fw-bold">10</p>
@@ -20,20 +20,20 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #ffa726, #fb8c00); color: #fff;">
+      <div class="card border-0 shadow-sm bg-warning text-white">
         <div class="card-body">
-          <h5 class="mb-3">1st, 2nd, 3rd Year Students</h5>
+          <h5 class="mb-3">Year-wise Students</h5>
           <p class="display-6 fw-bold">120 | 100 | 80</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Row for Graphs -->
+  <!-- Graphs Section -->
   <div class="row mt-5 g-4">
     <div class="col-md-4">
       <div class="card border-0 shadow-sm">
-        <div class="card-header text-white" style="background: #3949ab;">Total Students Over Time</div>
+        <div class="card-header bg-info text-white">Total Students Over Time</div>
         <div class="card-body">
           <canvas id="studentsChart"></canvas>
         </div>
@@ -41,7 +41,7 @@
     </div>
     <div class="col-md-4">
       <div class="card border-0 shadow-sm">
-        <div class="card-header text-white" style="background: #3949ab;">Total Students by Gender</div>
+        <div class="card-header bg-info text-white">Students by Gender</div>
         <div class="card-body">
           <canvas id="genderChart"></canvas>
         </div>
@@ -49,44 +49,19 @@
     </div>
     <div class="col-md-4">
       <div class="card border-0 shadow-sm">
-        <div class="card-header text-white" style="background: #3949ab;">Department Students (Year-wise)</div>
+        <div class="card-header bg-info text-white">Department Students</div>
         <div class="card-body">
           <canvas id="departmentChart"></canvas>
         </div>
       </div>
     </div>
   </div>
-{{!-- 
-  <!-- Event Calendar and Notice Board -->
-  <div class="row mt-5 g-4">
-    <div class="col-md-6">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header text-white" style="background: #3949ab;">Event Calendar</div>
-        <div class="card-body">
-          <div id="calendar"></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header text-white" style="background: #3949ab;">Notice Board</div>
-        <div class="card-body">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Holiday: New Year's Eve - Dec 31</li>
-            <li class="list-group-item">Faculty Meeting - Dec 30</li>
-            <li class="list-group-item">Math Exam - Dec 28</li>
-            <li class="list-group-item">Physics Lab Submission - Jan 2</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div> --}}
 
   <!-- Approved Students Table -->
   <div class="row mt-5">
     <div class="col-md-12">
       <div class="card border-0 shadow-sm">
-        <div class="card-header text-white" style="background: #3949ab;">Approved Students</div>
+        <div class="card-header bg-info text-white">Approved Students</div>
         <div class="card-body">
           <table class="table table-hover">
             <thead class="table-dark">
@@ -106,7 +81,6 @@
                 <td>{{this.year}}</td>
               </tr>
               {{/each}}
-
             </tbody>
           </table>
         </div>
@@ -118,7 +92,7 @@
   <div class="row mt-5">
     <div class="col-md-12">
       <div class="card border-0 shadow-sm">
-        <div class="card-header text-white" style="background: #3949ab;">Approved Teachers</div>
+        <div class="card-header bg-info text-white">Approved Teachers</div>
         <div class="card-body">
           <table class="table table-hover">
             <thead class="table-dark">
@@ -126,7 +100,7 @@
                 <th>#</th>
                 <th>Name</th>
                 <th>Subject</th>
-                <th>Class teacher</th>
+                <th>Class Teacher</th>
               </tr>
             </thead>
             <tbody>
@@ -146,19 +120,11 @@
   </div>
 </section>
 
-<!-- Include FullCalendar CSS -->
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" rel="stylesheet" />
-
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Include FullCalendar JS -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
-
 <script>
-  // Ensure the document is fully loaded before running the script
   document.addEventListener("DOMContentLoaded", function () {
-
     // Line Chart: Total Students Over Time
     const studentsCtx = document.getElementById("studentsChart").getContext("2d");
     new Chart(studentsCtx, {
@@ -169,8 +135,8 @@
           {
             label: "Total Students",
             data: [200, 220, 240, 260, 280, 300],
-            borderColor: "rgba(54, 162, 235, 1)",
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "#007bff",
+            backgroundColor: "rgba(0, 123, 255, 0.2)",
             borderWidth: 2,
             fill: true,
           },
@@ -234,18 +200,5 @@
         },
       },
     });
-
-    // FullCalendar: Event Calendar
-    const calendarEl = document.getElementById("calendar");
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: "dayGridMonth",
-      height: 350,
-      events: [
-        { title: "Math Exam", start: "2024-12-28" },
-        { title: "Holiday", start: "2024-12-31", end: "2025-01-01" },
-        { title: "Faculty Meeting", start: "2024-12-30" },
-      ],
-    });
-    calendar.render();
   });
 </script>
