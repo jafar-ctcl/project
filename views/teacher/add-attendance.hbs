@@ -1,6 +1,6 @@
 <section class="attendance-section py-5">
   <div class="container fw-bold">
-    
+
 
     <!-- Error Message -->
     {{#if errorMessage}}
@@ -8,21 +8,16 @@
       {{errorMessage}}
     </div>
     {{/if}}
-  {{#if students}}
-  <h2 class="text-center mb-4">Add Attendance</h2>
+    {{#if students}}
+    <h2 class="text-center mb-4">Add Attendance</h2>
     <!-- Attendance Form -->
     <div class="year-table">
       <form action="/teacher/add-attendance" method="POST">
         <!-- Date Selection -->
         <div class="mb-4">
           <label class="form-label fw-semibold">Select Date</label>
-          <input 
-            type="date" 
-            class="form-control form-control-lg" 
-            name="attendanceDate" 
-            value="{{attendanceDate}}" 
-            required 
-          />
+          <input type="date" class="form-control form-control-lg" name="attendanceDate" value="{{attendanceDate}}"
+            required />
         </div>
 
         <!-- Year Heading -->
@@ -45,20 +40,12 @@
                 <td>{{increment @index}}</td>
                 <td>{{name}}</td>
                 <td>
-                  <input 
-                    type="radio" 
-                    name="attendance[{{this.id}}]" 
-                    value="present|{{this.name}}" 
-                    required 
-                  />
+                  <input type="radio" name="attendance[{{this.id}}]" value="present|{{this.name}}|{{this.email}}"
+                    required />
                 </td>
                 <td>
-                  <input 
-                    type="radio" 
-                    name="attendance[{{this.id}}]" 
-                    value="absent|{{this.name}}" 
-                    required 
-                  />
+                  <input type="radio" name="attendance[{{this.id}}]" value="absent|{{this.name}}|{{this.email}}"
+                    required />
                 </td>
               </tr>
               {{/each}}
@@ -78,16 +65,16 @@
       </form>
     </div>
     {{else}}
-    {{#if errorMessage}} 
-     <div class="text-center mt-4">
+    {{#if errorMessage}}
+    <div class="text-center mt-4">
       <a href="/teacher/add-attendance" class="btn btn-outline-primary shadow-sm">Add attendance</a>
     </div>
-   {{else}}
-   <h2>no students found</h2>
+    {{else}}
+    <h2>no students found</h2>
     {{/if}}
     {{/if}}
-    
-   
+
+
   </div>
 </section>
 
@@ -123,5 +110,4 @@
     background-color: #218838;
     border-color: #1e7e34;
   }
-</style> 
-
+</style>

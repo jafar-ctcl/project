@@ -188,7 +188,7 @@ module.exports = {
   },
    saveAttendance: (attendanceData) => {
     return new Promise((resolve, reject) => {
-      const { sem, course, attendanceDate } = attendanceData[0]; // Extract year and date from the first record
+      const {sem, course, attendanceDate } = attendanceData[0]; // Extract year and date from the first record
 
       // Check if attendance for the same date and year already exists
       const checkSql = 'SELECT COUNT(*) AS count FROM attendance WHERE semester = ? AND date = ? AND course=?';
@@ -206,13 +206,14 @@ module.exports = {
         // If no duplicate exists, insert attendance data
         const values = attendanceData.map(record => [
           record.sem,
+          record.email,
           record.course,
           record.name,
           record.attendanceDate,
           record.status,
         ]);
 
-        const insertSql = 'INSERT INTO attendance (semester,course, name, date, status) VALUES ?';
+        const insertSql = 'INSERT INTO attendance (semester,email,course, name, date, status) VALUES ?';
 
         db.query(insertSql, [values], (insertErr, insertResult) => {
           if (insertErr) {

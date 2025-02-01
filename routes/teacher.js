@@ -12,14 +12,21 @@ const verifyLogin = (req, res, next) => {
 }
 
 /* GET home page. */
-router.get('/', verifyLogin, function (req, res, next) {
+router.get('/', verifyLogin, (req, res,next)=> {
   let email = req.session.teacher.email
-  teacherHelpers.getTeacher(email).then((resp) => {
+  teacherHelpers.getTeacher(email).then(async(resp) => {
     req.session.teacherData = resp[0]
-    // console.log("teaches", req.session.teacherData);
-
-
-    res.render('teacher/dashboard', { title: 'SASC', teacher, name: req.session.teacherData.name });
+     console.log("teaches", req.session.teacherData);
+   
+     let sem = req.session.teacherData.class_teacher
+     let course = req.session.teacherData.course
+   
+     //console.log("studens year",sem);
+   
+     let students = await teacherHelpers.getStudents(sem, course)
+     let timetableData = await teacherHelpers.getTeacherTimetable(email)
+     const { days, times, timetable } = timetableData
+    res.render('teacher/dashboard', { title: 'TEACHER', teacher, name: req.session.teacherData.name,students, days, times, timetable });
   })
 
 });
@@ -99,7 +106,7 @@ router.get('/timetable', verifyLogin, (req, res) => {
   teacherHelpers.getTeacherTimetable(email)
     .then((timetableData) => {
       const { days, times, timetable } = timetableData
-      res.render("teacher/view-timetable", { email, days, times, timetable });
+      res.render("teacher/view-timetable", { days, times, timetable });
     })
     .catch(err => {
       console.error("Error fetching teacher timetable:", err);
@@ -109,7 +116,7 @@ router.get('/timetable', verifyLogin, (req, res) => {
 
 
 router.get('/students', verifyLogin, (req, res) => {
-  const teacherData = req.session.teacherData;
+  // const teacherData = req.session.teacherData;
 
   // console.log("Session teacherData:", teacherData);
 
@@ -160,8 +167,8 @@ router.post('/add-attendance', (req, res) => {
   for (let key in attendanceData) {
     if (attendanceData.hasOwnProperty(key)) {
       const studentId = key.match(/\d+/)[0];
-      const [status, name] = attendanceData[key].split('|');
-      attendanceRecords.push({ name, sem, course, status, attendanceDate });
+      const [status, name,email] = attendanceData[key].split('|');
+      attendanceRecords.push({email, name, sem, course, status, attendanceDate });
     }
   }
   console.log(attendanceRecords);
@@ -180,20 +187,45 @@ router.post('/add-attendance', (req, res) => {
       });
     });
 });
-
 router.get('/view-attendance', verifyLogin, (req, res) => {
-  const sem = req.session.teacherData.class_teacher
-  const course = req.session.teacherData.course
-  //console.log(course);
+  const sem = req.session.teacherData.class_teacher;
+  const course = req.session.teacherData.course;
 
   // Fetch the last added attendance using the helper function
   teacherHelpers.getLastAttendance(sem, course).then((attendanceRecords) => {
-    // Render the view with the attendance records for the last day
-    res.render('teacher/view-attendance', { teacher, name: req.session.teacher.name, attendance: attendanceRecords });
-  })
-  // res.render('teacher/view-attendance',{teacher,name:req.session.teacher.name});
+    console.log(attendanceRecords);
 
+    if (attendanceRecords.length === 0) {
+      // If no attendance records found, render an error message
+      return res.render('teacher/view-attendance', {
+        teacher: req.session.teacher,
+        name: req.session.teacher.name,
+        errorMessage: "No attendance records found for this class."
+      });
+    }
+
+    // If attendance records are found, format the date and render the view
+    let date = new Date(attendanceRecords[0].date);
+    let formattedDate = date.toLocaleDateString("en-GB").split('/').join('-');
+    
+    // Render the view with the attendance records for the last day
+    res.render('teacher/view-attendance', {
+      teacher: req.session.teacher,
+      name: req.session.teacher.name,
+      date: formattedDate,
+      attendance: attendanceRecords
+    });
+  }).catch((err) => {
+    console.log("Error fetching attendance records:", err);
+    // In case of an error, render the page with an error message
+    res.render('teacher/view-attendance', {
+      teacher: req.session.teacher,
+      name: req.session.teacher.name,
+      errorMessage: "Failed to load attendance records."
+    });
+  });
 });
+
 
 
 router.post('/view-attendance', verifyLogin, (req, res) => {
@@ -209,7 +241,7 @@ router.post('/view-attendance', verifyLogin, (req, res) => {
     // console.log("Attendance Data:", resp);
 
     // Render the view with the attendance data and year
-    res.render('teacher/view-attendance', { attendance: resp, sem, teacher,name: req.session.teacherData.name });
+    res.render('teacher/view-attendance', { attendance: resp, sem,date, teacher,name: req.session.teacherData.name });
   })
 });
 router.post('/edit-attendance/:id', (req, res) => {
