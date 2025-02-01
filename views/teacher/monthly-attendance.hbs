@@ -1,5 +1,9 @@
 <div class="container py-4">
+    <a href="/teacher" class="home-link text-decoration-none">
+          <i class="bi bi-house-door me-2"></i>Home
+        </a>
   {{#if students}}
+  
     <h2 class="text-center">{{monthName}}</h2>
     <table class="attendance-table">
       <thead>
@@ -24,12 +28,12 @@
       </tbody>
     </table>
   {{else}}
-    <div class="no-attendance-message">
+    <div class="no-attendance-message mb-3">
       <h1>No Attendance Records for {{monthName}} {{year}}</h1>
       <p>No attendance has been marked for this month. Please check back later or add the records.</p>
     </div>
   {{/if}}
-
+{{#if availableYears}}
   <div class="card shadow-lg p-4 mb-5 mt-5">
     <h4 class="text-center mb-4 text-primary">Filter Attendance</h4>
     <form id="attendanceForm" method="POST" action="/teacher/monthly-attendance">
@@ -70,17 +74,19 @@
       </div>
     </form>
   </div>
-</div>
-
+  {{/if}}
 <div class="text-center">
   <a href="/teacher" class="btn btn-primary mb-4">Go Back</a>
 </div>
+</div>
+
 
 <style>
   .attendance-table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
+    margin-left:-54px;
     font-size: 14px;
     text-align: center;
   }
