@@ -26,6 +26,15 @@ const customHelpers = {
     } else {
       return options.inverse(this); // Don't render if times don't match
     }
+  },
+
+  // Custom 'or' helper to check if either of the two conditions is true
+  or: function (a, b, options) {
+    if (a || b) {
+      return options.fn(this); // Return block if any condition is true
+    } else {
+      return options.inverse(this); // Return else block if both conditions are false
+    }
   }
 };
 
