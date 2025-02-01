@@ -1,67 +1,214 @@
- 
- <section>
-<div class="row">
-
-    <div class="col-xl-12 col-md-12 p-4">
-    
-    <h1 class="h2 mb-4"> Overview</h1>
-
-    <!-- Dashboard Cards -->
-    <div class="row ">
-      <div class="col-md-4">
-        <div class="card bg-primary text-light mb-4">
+<section class="dashboard-section py-4">
+  <div class="container-fluid">
+    <div class="row g-4">
+      <!-- Timetable Card -->
+      <div class="col-xl-8 col-md-12">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-gradient-primary text-white">
+            <h5 class="card-title mb-0">Timetable Overview</h5>
+          </div>
           <div class="card-body">
-            <h5>Total Students</h5>
-            <p class="display-6">300</p>
+            {{#if days.length}}
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="text-center">Day</th>
+                    {{#each times}}
+                    <th class="text-center">{{this}}</th>
+                    {{/each}}
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each days}}
+                  <tr>
+                    <td class="text-center fw-bold text-uppercase">{{this}}</td>
+                    {{#if (lookup ../timetable this)}}
+                    {{#each (lookup ../timetable this)}}
+                    <td class="text-left">
+                      {{#if subjects.length}}
+                      {{#each subjects}}
+                      <div class="mb-2">
+                        <strong class="d-block">{{subject}}</strong>
+                        <small class="text-muted">{{course}} - {{semester}}</small>
+                      </div>
+                      {{/each}}
+                      {{else}}
+                      <div class="text-muted">No class</div>
+                      {{/if}}
+                    </td>
+                    {{/each}}
+                    {{else}}
+                    <td colspan="{{../times.length}}" class="text-center text-muted">No classes scheduled</td>
+                    {{/if}}
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+            {{else}}
+            <div class="text-center py-4">
+              <p class="text-muted mb-0">No timetable available for this teacher.</p>
+            </div>
+            {{/if}}
           </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card bg-success text-light mb-4">
-          <div class="card-body">
-            <h5>Total Faculty</h5>
-            <p class="display-6">10</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card bg-warning text-dark mb-4">
-          <div class="card-body">
-            <h5>Total Courses</h5>
-            <p class="display-6">06</p>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Recent Registrations Table -->
-    <div class="card">
-      <div class="card-header bg-secondary text-light">Student list</div>
-      <div class="card-body">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Course</th>
-              <th>Year</th>
-            </tr>
-          </thead>
-          <tbody>
-             {{#each students}}
-                <tr>
-                
+      <!-- Student List Card -->
+      <div class="col-xl-4 col-md-12">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-gradient-info text-white">
+            <h5 class="card-title mb-0">Student List</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Semester</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each students}}
+                  <tr>
+                    <td>{{increment @index}}</td>
                     <td>{{name}}</td>
-                    <td scope="col">{{course}}</td>
-                    <td scope="col">{{year}}</td>
-                {{/each}}
-          </tbody>
-        </table>
+                    <td>{{semester}}</td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  
   </div>
-    
-</div>
-  </section>
- 
+</section>
+
+<!-- Custom CSS -->
+<style>
+  .dashboard-section {
+    background-color: #f8fafc;
+  }
+
+  .card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+  }
+
+  .bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8, #117a8b);
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .table {
+    margin-bottom: 0;
+  }
+
+  .table thead th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .table td,
+  .table th {
+    vertical-align: middle;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: #e9ecef;
+  }
+
+  .text-muted {
+    color: #6c757d !important;
+  }
+
+  .fw-bold {
+    font-weight: 600;
+  }
+
+  .text-uppercase {
+    text-transform: uppercase;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .shadow-sm {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .bg-light {
+    background-color: #f8f9fa !important;
+  }
+
+  .text-white {
+    color: white !important;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .text-left {
+    text-align: left;
+  }
+
+  .mb-2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+
+  .p-0 {
+    padding: 0;
+  }
+
+  .p-4 {
+    padding: 1.5rem;
+  }
+
+  .py-4 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+</style>
