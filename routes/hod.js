@@ -153,7 +153,7 @@ router.post('/set-timetable', (req, res) => {
 
 router.get('/add-timetable', verifyLogin, async (req, res) => {
   let period = await hodHelpers.getPeriod()
-  //  console.log("periods",period);
+   console.log("periods",period);
 
   hodHelpers.getTimetableData().then(({ teachersInfo, courses, classTeachers }) => {
 
@@ -377,6 +377,58 @@ router.get('/view-event', (req, res) => {
 router.get('/view-mark', (req, res) => {
   res.render('hod/view-mark')
 })
+router.get('/about-student/:email', async (req, res) => {
+  try {
+    console.log("Fetching details for student with email:", req.params.email);
+    const email = req.params.email; // Get the email from the route parameter
+
+    // Fetch marks and attendance data for the student
+    let marks = await hodHelpers.getStdentMarks(email);
+    let { attendanceByMonth, attendancePercentages, overallPercentage} = await hodHelpers.getStudentAttendance(email);
+
+// Render the view with the fetched data
+res.render('hod/about-student', {
+  title: "About Student",
+  marks,
+  attendanceByMonth,
+  attendancePercentages,  // Pass monthly percentages
+  overallPercentage,      // Pass overall attendance percentage
+            // Pass the condonation status (true/false)
+});
+
+  } catch (error) {
+    console.error("Error fetching student details:", error);
+    res.status(500).send("An error occurred while fetching student details.");
+  }
+});
+router.get('/event-details/:title/:date', verifyLogin,(req, res) => {
+  const {title,date} = req.params
+  console.log("title",title,date);
+  
+  res.render('hod/event-details',{title,date})
+})
+router.get("/view-winners",(req,res)=>{
+hodHelpers.getWinners().then((data)=>{
+  res.render("hod/view-winners",{})
+
+})
+})
+router.post('/event-details', (req, res) => {
+  // console.log("Received Data:", req.body);
+  
+  let { date,title,first, second, third } = req.body;
+ 
+
+  hodHelpers.addWinners({date,title,first, second, third}).then(() => {
+      res.redirect('/hod/winners-view')
+      
+  }).catch(err => {
+      console.error("Error adding winners:", err);
+      res.status(500).send("Error saving winners");
+  });
+});
+
+  
 
 
 module.exports = router;

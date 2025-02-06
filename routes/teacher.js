@@ -12,21 +12,21 @@ const verifyLogin = (req, res, next) => {
 }
 
 /* GET home page. */
-router.get('/', verifyLogin, (req, res,next)=> {
+router.get('/', verifyLogin, (req, res, next) => {
   let email = req.session.teacher.email
-  teacherHelpers.getTeacher(email).then(async(resp) => {
+  teacherHelpers.getTeacher(email).then(async (resp) => {
     req.session.teacherData = resp[0]
-     console.log("teaches", req.session.teacherData);
-   
-     let sem = req.session.teacherData.class_teacher
-     let course = req.session.teacherData.course
-   
-     //console.log("studens year",sem);
-   
-     let students = await teacherHelpers.getStudents(sem, course)
-     let timetableData = await teacherHelpers.getTeacherTimetable(email)
-     const { days, times, timetable } = timetableData
-    res.render('teacher/dashboard', { title: 'TEACHER', teacher, name: req.session.teacherData.name,students, days, times, timetable });
+    console.log("teaches", req.session.teacherData);
+
+    let sem = req.session.teacherData.class_teacher
+    let course = req.session.teacherData.course
+
+    //console.log("studens year",sem);
+
+    let students = await teacherHelpers.getStudents(sem, course)
+    let timetableData = await teacherHelpers.getTeacherTimetable(email)
+    const { days, times, timetable } = timetableData
+    res.render('teacher/dashboard', { title: 'TEACHER', teacher, name: req.session.teacherData.name, students, days, times, timetable });
   })
 
 });
@@ -55,7 +55,7 @@ router.post('/login', (req, res) => {
       req.session.teacher = resp.data
 
 
-      // console.log("teacher logged" ,resp.data  );
+      console.log("teacher logged" ,resp.data  );
       req.session.teacherLoggedIn = true
       // req.session.student = resp.data
       res.redirect('/teacher')
@@ -167,8 +167,8 @@ router.post('/add-attendance', (req, res) => {
   for (let key in attendanceData) {
     if (attendanceData.hasOwnProperty(key)) {
       const studentId = key.match(/\d+/)[0];
-      const [status, name,email] = attendanceData[key].split('|');
-      attendanceRecords.push({email, name, sem, course, status, attendanceDate });
+      const [status, name, email] = attendanceData[key].split('|');
+      attendanceRecords.push({ email, name, sem, course, status, attendanceDate });
     }
   }
   console.log(attendanceRecords);
@@ -207,7 +207,7 @@ router.get('/view-attendance', verifyLogin, (req, res) => {
     // If attendance records are found, format the date and render the view
     let date = new Date(attendanceRecords[0].date);
     let formattedDate = date.toLocaleDateString("en-GB").split('/').join('-');
-    
+
     // Render the view with the attendance records for the last day
     res.render('teacher/view-attendance', {
       teacher: req.session.teacher,
@@ -233,15 +233,15 @@ router.post('/view-attendance', verifyLogin, (req, res) => {
   const course = req.session.teacherData.course
 
   const { date } = req.body; // Expecting `year` and `date` in the POST body
- 
-  
+
+
   // console.log("Year:", year, "Date:", date);
 
   teacherHelpers.getAttendance(date, sem, course).then((resp) => {
     // console.log("Attendance Data:", resp);
 
     // Render the view with the attendance data and year
-    res.render('teacher/view-attendance', { attendance: resp, sem,date, teacher,name: req.session.teacherData.name });
+    res.render('teacher/view-attendance', { attendance: resp, sem, date, teacher, name: req.session.teacherData.name });
   })
 });
 router.post('/edit-attendance/:id', (req, res) => {
@@ -278,7 +278,7 @@ router.get('/monthly-attendance', verifyLogin, (req, res) => {
           const students = data.students; // Data returned by the helper function
           const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1); // Days of the month (1-31)
 
-          
+
           // Preprocess attendance data
           students.forEach(student => {
             student.attendance = student.attendance.map(status => {
@@ -314,43 +314,6 @@ router.post('/monthly-attendance', (req, res) => {
   const course = req.session.teacherData.course
   const { year, month } = req.body;
 
-  // Log input data
-  //   // console.log("POST Parameters:", { year, month, stdYear,course });
-  //   teacherHelpers.getAvailableYears(stdYear, course) // Fetch the available years
-  //     .then((availableYears) => {
-  //       teacherHelpers.getMonthAttendance(month, year, stdYear, course)
-  //         .then((data) => {
-  //           const students = data.students;
-  //           // console.log("Fetched Students:", students); // Debug log
-
-  //           const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
-
-  //           // Preprocess attendance data
-  //           students.forEach(student => {
-  //             student.attendance = student.attendance.map(status => {
-  //               if (status === 'present') return '✖';  // Replace 'present' with ✖
-  //               if (status === 'absent') return 'A';   // Replace 'absent' with A
-  //               if (status === 'half') return '/';     // Replace 'half' with /
-  //               return '-';                             // Replace null/undefined with -
-  //             });
-  //           });
-
-  //           // Render with fetched data
-  //           res.render('teacher/monthly-attendance', {
-  //             name: req.session.teacherData.name,
-  //             monthName: new Date(year, month - 1).toLocaleString('default', { month: 'long' }),
-  //             year,
-  //             students,
-  //             daysInMonth,
-  //             availableYears,
-  //           });
-  //         })
-  //         .catch((err) => {
-  //           console.error("Error fetching attendance:", err);
-  //           res.status(500).send('Internal Server Error');
-  //         });
-  //     })
-  // });
 
   teacherHelpers.getAvailableYears(stdYear, course) // Fetch the available years
     .then((availableYears) => {
@@ -393,15 +356,15 @@ router.get('/students-list', verifyLogin, (req, res) => {
   const email = req.session.teacherData.email
   teacherHelpers.getTeacherData(email) // Assuming user email is stored in session
     .then((resp) => {
-      const { course, semester, subject } = resp;
+      const { uniqueSubjects, uniqueSemester, uniqueCourse } = resp;
 
       // Pass the data to the view
       res.render('teacher/students-list', {
         teacher,
         name: req.session.teacherData.name,
-        courses: course,
-        semesters: semester,
-        subjects: subject
+        courses: uniqueCourse,
+        semesters: uniqueSemester,
+        subjects: uniqueSubjects
       });
     })
     .catch(err => {
@@ -414,7 +377,7 @@ router.post('/students-list', (req, res) => {
   // console.log("Teacher marks request:", req.body);
 
   let { course, semester, subject } = req.body;
-  console.log("subjects", subject);
+
 
   // Fetch students based on course and semester
   teacherHelpers.getStudents(semester, course).then((students) => {
@@ -436,31 +399,33 @@ router.post('/students-list', (req, res) => {
 });
 // GET route to view marks
 // GET route to view marks grouped by course
-router.get('/view-marks', verifyLogin, (req, res) => {
+router.get('/view-marks', verifyLogin, async (req, res) => {
   const email = req.session.teacherData.email;
-  teacherHelpers.getTeacherData(email)
-    .then((teacherdtl) => {
-      const { course, semester, subject } = teacherdtl;
+ 
 
-      res.render('teacher/view-marks', {
-        teacher: teacherdtl,  // Passing the teacher details
-        name: req.session.teacherData.name,
-        course,
-        semester,
-        subject
-      });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error fetching marks");
-    });
+  // console.log("last data",lastData);
+
+  let teacherdtl = await teacherHelpers.getTeacherData(email)
+  const { uniqueSubjects, uniqueSemester, uniqueCourse } = teacherdtl;
+  let groupedMarks =await teacherHelpers.LastAddedMarks(uniqueSubjects)
+  console.log("grouped marksa",groupedMarks);
+  
+  res.render('teacher/view-marks', {
+    teacher,
+    name: req.session.teacherData.name,
+    groupedMarks,
+    course: uniqueCourse,
+    semester: uniqueSemester,
+    subject: uniqueSubjects,
+  });
+
 });
 
 router.post('/view-marks', async (req, res) => {
   // console.log("viwe mark ",req.body);
   const email = req.session.teacherData.email;
   let teacherdtl = await teacherHelpers.getTeacherData(email)
-  const { course, semester, subject } = teacherdtl;
+  const { uniqueSubjects, uniqueSemester, uniqueCourse } = teacherdtl;
 
   teacherHelpers.getMarks(req.body).then((groupedMarks) => {
     // Group marks by course
@@ -468,7 +433,10 @@ router.post('/view-marks', async (req, res) => {
     res.render('teacher/view-marks', {
       teacher,
       name: req.session.teacherData.name,
-      groupedMarks, course, semester, subject
+      groupedMarks,
+      course: uniqueCourse,
+      semester: uniqueSemester,
+      subject: uniqueSubjects,
     });
   })
 })
@@ -479,7 +447,7 @@ router.get('/add-mark', verifyLogin, (req, res) => {
   res.render('teacher/add-mark', { teacher, name: req.session.teacherData.name });
 });
 router.post('/add-mark', (req, res) => {
-  console.log("mark dtls", req.body);
+  // console.log("mark dtls", req.body);
 
   teacherHelpers.addMark(req.body)
     .then((resp) => {
@@ -497,10 +465,40 @@ router.post('/add-mark', (req, res) => {
       });
     });
 });
+router.get('/about-student/:email', async (req, res) => {
+  try {
+    console.log("Fetching details for student with email:", req.params.email);
+    const email = req.params.email; // Get the email from the route parameter
 
+    // Fetch marks and attendance data for the student
+    let marks = await teacherHelpers.getStdentMarks(email);
+    let { attendanceByMonth, attendancePercentages, overallPercentage} = await teacherHelpers.getStudentAttendance(email);
 
+// Render the view with the fetched data
+res.render('teacher/about-student', {
+  title: "About Student",
+  marks,
+  attendanceByMonth,
+  attendancePercentages,  // Pass monthly percentages
+  overallPercentage,      // Pass overall attendance percentage
+            // Pass the condonation status (true/false)
+});
 
+  } catch (error) {
+    console.error("Error fetching student details:", error);
+    res.status(500).send("An error occurred while fetching student details.");
+  }
+});
 
-
+router.get('/view-event', (req, res) => {
+  // Fetch event data from the database or any other source
+  teacherHelpers.getEvents().then((events) => {
+    // Pass the event data to the Handlebars view
+    res.render('teacher/view-event', { events });
+  }).catch((err) => {
+    console.error("Error fetching events:", err);
+    res.status(500).send("Error fetching events.");
+  });
+});
 
 module.exports = router;

@@ -6,14 +6,14 @@
       <div class="card shadow-lg">
         <div class="card-header">
           <h3 class="course-title">{{@key}}</h3>
+
         </div>
         <div class="card-body">
           <table class="table table-striped table-hover">
             <thead class="thead-dark">
               <tr>
                 <th>Name</th>
-                <th>Subject</th>
-                <th>Semester</th>
+
                 <th>Marks</th>
               </tr>
             </thead>
@@ -21,8 +21,7 @@
               {{#each this}}
               <tr>
                 <td>{{this.name}}</td>
-                <td>{{this.subject}}</td>
-                <td>{{this.semester}}</td>
+
                 <td>{{this.marks}}</td>
               </tr>
               {{/each}}
@@ -35,7 +34,7 @@
 
 
     <div class="card shadow-lg p-4 mb-4 ">
-      <h4 class="text-center mb-4 text-primary">Get studets</h4>
+      <h4 class="text-center mb-4 text-primary">view mark</h4>
       <form action="/teacher/view-marks" method="POST" class="border p-4 bg-light rounded shadow-sm">
 
         <!-- Select Course -->

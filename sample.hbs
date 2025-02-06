@@ -1,0 +1,266 @@
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+
+
+var studentRouter = require('./routes/student');
+var hodRouter = require('./routes/hod');
+var teacherRouter = require('./routes/teacher');
+
+var hbs = require('express-handlebars');
+const db = require('./config/connection');
+const session = require('express-session');
+var app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout/',partialsDir:__dirname+'/views/partials/'}))
+//db connection
+db.connect((err)=>{
+  if(err) throw err;
+  console.log('Db Connected');
+  
+})
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret:"dms",cookie:{maxAge:600000}}))
+app.use('/', studentRouter);
+app.use('/hod', hodRouter);
+app.use('/teacher', teacherRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;
+// 
+var createError = require('http-errors');
+var express = require('express');
+const exphbs = require('express-handlebars');  // Import express-handlebars
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+
+var studentRouter = require('./routes/student');
+var hodRouter = require('./routes/hod');
+var teacherRouter = require('./routes/teacher');
+
+const db = require('./config/connection');
+const session = require('express-session');
+var app = express();
+
+// Register the custom Handlebars helper
+const hbs = exphbs.create();  // Create an instance of express-handlebars
+hbs.handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+  switch (operator) {
+    case '===':
+      return (v1 === v2) ? options.fn(this) : options.inverse(this);
+    default:
+      return options.inverse(this);
+  }
+});
+
+// View engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+app.engine('hbs', hbs.engine({
+  extname: 'hbs',
+  defaultLayout: 'layout',
+  layoutsDir: __dirname + '/views/layout/',
+  partialsDir: __dirname + '/views/partials/'
+}));
+
+// DB connection
+db.connect((err) => {
+  if (err) throw err;
+  console.log('Db Connected');
+});
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ secret: "dms", cookie: { maxAge: 600000 } }));
+
+app.use('/', studentRouter);
+app.use('/hod', hodRouter);
+app.use('/teacher', teacherRouter);
+
+// Catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+
+// Error handler
+app.use(function (err, req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;
+//<section>
+  <div class="container mt-4">
+<!-- Home Link with Style -->
+        <a href="/teacher" class="home-link text-decoration-none">
+          <i class="bi bi-house-door me-2"></i>Home
+        </a>
+    {{#if attendance}}
+    <!-- Attendance Table -->
+    <div class="row">
+      <div class="col-md-12">
+        
+        <div class="table-responsive">
+          <!-- Table Header -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold text-dark">Today Attendance</h4>
+            <a href="/teacher/monthly-attendance" class="btn btn-outline-info btn-lg shadow-lg hover-effect rounded-0">
+              <i class="bi bi-calendar-month me-2"></i> View Monthly Attendance
+            </a>
+          </div>
+
+          <table class="table table-striped table-bordered shadow-lg">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                {{!-- <th>Roll Number</th> --}}
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+              {{#each attendance}}
+                <tr>
+                  <td>{{name}}</td>
+                  {{!-- <td>{{id}}</td> --}}
+                  <td>{{status}}</td>
+                  <td>
+                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#attendanceModal" onclick="editAttendance({{id}}, '{{name}}', '{{status}}')">Edit</button>
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- Attendance Filter Form -->
+    <div class="card shadow-lg p-4 mb-5 mt-5">
+      <h4 class="text-center mb-4 text-primary">Filter Attendance</h4>
+      <form id="attendanceForm" method="POST" action="/teacher/view-attendance">
+          <!-- Date Selection -->
+          <div class="col-md-12 mb-3">
+            <label for="attendanceDate" class="form-label">Select Date</label>
+            <input type="date" class="form-control" id="attendanceDate" name="date" required>
+          </div>
+        {{!-- </div> --}}
+
+        <!-- Submit Button -->
+        <div class="row mt-4">
+          <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary btn-lg px-4 py-2 shadow-lg hover-effect">View Attendance</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal for Editing Attendance -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="attendanceModalLabel">Edit Attendance</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editAttendanceForm">
+              <div class="mb-3">
+                <label for="studentName" class="form-label">Student Name</label>
+                <input type="text" class="form-control" id="studentName" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="attendanceStatus" class="form-label">Attendance Status</label>
+                <select class="form-select" id="attendanceStatus">
+                  <option value="present">Present</option>
+                  <option value="absent">Absent</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+ 
+</section>
+
+  <!-- JavaScript to handle attendance editing -->
+  <script>
+    function editAttendance(id, name, status) {
+  // Populate modal fields with the existing data
+  document.getElementById('studentName').value = name;
+  document.getElementById('attendanceStatus').value = status.toLowerCase();
+
+  // Attach the AJAX function to the form's onsubmit event
+  document.getElementById('editAttendanceForm').onsubmit = function (e) {
+    e.preventDefault(); // Prevent default form submission
+
+    const updatedStatus = document.getElementById('attendanceStatus').value;
+
+    // Perform AJAX request using jQuery
+    $.ajax({
+      url: `/teacher/edit-attendance/${id}`,
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        id: id,
+        status: updatedStatus,
+      }),
+      success: function (data) {
+        if (data.success) {
+          // Close the modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('attendanceModal'));
+          modal.hide();
+
+          // Reload the page or update DOM dynamically
+          location.reload();
+        } else {
+          alert('Failed to update attendance');
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error('Error:', error);
+        alert('Error updating attendance');
+      },
+    });
+  };
+}
+
+  </script>

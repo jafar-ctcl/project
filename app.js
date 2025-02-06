@@ -35,6 +35,9 @@ const customHelpers = {
     } else {
       return options.inverse(this); // Return else block if both conditions are false
     }
+  },
+  lt: (value1, value2) => {
+    return value1 < value2; // Return a Boolean (true or false)
   }
 };
 

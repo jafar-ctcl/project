@@ -1,0 +1,25 @@
+<section class="container mt-4">
+    <h2 class="mb-3">Add Winners</h2>
+
+    <form id="winnersForm" action="/hod/event-details" method="post">
+    {{!-- <h2>{{date}}{{title}}</h2> --}}
+     <input type="hidden" name="date" value="{{date}}" />
+     <input type="hidden" name="title" value="{{title}}" />
+        <div class="mb-3">
+            <label for="firstPrize" class="form-label">First Prize</label>
+            <input type="text" id="firstPrize" name="first" class="form-control" placeholder="Enter first prize winner">
+        </div>
+
+        <div class="mb-3">
+            <label for="secondPrize" class="form-label">Second Prize</label>
+            <input type="text" id="secondPrize" name="second" class="form-control" placeholder="Enter second prize winner">
+        </div>
+
+        <div class="mb-3">
+            <label for="thirdPrize" class="form-label">Third Prize</label>
+            <input type="text" id="thirdPrize" name="third" class="form-control" placeholder="Enter third prize winner">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</section>

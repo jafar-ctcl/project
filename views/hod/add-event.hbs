@@ -1,4 +1,4 @@
-<section class="container mt-5">
+{{!-- <section class="container mt-5">
   <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">Add New Event</h1>
 
   <!-- Event Form -->
@@ -160,4 +160,232 @@
   });
 });
 
+</script> --}}
+<section class="container mt-5">
+  <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">Add New Event</h1>
+
+  <!-- Event Form -->
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card border-light shadow-lg">
+        <div class="card-body">
+          <form id="eventForm" action="/hod/add-event" method="POST">
+
+            <!-- Event Title -->
+            <div class="mb-4">
+              <label for="eventTitle" class="form-label fs-5 fw-semibold">Event Title</label>
+              <input type="text" class="form-control border-0 shadow-sm" id="eventTitle" name="eventTitle" required>
+            </div>
+
+            <!-- Event Date -->
+            <div class="mb-4">
+              <label for="eventDate" class="form-label fs-5 fw-semibold">Event Date</label>
+              <input type="date" class="form-control border-0 shadow-sm" id="eventDate" name="eventDate" required>
+            </div>
+
+            <!-- Start Time -->
+            <div class="mb-4">
+              <label for="startTime" class="form-label fs-5 fw-semibold">Start Time</label>
+              <div class="d-flex">
+                <input type="time" class="form-control border-0 shadow-sm" id="startTime" name="startTime" required>
+                <select class="form-control ms-2 shadow-sm" id="startAmPm" name="startAmPm" required>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- End Time -->
+            <div class="mb-4">
+              <label for="endTime" class="form-label fs-5 fw-semibold">End Time</label>
+              <div class="d-flex">
+                <input type="time" class="form-control border-0 shadow-sm" id="endTime" name="endTime" required>
+                <select class="form-control ms-2 shadow-sm" id="endAmPm" name="endAmPm" required>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dynamic Guest Fields Container -->
+            <div id="guestsContainer"></div>
+
+            <!-- Add Guest Button -->
+            <div class="mb-4 text-center">
+              <button type="button" id="addGuestBtn" class="btn btn-outline-primary shadow-sm">Add Guest</button>
+            </div>
+
+            <!-- Event Place -->
+            <div class="mb-4">
+              <label for="eventPlace" class="form-label fs-5 fw-semibold">Event Place</label>
+              <input type="text" class="form-control border-0 shadow-sm" id="eventPlace" name="eventPlace" required>
+            </div>
+
+            <!-- Hidden Guest Names Field -->
+            <input type="hidden" id="guestNames" name="guestNames">
+
+            <!-- Submit Button -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary w-100 shadow-sm">Add Event</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Button -->
+  <div class="mt-5 text-center">
+    <a href="/hod/view-event" class="btn btn-outline-secondary">Go to Event Calendar</a>
+  </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const addGuestBtn = document.getElementById('addGuestBtn');
+  const guestsContainer = document.getElementById('guestsContainer');
+  const guestNamesInput = document.getElementById('guestNames');
+
+  addGuestBtn.addEventListener('click', function () {
+    const guestIndex = guestsContainer.children.length + 1;
+
+    const guestSection = document.createElement('div');
+    guestSection.classList.add('mb-4', 'row', 'align-items-center');
+    guestSection.setAttribute('id', `guest${guestIndex}`);
+
+    // Guest Name
+    const guestNameCol = document.createElement('div');
+    guestNameCol.classList.add('col-md-10');
+    const guestNameLabel = document.createElement('label');
+    guestNameLabel.setAttribute('for', `guestName${guestIndex}`);
+    guestNameLabel.textContent = `Guest ${guestIndex} Name`;
+    const guestNameInput = document.createElement('input');
+    guestNameInput.classList.add('form-control', 'border-0', 'shadow-sm');
+    guestNameInput.setAttribute('id', `guestName${guestIndex}`);
+    guestNameInput.setAttribute('type', 'text');
+
+    guestNameCol.appendChild(guestNameLabel);
+    guestNameCol.appendChild(guestNameInput);
+
+    // Remove Guest Button
+    const removeBtnCol = document.createElement('div');
+    removeBtnCol.classList.add('col-md-2', 'text-end');
+    const removeGuestBtn = document.createElement('button');
+    removeGuestBtn.classList.add('btn', 'btn-outline-danger', 'shadow-sm');
+    removeGuestBtn.textContent = 'Remove';
+    removeGuestBtn.addEventListener('click', function () {
+      guestSection.remove();
+      updateGuestNames();
+    });
+
+    removeBtnCol.appendChild(removeGuestBtn);
+
+    guestSection.appendChild(guestNameCol);
+    guestSection.appendChild(removeBtnCol);
+
+    guestsContainer.appendChild(guestSection);
+
+    updateGuestNames();
+  });
+
+  // Function to update the hidden input with guest names
+  function updateGuestNames() {
+    const guestNames = [];
+    const guestInputs = document.querySelectorAll('[id^="guestName"]');
+    guestInputs.forEach(input => {
+      if (input.value && !guestNames.includes(input.value)) {
+        guestNames.push(input.value); // Add only unique names
+      }
+    });
+    guestNamesInput.value = guestNames.join(','); // Store guest names as comma-separated
+  }
+
+  // Update guest names when the form is submitted
+  document.getElementById('eventForm').addEventListener('submit', function () {
+    updateGuestNames(); // Ensure guest names are updated before form submission
+  });
+});
 </script>
+<style>
+  /* Custom Styles for the Event Form */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    
+}
+
+.card {
+    background-color: #e0f7fa;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.form-control {
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 1rem;
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary {
+    border: 2px solid #0d6efd;
+    color: #0d6efd;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+
+    .form-control {
+        padding: 8px 10px;
+    }
+
+    .btn {
+        padding: 8px 15px;
+    }
+}
+</style>

@@ -22,7 +22,9 @@
             {{#each this.attendance}}
               <td class="{{#if (eq this 'A')}}text-danger{{/if}}">{{this}}</td>
             {{/each}}
-            <td class="percentage-cell">{{this.attendancePercentage}}%</td> <!-- Added class for percentage cell -->
+           <td class="percentage-cell {{#if (lt this.attendancePercentage 75)}}text-danger{{else}}text-success{{/if}}">
+      {{this.attendancePercentage}}%
+    </td>
           </tr>
         {{/each}}
       </tbody>

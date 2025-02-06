@@ -9,144 +9,80 @@
         </div>
         {{/if}}
 
-        {{#if attendance}}
-        <!-- Attendance Table -->
-        <div class="table-responsive rounded-3 shadow-sm">
-            <table class="table table-bordered table-hover mb-0">
-                <thead class="bg-primary text-white">
-                    <tr>
-                        <th class="text-center">Date</th>
-                        <th class="text-center">Day</th>
-                        <th class="text-center">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white">
-                    {{#each attendance}}
-                    <tr>
-                        <td class="text-center align-middle">{{this.formattedDate}}</td>
-                        <td class="text-center align-middle">{{this.day}}</td>
-                        <td class="text-center align-middle">
-                            {{!-- <span class="badge {{#if (eq this.status 'present')}}bg-success{{else if (eq this.status 'absent')}}bg-danger{{else}}bg-warning{{/if}}"> --}}
+        {{#if attendanceByMonth}}
+        {{#each attendanceByMonth}}
+        <div class="mb-4">
+            <h3 class="text-center text-secondary">{{@key}}</h3> <!-- Displays Month-Year (e.g., "08-2024") -->
+            <div class="table-responsive rounded-3 shadow-sm">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th class="text-center">Date</th>
+                            <th class="text-center">Day</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        {{#each this}}
+                        <tr>
+                            <td class="text-center align-middle">{{this.formattedDate}}</td>
+                            <td class="text-center align-middle">{{this.day}}</td>
+                            <td class="text-center align-middle">
                                 {{this.status}}
-                            </span>
-                            {{#if reason}}
+                                {{#if reason}}
                                 <small class="text-muted">({{reason}})</small>
-                                {{!-- {{#or (eq this.status "absent") (eq this.status "half")}}
-                                    <button class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#reasonModal"
-                                        onclick="setAttendanceReason('{{this.email}}', '{{this.date}}')">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                {{/or}} --}}
-                            {{else}}
+                                {{else}}
                                 {{#or (eq this.status "absent") (eq this.status "half")}}
-                                    <button class="btn btn-sm btn-outline-warning ms-2" data-bs-toggle="modal" data-bs-target="#reasonModal"
-                                        onclick="setAttendanceReason('{{this.email}}', '{{this.date}}')">
-                                        <i class="fas fa-comment-alt"></i> Provide Reason
-                                    </button>
+                                <button class="btn btn-sm btn-outline-warning ms-2" data-bs-toggle="modal"
+                                    data-bs-target="#reasonModal"
+                                    onclick="setAttendanceReason('{{this.email}}', '{{this.date}}')">
+                                    <i class="fas fa-comment-alt"></i> Provide Reason
+                                </button>
                                 {{/or}}
-                            {{/if}}
-                        </td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Modal for Providing Reason -->
-        <div class="modal fade" id="reasonModal" tabindex="-1" aria-labelledby="reasonModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="reasonModalLabel">Provide Attendance Reason</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="attendanceReason" class="form-label fw-bold">Reason for Absence</label>
-                            <textarea class="form-control" id="attendanceReason" rows="4"
-                                placeholder="Enter reason here..."></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="submitAttendanceReason()">
-                            <i class="fas fa-check"></i> Submit
-                        </button>
-                    </div>
-                </div>
+                                {{/if}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
             </div>
         </div>
+        {{/each}}
 
-        <div class="text-center mt-4">
-            <a href="/student" class="btn btn-outline-primary btn-lg">
-                <i class="fas fa-arrow-left"></i> Go Back
-            </a>
-        </div>
         {{else}}
-        <div class="text-center mt-4">
+
+                <div class="text-center mt-4">
             <a href="/student" class="btn btn-outline-primary btn-lg">
                 <i class="fas fa-arrow-left"></i> Go Back
             </a>
         </div>
         {{/if}}
     </div>
+    <!-- Modal for Providing Reason -->
+        <div class="modal fade" id="reasonModal" tabindex="-1" aria-labelledby="reasonModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reasonModalLabel">Provide Attendance Reason</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Input field to enter the reason -->
+                        <div class="mb-3">
+                            <label for="attendanceReason" class="form-label">Reason for Absence</label>
+                            <textarea class="form-control" id="attendanceReason" rows="3"
+                                placeholder="Enter reason here..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitAttendanceReason()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </section>
-
-<!-- Font Awesome for Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-<!-- Custom CSS -->
-<style>
-    .attendance-section {
-        background-color: #f8f9fa;
-    }
-
-    .table thead th {
-        font-weight: 600;
-        text-transform: uppercase;
-    }
-
-    .table tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    .badge {
-        font-size: 0.9rem;
-        padding: 0.5em 0.75em;
-    }
-
-    .btn-outline-primary:hover {
-        background-color: #0d6efd;
-        color: #fff;
-    }
-
-    .btn-outline-warning:hover {
-        background-color: #ffc107;
-        color: #000;
-    }
-
-    .modal-content {
-        border: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header {
-        border-bottom: none;
-    }
-
-    .modal-footer {
-        border-top: none;
-    }
-
-    .form-control {
-        border-radius: 0.5rem;
-    }
-
-    .btn-lg {
-        padding: 0.5rem 1.5rem;
-        font-size: 1.1rem;
-    }
-</style>
 
 <script>
     let currentAttendance = {}; // Store the email and date globally
@@ -173,7 +109,7 @@
                 date: currentAttendance.date,
                 reason: reason
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     // Close the modal after successful submission
                     $('#reasonModal').modal('hide');
@@ -183,7 +119,7 @@
                     alert('Failed to submit reason. Please try again later.');
                 }
             },
-            error: function(error) {
+            error: function (error) {
                 alert('An error occurred while submitting the reason. Please try again.');
             }
         });

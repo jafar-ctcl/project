@@ -26,7 +26,8 @@
           {{!-- <td>{{ABCD_Id}}</td> --}}
           <td>
             <div class="d-flex action-buttons">
-              <a href="hod/about-student" class=" m-1 btn btn-success">View</a>
+              <!-- Pass the email as a query parameter in the URL -->
+              <a href="/teacher/about-student/{{email}}" class="m-1 btn btn-success">View</a>
 
             </div>
           </td>

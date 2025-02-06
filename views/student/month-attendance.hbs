@@ -1,0 +1,114 @@
+<div class="container py-4">
+    <a href="/student" class="home-link text-decoration-none">
+        <i class="bi bi-house-door me-2"></i>Home
+    </a>
+
+    <h2 class="text-center">{{student_name}}</h2>
+    <div class="innerdiv">
+        <table class="attendance-table">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    {{#each daysInMonth}}
+                    <th>{{this}}</th>
+                    {{/each}}
+                    <th class="percentage-header">%</th> <!-- Added class for percentage header -->
+                </tr>
+            </thead>
+            <tbody>
+                {{#each months}}
+                <tr>
+                    <td>{{this.month}}</td>
+                    {{#each this.attendance}}
+                    <td class="{{#if (eq this 'A')}}text-danger{{else}}text-success{{/if}}">{{this}}</td>
+                    {{/each}}
+                    <td
+                        class="percentage-cell {{#if (lt this.attendancePercentage 75)}}text-danger{{else}}text-success{{/if}}">
+                        {{this.attendancePercentage}}%
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    {{#if (eq months.length 0)}}
+    <div class="no-attendance-message mb-3">
+        <h1>No Attendance Records</h1>
+        <p>No attendance has been marked for this student. Please check back later or add the records.</p>
+    </div>
+    {{/if}}
+
+    <div class="text-center">
+        <a href="/student" class="btn btn-primary m-4">Go Back</a>
+    </div>
+</div>
+
+
+<style>
+    .innerdiv {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+
+        font-size: 14px;
+
+    }
+
+    .attendance-table th,
+    .attendance-table td {                                                                                                                                              
+        border: 1px solid #ddd;
+        padding: 9px;
+    }
+
+    .attendance-table th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    .month-name {
+        text-align: left;
+        font-weight: bold;
+        padding: 5px;
+    }
+
+    .no-attendance-message {
+        text-align: center;
+        padding: 30px;
+        background-color: #f8f9fa;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-top: 50px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .no-attendance-message h1 {
+        font-size: 2rem;
+        color: #333;
+    }
+
+    .no-attendance-message p {
+        font-size: 1rem;
+        color: #666;
+    }
+
+    .text-danger {
+        color: red;
+        font-weight: bold;
+    }
+
+    /* Custom styles for percentage header and cell */
+    .percentage-header {
+        background-color: #e9f5ff;
+        /* Light blue background */
+        color: #007bff;
+        /* Blue text */
+        font-weight: bold;
+    }
+</style>

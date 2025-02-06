@@ -83,39 +83,39 @@ router.get("/timetable", verifyLogin, (req, res) => {
 
   // Call getTimetable function with course and semester
   studentHelpers.getTimetable(course, semester)
-      .then((timetableData) => {
-          // Extract times and timetable from the resolved data
-          const { times, timetable } = timetableData;
+    .then((timetableData) => {
+      // Extract times and timetable from the resolved data
+      const { times, timetable } = timetableData;
 
-          // Render the timetable view with times and timetable data
-          res.render("student/view-timetable", {
-              times: times,
-              timetable: timetable
-          });
-      })
-      .catch((err) => {
-          // Handle errors if any
-          console.error("Error fetching timetable:", err);
-          res.status(500).send("Internal Server Error");
+      // Render the timetable view with times and timetable data
+      res.render("student/view-timetable", {
+        times: times,
+        timetable: timetable
       });
+    })
+    .catch((err) => {
+      // Handle errors if any
+      console.error("Error fetching timetable:", err);
+      res.status(500).send("Internal Server Error");
+    });
 });
-router.get('/attendance',verifyLogin, (req, res) => {
-  const email = req.session.student.email; // Assuming you store the student's email in session
-// console.log("email",email);
+router.get('/attendance', verifyLogin, (req, res) => {
+  const email = req.session.student.email; // Get student email from session
 
-  studentHelpers.getAttendance(email).then((attendanceRecords) => {
-    if (attendanceRecords.length > 0) {
-      // console.log("attemda",attendanceRecords);
-      
-      res.render('student/attendance', { attendance: attendanceRecords });
-    } else {
-      res.render('student/attendance', { attendance: [], errorMessage: 'No attendance records found for this student.' });
-    }
-  }).catch((err) => {
-    console.log(err);
-    res.render('student/attendance', { errorMessage: 'There was an error fetching the attendance records.' });
-  });
+  studentHelpers.getAttendance(email)
+    .then((attendanceByMonth) => {
+      if (Object.keys(attendanceByMonth).length > 0) {
+        res.render('student/attendance', { attendanceByMonth });
+      } else {
+        res.render('student/attendance', { attendanceByMonth: {}, errorMessage: 'No attendance records found.' });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.render('student/attendance', { attendanceByMonth: {}, errorMessage: 'Error fetching attendance records.' });
+    });
 });
+
 router.post('/attendance-reason', (req, res) => {
   const { email, date, reason } = req.body;
 
@@ -135,10 +135,55 @@ router.post('/attendance-reason', (req, res) => {
       res.status(500).json({ success: false, message: 'Failed to update attendance reason' });
     });
 });
+router.get('/month-attendance', verifyLogin, (req, res) => {
+  const email = req.session.student.email; // Get student email from session
+  
+  studentHelpers.getAllMonthAttendance(email).then(({ months }) => {
+    const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1); // Create an array of days (1 to 31)
+    console.log(months);  // Log the months data
+
+    // Process each month
+    months.forEach((month) => {
+      // Map the attendance status to the required symbols
+      month.attendance = month.attendance.map(status => {
+        if (status === 'present') return '✖';  // Replace 'present' with ✖
+        if (status === 'absent') return 'A';   // Replace 'absent' with A
+        if (status === 'half') return '/';     // Replace 'half' with /
+        return '-';                             // Replace null/undefined with -
+      });
+    });
+
+    // Render the page with the processed months data
+    res.render('student/month-attendance', { months, daysInMonth });
+  }).catch(err => {
+    console.error("Error fetching attendance data:", err);
+    res.render('student/month-attendance', { months: [], daysInMonth: [] });
+  });
+});
+
+  router.get("/view-marks", (req, res) => {
+    const email = req.session.student.email; // Get the logged-in student's email from the session
+    studentHelpers.getMarks(email)
+      .then((marks) => {
+        res.render("student/view-marks", { marks }); // Pass the marks data to the HBS template
+      })
+      .catch((err) => {
+        console.error("Error fetching marks:", err);
+        res.status(500).send("Error fetching marks");
+      });
+  });
 
 
+router.get('/view-event', (req, res) => {
+  // Fetch event data from the database or any other source
+  studentHelpers.getEvents().then((events) => {
+    // Pass the event data to the Handlebars view
+    res.render('student/view-event', { events });
+  }).catch((err) => {
+    console.error("Error fetching events:", err);
+    res.status(500).send("Error fetching events.");
+  });
+});
 
 
-
-
-module.exports = router;
+  module.exports = router;

@@ -1,0 +1,83 @@
+<section>
+  <div class="container mt-5">
+    <h1 class="h2 text-center mb-4 text-uppercase fw-bold text-primary">Your Marks</h1>
+
+    <!-- Marks Table -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Marks Overview</h5>
+      </div>
+      <div class="card-body">
+        {{#if marks.length}}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th class="text-center">Subject</th>
+                <th class="text-center">Marks</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each marks}}
+              <tr>
+                <td class="text-center">{{this.subject}}</td>
+                <td class="text-center">{{this.marks}}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        {{else}}
+        <div class="text-center py-4">
+          <p class="text-muted mb-0">No marks available at the moment.</p>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+      <a href="/student" class="btn btn-outline-primary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- Custom CSS -->
+<style>
+  .table th {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .text-muted {
+    color: #6c757d !important;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+  }
+</style>

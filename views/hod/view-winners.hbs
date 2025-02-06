@@ -1,0 +1,38 @@
+<section class="container my-5">
+    <!-- Event Title Section -->
+    <section class="text-center mb-5">
+        <h1>{{title}}</h1>
+    </section>
+
+    <!-- Event Details Section -->
+    <section class="row">
+        <!-- Event Date -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Event Date</h5>
+                    <p class="card-text">{{date}}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Winners Section -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Winners</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">1st: {{first}}</li>
+                        <li class="list-group-item">2nd: {{second}}</li>
+                        <li class="list-group-item">3rd: {{third}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation Section -->
+    <section class="text-center mt-4">
+        <a href="/view-event" class="btn btn-primary">Back to Events</a>
+    </section>
+</section>
