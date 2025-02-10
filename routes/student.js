@@ -103,17 +103,18 @@ router.get('/attendance', verifyLogin, (req, res) => {
   const email = req.session.student.email; // Get student email from session
 
   studentHelpers.getAttendance(email)
-    .then((attendanceByMonth) => {
+    .then(({ attendanceByMonth, attendancePercentage }) => {
       if (Object.keys(attendanceByMonth).length > 0) {
-        res.render('student/attendance', { attendanceByMonth });
+        res.render('student/attendance', { attendanceByMonth, attendancePercentage });
       } else {
-        res.render('student/attendance', { attendanceByMonth: {}, errorMessage: 'No attendance records found.' });
+        res.render('student/attendance', { attendanceByMonth: {}, attendancePercentage: 0, errorMessage: 'No attendance records found.' });
       }
     })
     .catch((err) => {
       console.log(err);
-      res.render('student/attendance', { attendanceByMonth: {}, errorMessage: 'Error fetching attendance records.' });
+      res.render('student/attendance', { attendanceByMonth: {}, attendancePercentage: 0, errorMessage: 'Error fetching attendance records.' });
     });
+
 });
 
 router.post('/attendance-reason', (req, res) => {
@@ -137,7 +138,7 @@ router.post('/attendance-reason', (req, res) => {
 });
 router.get('/month-attendance', verifyLogin, (req, res) => {
   const email = req.session.student.email; // Get student email from session
-  
+
   studentHelpers.getAllMonthAttendance(email).then(({ months }) => {
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1); // Create an array of days (1 to 31)
     console.log(months);  // Log the months data
@@ -161,17 +162,17 @@ router.get('/month-attendance', verifyLogin, (req, res) => {
   });
 });
 
-  router.get("/view-marks", (req, res) => {
-    const email = req.session.student.email; // Get the logged-in student's email from the session
-    studentHelpers.getMarks(email)
-      .then((marks) => {
-        res.render("student/view-marks", { marks }); // Pass the marks data to the HBS template
-      })
-      .catch((err) => {
-        console.error("Error fetching marks:", err);
-        res.status(500).send("Error fetching marks");
-      });
-  });
+router.get("/view-marks", (req, res) => {
+  const email = req.session.student.email; // Get the logged-in student's email from the session
+  studentHelpers.getMarks(email)
+    .then((marks) => {
+      res.render("student/view-marks", { marks }); // Pass the marks data to the HBS template
+    })
+    .catch((err) => {
+      console.error("Error fetching marks:", err);
+      res.status(500).send("Error fetching marks");
+    });
+});
 
 
 router.get('/view-event', (req, res) => {
@@ -186,4 +187,4 @@ router.get('/view-event', (req, res) => {
 });
 
 
-  module.exports = router;
+module.exports = router;

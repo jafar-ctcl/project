@@ -1,63 +1,71 @@
 <section class="attendance-section py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-4 display-4 fw-bold text-primary">Your Attendance</h2>
 
-        {{#if errorMessage}}
-        <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
-            {{errorMessage}}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {{/if}}
-
-        {{#if attendanceByMonth}}
-        {{#each attendanceByMonth}}
-        <div class="mb-4">
-            <h3 class="text-center text-secondary">{{@key}}</h3> <!-- Displays Month-Year (e.g., "08-2024") -->
-            <div class="table-responsive rounded-3 shadow-sm">
-                <table class="table table-bordered table-hover mb-0">
-                    <thead class="bg-primary text-white">
-                        <tr>
-                            <th class="text-center">Date</th>
-                            <th class="text-center">Day</th>
-                            <th class="text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white">
-                        {{#each this}}
-                        <tr>
-                            <td class="text-center align-middle">{{this.formattedDate}}</td>
-                            <td class="text-center align-middle">{{this.day}}</td>
-                            <td class="text-center align-middle">
-                                {{this.status}}
-                                {{#if reason}}
-                                <small class="text-muted">({{reason}})</small>
-                                {{else}}
-                                {{#or (eq this.status "absent") (eq this.status "half")}}
-                                <button class="btn btn-sm btn-outline-warning ms-2" data-bs-toggle="modal"
-                                    data-bs-target="#reasonModal"
-                                    onclick="setAttendanceReason('{{this.email}}', '{{this.date}}')">
-                                    <i class="fas fa-comment-alt"></i> Provide Reason
-                                </button>
-                                {{/or}}
-                                {{/if}}
-                            </td>
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        {{/each}}
-
-        {{else}}
-
-                <div class="text-center mt-4">
-            <a href="/student" class="btn btn-outline-primary btn-lg">
-                <i class="fas fa-arrow-left"></i> Go Back
-            </a>
-        </div>
-        {{/if}}
+    {{#if errorMessage}}
+    <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
+        {{errorMessage}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    {{/if}}
+
+    {{#if attendanceByMonth}}
+  <div class="text-center mb-4">
+    <h4 class="fw-bold {{#if (lt attendancePercentage 75)}}text-danger{{else}}text-success{{/if}}">
+        Total Attendance: {{attendancePercentage}}%
+    </h4>
+</div>
+
+    {{#each attendanceByMonth}}
+    <div class="mb-4">
+         <div class="card-header bg-primary text-white">
+      <h5 class="card-title mb-0">Attendance for {{@key}} </h5>
+    </div>
+        <div class="table-responsive rounded-3 shadow-sm">
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">Day</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    {{#each this}}
+                    <tr>
+                        <td class="text-center align-middle">{{this.formattedDate}}</td>
+                        <td class="text-center align-middle">{{this.day}}</td>
+                        <td class="text-center align-middle">
+                            {{this.status}}
+                            {{#if reason}}
+                            <small class="text-muted">({{reason}})</small>
+                            {{else}}
+                            {{#or (eq this.status "absent") (eq this.status "half")}}
+                            <button class="btn btn-sm btn-outline-warning ms-2" data-bs-toggle="modal"
+                                data-bs-target="#reasonModal"
+                                onclick="setAttendanceReason('{{this.email}}', '{{this.date}}')">
+                                <i class="fas fa-comment-alt"></i> Provide Reason
+                            </button>
+                            {{/or}}
+                            {{/if}}
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/each}}
+
+    {{/if}}
+   
+  <!-- Back Button -->
+  <div class="text-center mt-4">
+    <a href="/student" class="btn btn-outline-primary">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
+</div>
+
     <!-- Modal for Providing Reason -->
         <div class="modal fade" id="reasonModal" tabindex="-1" aria-labelledby="reasonModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -125,3 +133,41 @@
         });
     }
 </script>
+
+
+<!-- Custom CSS -->
+<style>
+  .table th {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .text-muted {
+    color: #6c757d !important;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+  }
+</style>

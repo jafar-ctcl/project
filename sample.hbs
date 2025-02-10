@@ -264,3 +264,122 @@ module.exports = app;
 }
 
   </script>
+  ///add timetable 
+  {{#each period}}
+          <div id="periodSection">
+            <!-- Period Details -->
+            <div class="time-slot mb-4 border p-4 rounded shadow-sm">
+              <h5 class="text-secondary mb-3">{{this.periods}}</h5>
+
+              <!-- Period Time Input -->
+              <div class="mb-3">
+                <label for="period{{@index}}" class="form-label">Period Time</label>
+                <input type="text" name="periods" id="period{{@index}}" class="form-control"
+                  value="{{this.period_time}}" readonly>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fs-5">Teacher</label>
+                <select id="teacherDropdown{{@index}}" class="form-select custom-select" name="teachers" required>
+                  <option value="">Choose a teacher...</option>
+                  {{#each ../teachersInfo}} <!-- Use ../ to reference the teachersInfo in the parent context -->
+                  <option value="{{this.name}}" data-email="{{this.email}}" data-subjects="{{this.subjects}}">
+                    {{this.name}}
+                  </option>
+                  {{else}}
+                  <option disabled>No teachers available</option>
+                  {{/each}}
+                </select>
+
+                <!-- Hidden email input field -->
+                <input type="hidden" name="teacherEmails" id="teacherEmailInput{{@index}}">
+              </div>
+
+              <!-- Subject Dropdown -->
+              <div class="mb-3">
+                <label for="subjectDropdown{{@index}}" class="form-label fs-5">Subject</label>
+                <select id="subjectDropdown{{@index}}" class="form-select custom-select" name="subjects" required>
+                  <option value="">Choose a subject...</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+          {{!-- {{#each period}}
+          <div id="periodSection">
+            <!-- Period Details -->
+            <div class="time-slot mb-4 border p-4 rounded shadow-sm">
+              <h5 class="text-secondary mb-3">{{this.period_name}}</h5>
+
+              <!-- Period Time Input -->
+              <div class="mb-3">
+                <label for="period{{@index}}" class="form-label">Period Time</label>
+                <input type="text" name="periods" id="period{{@index}}" class="form-control" value="{{this.time}}"
+                  readonly>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fs-5">Teacher</label>
+                <select id="teacherDropdown{{@index}}" class="form-select custom-select" name="teachers" required>
+                  <option value="">Choose a teacher...</option>
+                  {{#each ../teachersInfo}} <!-- Use ../ to reference the teachersInfo in the parent context -->
+                  <option value="{{this.name}}" data-email="{{this.email}}" data-subjects="{{this.subjects}}">
+                    {{this.name}}
+                  </option>
+                  {{else}}
+                  <option disabled>No teachers available</option>
+                  {{/each}}
+                </select>
+
+                <!-- Hidden email input field -->
+                <input type="hidden" name="teacherEmails" id="teacherEmailInput{{@index}}">
+              </div>
+
+              <!-- Subject Dropdown -->
+              <div class="mb-3">
+                <label for="subjectDropdown{{@index}}" class="form-label fs-5">Subject</label>
+                <select id="subjectDropdown{{@index}}" class="form-select custom-select" name="subjects" required>
+                  <option value="">Choose a subject...</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          {{/each}} --}}
+          {{!-- addTimetable: (timetableData) => {
+        return new Promise((resolve, reject) => {
+            const { course, semester, day, periods, teachers, teacherEmails, subjects } = timetableData
+            const checkQuery = SELECT * FROM timetable WHERE semester = ? AND course = ? AND day = ?;
+            db.query(checkQuery, [semester, course, day], (err, existing) => {
+                if (err) {
+                    console.error("Error checking existing timetable entry", err);
+                    return reject({ message: "Error checking existing timetable entry", error: err });
+                }
+                console.log("Existing entries found:", existing); // Log existing entries for debugging
+
+                // If an entry already exists, reject
+                if (existing.length > 0) {
+                    return reject({ message: "Entry exists for this semester, course, and day" });
+                }
+
+                // Insert data for each period
+                const insertPromises = periods.map((period, i) => {
+                    const query = INSERT INTO timetable (course, semester, day, time, teacher, email, subject) 
+                             VALUES (?, ?, ?, ?, ?, ?, ?);
+                    return new Promise((resolve, reject) => {
+                        db.query(query, [course, semester, day, period, teachers[i], teacherEmails[i], subjects[i]], (err) => {
+                            if (err) {
+                                console.error("Error inserting timetable entry for period:", period, err);
+                                return reject({ message: "Error inserting timetable entry", error: err });
+                            }
+                            resolve();
+                        });
+                    });
+                });
+
+                // Wait for all insertions to complete
+                Promise.all(insertPromises)
+                    .then(() => resolve("Timetable inserted successfully"))
+                    .catch(reject);
+            });
+        });
+    }, --}}

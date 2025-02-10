@@ -266,51 +266,113 @@ module.exports = {
   },
 
   getLastAttendance: (sem, course) => {
+    // return new Promise((resolve, reject) => {
+    //   // Query to fetch the latest attendance record to get the most recent date
+    //   // db.query('SELECT * FROM attendance  where course=? AND semester = ? AND isStudent=1  ORDER BY date DESC LIMIT 1 ', [course, sem], (err, result) => {
+    //   //   if (err) {
+    //   //     console.error('Error fetching last attendance:', err);
+    //   //     reject(err); // Reject the promise in case of error
+    //   //   } 
+    //   db.query(
+    //     `SELECT a.*, s.email FROM attendance a JOIN students s ON a.email = s.email WHERE a.course = ? AND a.semester = ? AND s.status = 1 ORDER BY a.date DESC LIMIT 1`,
+    //     [course, sem],
+    //     (err, result) => {
+    //       if (err) {
+    //         console.error("Error fetching last attendance:", err);
+    //         return reject(err); // Reject the promise in case of error
+    //       } else {
+    //         const lastAttendance = result[0]; // Get the most recent attendance record
+
+    //         if (lastAttendance && lastAttendance.date) {
+    //           const lastAttendanceDate = lastAttendance.date;
+
+    //           // Query to fetch all attendance records for the last attendance date
+    //           db.query('SELECT * FROM attendance WHERE date = ? AND semester = ? AND course=?', [lastAttendanceDate, sem, course], (err, allRecords) => {
+    //             if (err) {
+    //               console.error('Error fetching all attendance for the last date:', err);
+    //               reject(err);
+    //             } else {
+    //               // Process the records to add the day of the week
+    //               const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    //               allRecords.forEach(record => {
+    //                 const attendanceDate = new Date(record.date);
+    //                 record.dayOfWeek = daysOfWeek[attendanceDate.getDay()];
+    //               });
+
+    //               resolve(allRecords); // Resolve the promise with all attendance records for the last date
+    //             }
+    //           });
+    //         } else {
+    //           resolve([]); // If no attendance records exist, return an empty array
+    //         }
+    //       }
+    //     });
+    // });
     return new Promise((resolve, reject) => {
-      // Query to fetch the latest attendance record to get the most recent date
-      db.query('SELECT * FROM attendance  where course=? AND semester = ? AND isStudent=1  ORDER BY date DESC LIMIT 1 ', [course, sem], (err, result) => {
-        if (err) {
-          console.error('Error fetching last attendance:', err);
-          reject(err); // Reject the promise in case of error
-        } else {
-          const lastAttendance = result[0]; // Get the most recent attendance record
-
-          if (lastAttendance && lastAttendance.date) {
-            const lastAttendanceDate = lastAttendance.date;
-
-            // Query to fetch all attendance records for the last attendance date
-            db.query('SELECT * FROM attendance WHERE date = ? AND semester = ? AND course=?', [lastAttendanceDate, sem, course], (err, allRecords) => {
-              if (err) {
-                console.error('Error fetching all attendance for the last date:', err);
-                reject(err);
-              } else {
-                // Process the records to add the day of the week
-                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                allRecords.forEach(record => {
-                  const attendanceDate = new Date(record.date);
-                  record.dayOfWeek = daysOfWeek[attendanceDate.getDay()];
-                });
-
-                resolve(allRecords); // Resolve the promise with all attendance records for the last date
-              }
-            });
-          } else {
-            resolve([]); // If no attendance records exist, return an empty array
+      // Fetch the most recent attendance record
+      const latestAttendanceQuery = `
+          SELECT a.*, s.email 
+          FROM attendance a 
+          JOIN students s ON a.email = s.email 
+          WHERE a.course = ? AND a.semester = ? AND s.status = 1 
+          ORDER BY a.date DESC 
+          LIMIT 1
+      `;
+  
+      db.query(latestAttendanceQuery, [course, sem], (err, result) => {
+          if (err) {
+              console.error("Error fetching last attendance:", err);
+              return reject(err);
           }
-        }
+  
+          const lastAttendance = result[0];
+  
+          if (!lastAttendance || !lastAttendance.date) {
+              return resolve([]); // No attendance records found
+          }
+  
+          const lastAttendanceDate = lastAttendance.date;
+  
+          // Fetch all attendance records for the last attendance date
+          const allAttendanceQuery = `
+          SELECT a.*, 
+                 DAYNAME(a.date) AS dayOfWeek  -- Automatically fetch day name (Monday, Tuesday, etc.)
+          FROM attendance a
+          JOIN students s ON a.email = s.email  -- Join with students table
+          WHERE a.date = ? 
+            AND a.semester = ? 
+            AND a.course = ? 
+            AND s.status = 1  -- Only include active students
+      `;  
+          db.query(allAttendanceQuery, [lastAttendanceDate, sem, course], (err, allRecords) => {
+              if (err) {
+                  console.error("Error fetching all attendance for the last date:", err);
+                  return reject(err);
+              }
+  
+              resolve(allRecords); // Resolve with formatted attendance records
+          });
       });
-    });
-
+  });
+  
 
   },
   getAttendance: (date, sem, course) => {
     return new Promise((resolve, reject) => {
       // console.log("helpers", year, date);
-      db.query('SELECT * FROM attendance WHERE semester = ? AND date = ? AND course=? AND isStudent=1', [sem, date, course], (err, data) => {
+      // db.query('SELECT * FROM attendance WHERE semester = ? AND date = ? AND course=? AND isStudent=1', [sem, date, course], (err, data) => {
+      //   if (err) {
+      //     console.log("error", err);
+      //     return;
+      //   }
+      const query = `SELECT a.*, s.email FROM attendance a JOIN students s ON a.email = s.email WHERE a.semester = ? AND a.date = ? AND a.course = ? AND s.status = 1`;
+
+        db.query(query, [sem, date, course], (err, data) => {
         if (err) {
-          console.log("error", err);
-          return;
+          console.log("Error fetching attendance:", err);
+          return reject("Error fetching attendance data");
         }
+
 
         // console.log("get  attendance", data);
 
@@ -409,11 +471,12 @@ module.exports = {
   // },
   getMonthAttendance: (month, year, sem, course) => {
     return new Promise((resolve, reject) => {
-      const query = `
-        SELECT * FROM attendance
-        WHERE YEAR(date) = ? AND MONTH(date) = ? AND semester = ? AND course = ? AND isStudent=1
-        ORDER BY date
-      `;
+      // const query = `
+      //   SELECT * FROM attendance
+      //   WHERE YEAR(date) = ? AND MONTH(date) = ? AND semester = ? AND course = ? AND isStudent=1
+      //   ORDER BY date
+      // `;
+      const query = `SELECT a.* FROM attendance a JOIN students s ON a.email = s.email WHERE YEAR(a.date) = ? AND MONTH(a.date) = ? AND a.semester = ? AND a.course = ? AND s.status = 1 ORDER BY a.date;`;
 
       db.query(query, [year, month, sem, course], (err, results) => {
         if (err) {
@@ -474,12 +537,13 @@ module.exports = {
 
   getAvailableYears: (sem, course) => {
     return new Promise((resolve, reject) => {
-      const query = `
-            SELECT DISTINCT YEAR(date) AS year 
-            FROM attendance 
-            WHERE semester = ?  AND course = ? AND isStudent=1
-            ORDER BY year DESC;
-          `;
+      // const query = `
+      //       SELECT DISTINCT YEAR(date) AS year 
+      //       FROM attendance 
+      //       WHERE semester = ?  AND course = ? AND isStudent=1
+      //       ORDER BY year DESC;
+      //     `;
+      const query = `SELECT DISTINCT YEAR(a.date) AS year FROM attendance a JOIN students s ON a.email = s.email WHERE a.semester = ? AND a.course = ? AND s.status = 1 ORDER BY year DESC;`;
 
       db.query(query, [sem, course], (err, results) => {
         if (err) {
@@ -591,7 +655,8 @@ module.exports = {
   getMarks: (stdData) => {
     const { course, semester, subject } = stdData;
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM mark WHERE course = ? AND semester = ? AND subject = ? AND isStudent=1";  // Fixed the query
+      // const query = "SELECT * FROM mark WHERE course = ? AND semester = ? AND subject = ? AND isStudent=1";  // Fixed the query
+      const query = `SELECT m.* FROM mark m JOIN students s ON m.email = s.email WHERE m.course = ? AND m.semester = ? AND m.subject = ? AND s.status = 1`;
       db.query(query, [course, semester, subject], (err, result) => {
         if (err) {
           return reject(err);
@@ -609,8 +674,10 @@ module.exports = {
   },
   getStdentMarks: (email) => {
     return new Promise((resolve, reject) => {
+
       db.query(
-        "SELECT subject, marks FROM mark WHERE email = ? AND isStudent=1",
+        // "SELECT subject, marks FROM mark WHERE email = ? AND isStudent=1",
+        "SELECT m.subject, m.marks FROM mark m JOIN students s ON m.email = s.email WHERE m.email = ? AND s.status = 1",
         [email],
         (err, result) => {
           if (err) reject(err);
@@ -621,7 +688,10 @@ module.exports = {
   },
   getStudentAttendance: (email) => {
     return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM attendance WHERE email = ? AND isStudent=1 ORDER BY date ASC', [email], (err, results) => {
+      db.query(
+        // 'SELECT * FROM attendance WHERE email = ? AND isStudent=1 ORDER BY date ASC',
+        "SELECT a.* FROM attendance a JOIN students s ON a.email = s.email WHERE a.email = ? AND s.status = 1 ORDER BY a.date ASC",
+         [email], (err, results) => {
         if (err) {
           return reject(err); // Return error if query fails
         }

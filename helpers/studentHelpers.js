@@ -183,44 +183,70 @@ module.exports = {
     },
     getAttendance: (email) => {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM attendance WHERE email = ? ORDER BY date DESC', [email], (err, results) => {
-                if (err) {
-                    reject(err);
-                } else {
+            db.query(
+                "SELECT * FROM attendance WHERE email = ? ORDER BY date DESC",
+                [email],
+                (err, results) => {
+                    if (err) {
+                        return reject(err);
+                    }
+        
                     if (results.length > 0) {
                         const attendanceByMonth = {};
-
+                        let totalMarkedDays = 0; // Total days with attendance records
+                        let totalPresent = 0; // Count present and half-days
+                        
                         results.forEach((row) => {
                             const originalDate = new Date(row.date);
-
-                            const monthName = originalDate.toLocaleString('en-US', { month: 'long' }); // e.g., "August"
+                            const monthName = originalDate.toLocaleString("en-US", { month: "long" });
                             const year = originalDate.getFullYear();
-                            const monthYearKey = `${monthName} ${year}`; // e.g., "August 2024"
-
+                            const monthYearKey = `${monthName} ${year}`;
+        
                             // Format the date to DD-MM-YYYY
-                            const day = String(originalDate.getDate()).padStart(2, '0');
-                            const formattedDate = `${day}-${String(originalDate.getMonth() + 1).padStart(2, '0')}-${year}`;
-
-                            const dayName = originalDate.toLocaleString('en-US', { weekday: 'long' });
-
+                            const day = String(originalDate.getDate()).padStart(2, "0");
+                            const formattedDate = `${day}-${String(originalDate.getMonth() + 1).padStart(2, "0")}-${year}`;
+                            const dayName = originalDate.toLocaleString("en-US", { weekday: "long" });
+        
                             if (!attendanceByMonth[monthYearKey]) {
                                 attendanceByMonth[monthYearKey] = [];
                             }
-
+        
                             attendanceByMonth[monthYearKey].push({
                                 ...row,
-                                formattedDate, // Formatted Date: DD-MM-YYYY
-                                day: dayName,  // Day Name: Monday, Tuesday, etc.
+                                formattedDate,
+                                day: dayName,
                             });
+        
+                            // Count present and half-days
+                            if (row.status === "present") {
+                                totalPresent += 1;
+                            } else if (row.status === "half") {
+                                totalPresent += 0.5;
+                            }
+        
+                            // Only count days where attendance was marked
+                            if (row.status !== null) {
+                                totalMarkedDays += 1;
+                            }
                         });
-
-                        resolve(attendanceByMonth);
+        
+                        // Calculate attendance percentage
+                        const attendancePercentage = totalMarkedDays > 0 
+                            ? ((totalPresent / totalMarkedDays) * 100).toFixed(2) 
+                            : 0;
+        
+                        resolve({ 
+                            attendanceByMonth, 
+                            attendancePercentage 
+                        });
                     } else {
-                        resolve({});
+                        resolve({ attendanceByMonth: {}, attendancePercentage: 0 });
                     }
                 }
-            });
+            );
         });
+        
+                
     },
 
     updateAttendanceReason: (email, date, reason) => {
