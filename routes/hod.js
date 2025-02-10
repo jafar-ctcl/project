@@ -153,7 +153,7 @@ router.post('/set-timetable', (req, res) => {
 
 router.get('/add-timetable', verifyLogin, async (req, res) => {
   let period = await hodHelpers.getPeriod()
-   console.log("periods",period);
+  // console.log("periods", period);
 
   hodHelpers.getTimetableData().then(({ teachersInfo, courses, classTeachers }) => {
 
@@ -170,14 +170,34 @@ router.get('/add-timetable', verifyLogin, async (req, res) => {
     res.status(500).send('Internal Server Error');
   });
 });
-router.post('/add-timetable', (req, res) => {
+router.post('/add-timetable', async (req, res) => {
   const timetableData = req.body;
+  // addTimetable(timetableData)
+  const { course, semester, day } = req.body;
   // console.log(timetableData);
-
+  let period = await hodHelpers.getPeriod()
+  let { teachersInfo, courses, classTeachers } = await hodHelpers.getTimetableData()
   hodHelpers
-    .addTimetable(timetableData)
-    .then((message) => {
-      res.redirect('/hod/add-timetable');
+    .addTimetable(course, semester, day)
+    .then((resp) => {
+      // res.redirect('/hod/add-timetable');
+      console.log("resp",resp);
+      
+      if (resp.success) {
+        res.render('hod/create-timetable', {
+          hod, period, teachersInfo,   // Pass teacher names and subjects
+          courses,        // Pass unique courses
+          classTeachers,
+          course, semester, day
+        })
+      } else {
+        
+        res.render('hod/add-timetable', {
+          hod: true,
+          errorMessage:resp.message, // Pass the error message
+        });
+        
+      }
     })
     .catch((error) => {
       // console.error('Error:', error.message);
@@ -190,7 +210,24 @@ router.post('/add-timetable', (req, res) => {
 
     });
 });
-
+router.get('/create-timetable', verifyLogin, async (req, res) => {
+  let period = await hodHelpers.getPeriod()
+  let { teachersInfo, courses, classTeachers } = await hodHelpers.getTimetableData()
+  res.render('hod/create-timetable', {
+    hod, period, teachersInfo,   // Pass teacher names and subjects
+    courses,        // Pass unique courses
+    classTeachers,
+  })
+})
+router.post('/create-timetable',(req,res)=>{
+  const timetableData = req.body;
+  console.log("timetabledata",req.body);
+  hodHelpers.createTimetable(timetableData).then((resp)=>{
+    console.log("after create post method");
+    
+    res.redirect('/hod/add-timetable')
+  })
+})
 router.get('/view-timetable', verifyLogin, async (req, res) => {
   let teacherData = await hodHelpers.getTimetableData()
   // console.log("teacherData",teacherData.teachersInfo);
@@ -229,9 +266,9 @@ router.post('/edit-timetable', (req, res) => {
 });
 
 // Route to render the semester timetable
-router.get('/semester-timetable',verifyLogin,async (req, res) => {
+router.get('/semester-timetable', verifyLogin, async (req, res) => {
   let teacherData = await hodHelpers.getTimetableData()
-  
+
   hodHelpers
     .getSemTimetable()  // Fetch the timetable data from the helper
     .then((timetableData) => {
@@ -253,7 +290,7 @@ router.get('/semester-timetable',verifyLogin,async (req, res) => {
       res.status(500).send('Error fetching timetable data');
     });
 });
-router.post('/edit-semester-timetable',(req,res)=>{
+router.post('/edit-semester-timetable', (req, res) => {
   console.log("Edit semester Timetable Data:", req.body);
 
   // Destructure data from the request body
@@ -302,13 +339,13 @@ router.post('/manage-teacher', (req, res) => {
 });
 
 
-router.get('/view-managed-teacher/:email', verifyLogin,async (req, res) => {
+router.get('/view-managed-teacher/:email', verifyLogin, async (req, res) => {
   // console.log("teacher email", req.session.teacherData[0].email);
   // console.log(req.params);
   let { email } = req.params
   let timetableData = await hodHelpers.getTeacherTimetable(email)
-  console.log("teacher timetable",timetableData);
-  
+  console.log("teacher timetable", timetableData);
+
   hodHelpers.viewManagedTeacher(email).then((resp) => {
     let teacherData = resp[0];
     // Pass teacherData and subjects to the view
@@ -353,8 +390,8 @@ router.post('/add-event', (req, res) => {
   console.log("Event data:", req.body);
   // Call the addEvent function from your helpers
   hodHelpers.addEvent(req.body).then((resp) => {
-      res.redirect('/hod/view-event')
-    
+    res.redirect('/hod/view-event')
+
 
   }).catch((err) => {
     // Error case: Send a failure response with the error message
@@ -384,51 +421,51 @@ router.get('/about-student/:email', async (req, res) => {
 
     // Fetch marks and attendance data for the student
     let marks = await hodHelpers.getStdentMarks(email);
-    let { attendanceByMonth, attendancePercentages, overallPercentage} = await hodHelpers.getStudentAttendance(email);
+    let { attendanceByMonth, attendancePercentages, overallPercentage } = await hodHelpers.getStudentAttendance(email);
 
-// Render the view with the fetched data
-res.render('hod/about-student', {
-  title: "About Student",
-  marks,
-  attendanceByMonth,
-  attendancePercentages,  // Pass monthly percentages
-  overallPercentage,      // Pass overall attendance percentage
-            // Pass the condonation status (true/false)
-});
+    // Render the view with the fetched data
+    res.render('hod/about-student', {
+      title: "About Student",
+      marks,
+      attendanceByMonth,
+      attendancePercentages,  // Pass monthly percentages
+      overallPercentage,      // Pass overall attendance percentage
+      // Pass the condonation status (true/false)
+    });
 
   } catch (error) {
     console.error("Error fetching student details:", error);
     res.status(500).send("An error occurred while fetching student details.");
   }
 });
-router.get('/event-details/:title/:date', verifyLogin,(req, res) => {
-  const {title,date} = req.params
-  console.log("title",title,date);
-  
-  res.render('hod/event-details',{title,date})
-})
-router.get("/view-winners",(req,res)=>{
-hodHelpers.getWinners().then((data)=>{
-  res.render("hod/view-winners",{})
+router.get('/event-details/:title/:date', verifyLogin, (req, res) => {
+  const { title, date } = req.params
+  console.log("title", title, date);
 
+  res.render('hod/event-details', { title, date })
 })
+router.get("/view-winners", (req, res) => {
+  hodHelpers.getWinners().then((data) => {
+    res.render("hod/view-winners", {})
+
+  })
 })
 router.post('/event-details', (req, res) => {
   // console.log("Received Data:", req.body);
-  
-  let { date,title,first, second, third } = req.body;
- 
 
-  hodHelpers.addWinners({date,title,first, second, third}).then(() => {
-      res.redirect('/hod/winners-view')
-      
+  let { date, title, first, second, third } = req.body;
+
+
+  hodHelpers.addWinners({ date, title, first, second, third }).then(() => {
+    res.redirect('/hod/winners-view')
+
   }).catch(err => {
-      console.error("Error adding winners:", err);
-      res.status(500).send("Error saving winners");
+    console.error("Error adding winners:", err);
+    res.status(500).send("Error saving winners");
   });
 });
 
-  
+
 
 
 module.exports = router;
