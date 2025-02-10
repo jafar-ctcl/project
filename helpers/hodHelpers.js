@@ -46,7 +46,7 @@ module.exports = {
     getAllStudents: () => {
         return new Promise((resolve, reject) => {
             db.query('select * from students', (err, data) => {
-            // db.query('select * from login_data where type="student"', (err, data) => {
+                // db.query('select * from login_data where type="student"', (err, data) => {
                 resolve(data)
             })
         })
@@ -54,108 +54,26 @@ module.exports = {
     changeStatus: (data) => {
         return new Promise((resolve, reject) => {
             console.log("status", data.status);
-        
+
             const updateQuery = `
                 UPDATE attendance, mark 
                 SET attendance.isStudent = ?, mark.isStudent = ? 
                 WHERE attendance.email = ? AND mark.email = ?
             `;
-        
+
             const studentQuery = `UPDATE students SET status = ? WHERE email = ?`;
-        
-            if (data.status === 0) {
-                console.log("Updating to inactive...");
-                db.query(updateQuery, [data.status, data.status, data.email, data.email], (err, result) => {
-                    if (err) return reject(err);
-                    console.log("Updated isStudent status in both tables");
-                });
-            } else {
-                console.log("Checking if email exists in attendance and marks...");
-                ["attendance", "mark"].forEach((table) => {
-                    db.query(`SELECT * FROM ${table} WHERE email = ?`, [data.email], (err, result) => {
-                        if (err) return reject(err);
-                        if (result.length > 0) {
-                            db.query(`UPDATE ${table} SET isStudent = ? WHERE email = ?`, [data.status, data.email], (err) => {
-                                if (err) return reject(err);
-                                console.log(`${table} marked as active`);
-                            });
-                        }
-                    });
-                });
-            }
-        
+
             db.query(studentQuery, [data.status, data.email], (err) => {
                 if (err) return reject(err);
                 resolve("Student status updated successfully");
             });
         });
-       
-        // return new Promise((resolve, reject) => {
-            // db.query('UPDATE login_data SET status=? WHERE email = ?', [data.status, data.email], (err, result) => {
-            //     if (err) return reject(err);
-            //     resolve()
-            // });
 
-
-            // if (data.status == 0) {
-            //     db.query("DELETE FROM students WHERE email=?", [data.email], (err, result) => {
-            //         if (err) return reject(err)
-            //     })
-
-            // }
-            // Update the status in login_data
-            // db.query('UPDATE login_data SET status=? WHERE email = ?', [data.status, data.email], (err, result) => {
-            //     if (err) return reject(err);
-
-            // // Call getApprovedTeachers only if the status is 1
-            // if (data.status == 1) {
-            //     db.query('select * from login_data where type="student" AND status= 1', (err, data) => {
-
-            //         //console.log("students", user);
-
-            //         data.map((user) => {
-            //             db.query('SELECT * FROM  students WHERE email = ?', [user.email], (err, result) => {
-            //                 if (err) return reject(err)
-
-            //                 if (result.length > 0) {
-            //                     // If the teacher already exists, skip insertion
-            //                     // console.log(`Student ${user.email} already exists, skipping.`);
-            //                 } else {
-            //                     db.query(
-            //                         'INSERT INTO students (name, email,semester,dob,course,phone, gender) VALUES (?,?,?,?, ?, ?, ?)',
-            //                         [user.name, user.email, user.semester, user.dob, user.course, user.phone, user.gender],
-            //                         (err, Result) => {
-            //                             if (err) {
-            //                                 // return reject(err)
-            //                                 console.log(err);
-            //                             }
-
-            //                         })
-
-            //                 }
-
-
-            //             })
-
-
-            //         })
-
-            //         resolve()
-
-            //     })
-            // } else {
-            //     resolve(); // Resolve directly if the status is not 1
-            // }
-
-            // db.query('update login_data set status=? where email = ?', [data.status, data.email], (err, data) => {
-            //     resolve()
-            // })
-        // })
     },
     getApprovedStudents: () => {
         return new Promise((resolve, reject) => {
             db.query('SELECT * FROM students where status = 1', (err, data) => {
-            // db.query('SELECT * FROM login_data WHERE type="student" AND status=1', (err, data) => {
+                // db.query('SELECT * FROM login_data WHERE type="student" AND status=1', (err, data) => {
 
                 if (err) reject(err)
                 resolve(data)
@@ -175,69 +93,16 @@ module.exports = {
         // })
     },
     changeTeacherStatus: (data) => {
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject) => {
 
-            
+
             // Update the status in login_data
             db.query('UPDATE teachers SET status=? WHERE email = ?', [data.status, data.email], (err, result) => {
                 if (err) return reject(err);
                 resolve("Teacher status updated successfully")
             })
         })
-        // return new Promise((resolve, reject) => {
-        //     console.log("Changing status for:", data);
-
-        //     if (data.status == 0) {
-        //         // If status is 0, delete the teacher
-        //         db.query("DELETE FROM teachers WHERE email=?", [data.email], (err, result) => {
-        //             if (err) return reject(err);
-        //             console.log(`Teacher with email ${data.email} deleted.`);
-        //         });
-        //     }
-
-        //     // Update the status in login_data
-        //     db.query('UPDATE login_data SET status=? WHERE email = ?', [data.status, data.email], (err, result) => {
-        //         if (err) return reject(err);
-
-        //         if (data.status == 1) {
-        //             // If status is 1, fetch all approved teachers
-        //             db.query('SELECT * FROM login_data WHERE type="teacher" AND status=1', (err, teachers) => {
-        //                 if (err) return reject(err);
-
-        //                 let insertPromises = teachers.map((user) => {
-        //                     return new Promise((resolve, reject) => {
-        //                         db.query('SELECT * FROM teachers WHERE email = ?', [user.email], (err, result) => {
-        //                             if (err) return reject(err);
-
-        //                             if (result.length > 0) {
-        //                                 console.log(`Teacher ${user.email} already exists, skipping.`);
-        //                                 return resolve();
-        //                             }
-
-        //                             // Insert the new teacher
-        //                             db.query(
-        //                                 'INSERT INTO teachers (name, email,phone,gender) VALUES (?, ?,?,?)',
-        //                                 [user.name, user.email, user.phone, user.gender],
-        //                                 (err, insertResult) => {
-        //                                     if (err) return reject(err);
-        //                                     console.log(`Inserted teacher: ${user.email}`);
-        //                                     resolve();
-        //                                 }
-        //                             );
-        //                         });
-        //                     });
-        //                 });
-
-        //                 // Wait for all insertions to complete
-        //                 Promise.all(insertPromises)
-        //                     .then(() => resolve("Teachers updated successfully"))
-        //                     .catch((err) => reject(err));
-        //             });
-        //         } else {
-        //             resolve("Teacher status updated successfully");
-        //         }
-        //     });
-        // });
+ 
     },
 
     getAllTeachers: () => {
@@ -249,14 +114,7 @@ module.exports = {
             })
 
         })
-        // return new Promise((resolve, reject) => {
-        //     // db.query('SELECT * FROM teachers', (err, data) => {
-        //     db.query('SELECT * FROM teachers ', (err, data) => {
-        //         if (err) reject(err)
-        //         resolve(data)
-        //     })
-
-        // })
+       
     },
     getTimetableData: () => {
         return new Promise((resolve, reject) => {
@@ -296,84 +154,62 @@ module.exports = {
                 resolve({ teachersInfo, courses, classTeachers });
             });
         });
-        // return new Promise((resolve, reject) => {
-        //     db.query('SELECT * FROM teachers', (err, result) => {
-        //         if (err) return reject(err);
-        //         //    console.log("get timetable teachers",result);
-
-        //         // Create an array to hold teacher names and their subjects
-        //         const teachersInfo = result.map((teacher) => ({
-        //             name: teacher.name,
-        //             subjects: teacher.subjects,
-        //             email: teacher.email,
-        //         }));
-
-        //         // Create sets to store unique courses and class teachers
-        //         const uniqueCourses = new Set();
-        //         const uniqueClassTeachers = new Set();
-
-        //         // Loop through the result to add unique courses and class teachers to the sets
-        //         result.forEach((teacher) => {
-        //             if (teacher.course) {
-        //                 uniqueCourses.add(teacher.course); // Add course to uniqueCourses set
-        //             }
-        //             if (teacher.class_teacher) {
-        //                 uniqueClassTeachers.add(teacher.class_teacher); // Add class_teacher to uniqueClassTeachers set
-        //             }
-        //         });
-
-        //         // Convert sets to arrays to pass them to Handlebars
-        //         const courses = Array.from(uniqueCourses);
-        //         const classTeachers = Array.from(uniqueClassTeachers);
-        //         //    console.log("courses",courses);
-        //         //    console.log("classTeachers",classTeachers);
-        //         //    console.log("teachersInfo",teachersInfo);
-
-        //         // Resolve with the filtered data: teachers' names and subjects, and unique courses/class teachers
-        //         resolve({ teachersInfo, courses, classTeachers });
-        //     });
-        // });
+       
     },
 
 
-    addTimetable: (timetableData) => {
+    addTimetable: (course, semester, day ) => {
         return new Promise((resolve, reject) => {
-            const { course, semester, day, periods, teachers, teacherEmails, subjects } = timetableData
+            // const { course, semester, day } = timetableData;
+            console.log(course, semester, day);
+            
             const checkQuery = `SELECT * FROM timetable WHERE semester = ? AND course = ? AND day = ?`;
             db.query(checkQuery, [semester, course, day], (err, existing) => {
                 if (err) {
                     console.error("Error checking existing timetable entry", err);
                     return reject({ message: "Error checking existing timetable entry", error: err });
                 }
-                console.log("Existing entries found:", existing); // Log existing entries for debugging
 
-                // If an entry already exists, reject
+                console.log("Existing entries found:", existing.length); // Log existing entries for debugging
+
+                // If an entry already exists, resolve with a message
                 if (existing.length > 0) {
-                    return reject({ message: "Entry exists for this semester, course, and day" });
+                    return resolve({ message: "The timetable is already exist..." });
+                }else{
+
+                // If no existing entry is found, resolve with a success message
+                return resolve({success:true});
                 }
 
-                // Insert data for each period
-                const insertPromises = periods.map((period, i) => {
-                    const query = `INSERT INTO timetable (course, semester, day, time, teacher, email, subject) 
-                             VALUES (?, ?, ?, ?, ?, ?, ?)`;
-                    return new Promise((resolve, reject) => {
-                        db.query(query, [course, semester, day, period, teachers[i], teacherEmails[i], subjects[i]], (err) => {
-                            if (err) {
-                                console.error("Error inserting timetable entry for period:", period, err);
-                                return reject({ message: "Error inserting timetable entry", error: err });
-                            }
-                            resolve();
-                        });
-                    });
-                });
-
-                // Wait for all insertions to complete
-                Promise.all(insertPromises)
-                    .then(() => resolve("Timetable inserted successfully"))
-                    .catch(reject);
             });
         });
     },
+    createTimetable: (timetableData) => {
+        return new Promise((resolve, reject) => {
+            const { course, semester, day, periods, teachers, teacherEmails, subjects } = timetableData;
+    
+            // Insert data for each period
+            const insertPromises = periods.map((period, i) => {
+                const query = `INSERT INTO timetable (course, semester, day, time, teacher, email, subject) 
+                             VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                return new Promise((resolve, reject) => {
+                    db.query(query, [course, semester, day, period, teachers[i], teacherEmails[i], subjects[i]], (err) => {
+                        if (err) {
+                            console.error("Error inserting timetable entry for period:", period, err);
+                            return reject({ message: "Error inserting timetable entry", error: err });
+                        }
+                        resolve();
+                    });
+                });
+            });
+    
+            // Wait for all insertions to complete
+            Promise.all(insertPromises)
+                .then(() => resolve("Timetable created successfully"))
+                .catch(reject);
+        });
+    },
+    
 
     getTimetable: () => {
         return new Promise((resolve, reject) => {
@@ -473,7 +309,7 @@ module.exports = {
 
             // Check if `classTeacher` is empty or only whitespace, and set to null
             const classTeacherValue = (classTeacher && classTeacher.trim() !== "") ? classTeacher : null;
-             // Check if the teacher with the same teacherId or classTeacher already exists
+            // Check if the teacher with the same teacherId or classTeacher already exists
             db.query(
                 'SELECT * FROM teachers WHERE course = ? AND class_teacher = ? ',
                 [course, classTeacherValue], // Use the determined value
@@ -569,7 +405,7 @@ module.exports = {
             const subjectList = Array.isArray(subjects) ? subjects.join(', ') : subjects;
 
             // Build the query and parameters dynamically
-            let query = 'SELECT * FROM teachers WHERE course = ? AND class_teacher = ? AND email != ?';
+            let query = 'SELECT * FROM teachers WHERE course = ? AND class_teacher = ? AND email != ? AND status=1';
             let params = [course, classTeacher, email]; // Exclude the current teacher
 
             // First, check for duplicate entry with the same `course` and `class_teacher` (excluding the current teacher)
@@ -640,13 +476,13 @@ module.exports = {
     setTimetable: (periodData) => {
         return new Promise((resolve, reject) => {
             console.log("setTimetable", periodData);
-    
+
             // Prepare data for insertion
             const values = periodData.map(period => [period.period_name, period.time]);
-    
+
             // SQL query for bulk insert
             const sql = `INSERT INTO admin (periods,period_time) VALUES ?`;
-    
+
             // Execute the query
             db.query(sql, [values], (err, result) => {
                 if (err) {
@@ -656,7 +492,7 @@ module.exports = {
                 resolve({ success: true, message: 'Timetable set successfully' });
             });
         });
-    
+
         // return new Promise((resolve, reject) => {
         //     console.log("setTimetable", periodData);
 
@@ -715,21 +551,21 @@ module.exports = {
     getPeriod: () => {
         return new Promise((resolve, reject) => {
             db.query('SELECT  periods, period_time FROM admin', (err, result) => {
-              if (err) {
-                console.error("Error fetching periods:", err);
-                return reject("Error fetching periods");
-              }
-              // Filter out any rows where period_name or period_time is null
-              const filteredResult = result.filter(row => row.periods && row.period_time)
-                                            .map(row => ({
-                                             
-                                              periods: row.periods,
-                                              period_time: row.period_time
-                                            }));
-        
-              resolve(filteredResult);
+                if (err) {
+                    console.error("Error fetching periods:", err);
+                    return reject("Error fetching periods");
+                }
+                // Filter out any rows where period_name or period_time is null
+                const filteredResult = result.filter(row => row.periods && row.period_time)
+                    .map(row => ({
+
+                        periods: row.periods,
+                        period_time: row.period_time
+                    }));
+
+                resolve(filteredResult);
             });
-          });
+        });
         // return new Promise((resolve, reje) => {
         //     db.query('SELECT *FROM periods', (err, result) => {
         //         if (err) reject(err)
@@ -863,110 +699,115 @@ module.exports = {
     },
     getStdentMarks: (email) => {
         return new Promise((resolve, reject) => {
+
             db.query(
-                "SELECT subject, marks FROM mark WHERE email = ? AND isStudent=1",
-                [email],
-                (err, result) => {
-                    if (err) reject(err);
-                    resolve(result);
-                }
+              // "SELECT subject, marks FROM mark WHERE email = ? AND isStudent=1",
+              "SELECT m.subject, m.marks FROM mark m JOIN students s ON m.email = s.email WHERE m.email = ? AND s.status = 1",
+              [email],
+              (err, result) => {
+                if (err) reject(err);
+                resolve(result);
+              }
             );
-        });
+          });
     },
     getStudentAttendance: (email) => {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM attendance WHERE email = ? ORDER BY date ASC', [email], (err, results) => {
-                if (err) {
-                    return reject(err); // Return error if query fails
+            db.query(
+              // 'SELECT * FROM attendance WHERE email = ? AND isStudent=1 ORDER BY date ASC',
+              "SELECT a.* FROM attendance a JOIN students s ON a.email = s.email WHERE a.email = ? AND s.status = 1 ORDER BY a.date ASC",
+               [email], (err, results) => {
+              if (err) {
+                return reject(err); // Return error if query fails
+              }
+      
+              if (results.length === 0) {
+                return resolve({ attendanceByMonth: {}, attendancePercentages: {}, overallPercentage: 0 });
+              }
+      
+              const attendanceByMonth = {};
+              const attendancePercentages = {};
+              let totalPointsAllMonths = 0;
+              let totalDaysAllMonths = 0;
+      
+              results.forEach((row) => {
+                const originalDate = new Date(row.date);
+                const monthName = originalDate.toLocaleString('en-US', { month: 'long' });
+                const year = originalDate.getFullYear();
+                const monthYearKey = `${monthName} ${year}`; // Example: "February 2024"
+      
+                if (!attendanceByMonth[monthYearKey]) {
+                  attendanceByMonth[monthYearKey] = [];
+                  attendancePercentages[monthYearKey] = { totalDays: 0, totalPoints: 0 };
                 }
-
-                if (results.length === 0) {
-                    return resolve({ attendanceByMonth: {}, attendancePercentages: {}, overallPercentage: 0 });
-                }
-
-                const attendanceByMonth = {};
-                const attendancePercentages = {};
-                let totalPointsAllMonths = 0;
-                let totalDaysAllMonths = 0;
-
-                results.forEach((row) => {
-                    const originalDate = new Date(row.date);
-                    const monthName = originalDate.toLocaleString('en-US', { month: 'long' });
-                    const year = originalDate.getFullYear();
-                    const monthYearKey = `${monthName} ${year}`; // Example: "February 2024"
-
-                    if (!attendanceByMonth[monthYearKey]) {
-                        attendanceByMonth[monthYearKey] = [];
-                        attendancePercentages[monthYearKey] = { totalDays: 0, totalPoints: 0 };
-                    }
-
-                    const formattedDate = originalDate.toLocaleDateString('en-GB'); // e.g., "05-02-2024"
-                    const dayName = originalDate.toLocaleString('en-US', { weekday: 'long' });
-
-                    // Assign points based on attendance status
-                    let attendancePoints = 0;
-                    if (row.status.toLowerCase() === "present") {
-                        attendancePoints = 1;
-                    } else if (row.status.toLowerCase() === "half") {
-                        attendancePoints = 0.5;
-                    } // "Absent" defaults to 0 points
-
-                    attendanceByMonth[monthYearKey].push({
-                        ...row,
-                        formattedDate,
-                        day: dayName,
-                        reason: row.reason || null,
-                    });
-
-                    // Update monthly and overall statistics
-                    attendancePercentages[monthYearKey].totalDays += 1;
-                    attendancePercentages[monthYearKey].totalPoints += attendancePoints;
-                    totalDaysAllMonths += 1;
-                    totalPointsAllMonths += attendancePoints;
+      
+                const formattedDate = originalDate.toLocaleDateString('en-GB'); // e.g., "05-02-2024"
+                const dayName = originalDate.toLocaleString('en-US', { weekday: 'long' });
+      
+                // Assign points based on attendance status
+                let attendancePoints = 0;
+                if (row.status.toLowerCase() === "present") {
+                  attendancePoints = 1;
+                } else if (row.status.toLowerCase() === "half") {
+                  attendancePoints = 0.5;
+                } // "Absent" defaults to 0 points
+      
+                attendanceByMonth[monthYearKey].push({
+                  ...row,
+                  formattedDate,
+                  day: dayName,
+                  reason: row.reason || null,
                 });
-
-                // Calculate percentages for each month
-                Object.keys(attendancePercentages).forEach((month) => {
-                    const { totalDays, totalPoints } = attendancePercentages[month];
-                    attendancePercentages[month] = totalDays > 0 ? ((totalPoints / totalDays) * 100).toFixed(2) : "0.00";
-                });
-
-                // Calculate overall percentage
-                const overallPercentage = totalDaysAllMonths > 0 ? ((totalPointsAllMonths / totalDaysAllMonths) * 100).toFixed(2) : "0.00";
-
-                // Sort months based on the latest added attendance entry (latest month first)
-                const sortedMonths = Object.keys(attendanceByMonth).sort((a, b) => {
-                    const [monthA, yearA] = a.split(' ');
-                    const [monthB, yearB] = b.split(' ');
-
-                    // Convert month-year into a date for sorting
-                    const dateA = new Date(`${monthA} 1, ${yearA}`);
-                    const dateB = new Date(`${monthB} 1, ${yearB}`);
-
-                    // Compare to get the latest month first
-                    return dateB - dateA; // Reverse order for latest month first
-                });
-
-                // Prepare the response by reorganizing the months in reverse order
-                const sortedAttendanceByMonth = sortedMonths.reduce((acc, month) => {
-                    acc[month] = attendanceByMonth[month];
-                    return acc;
-                }, {});
-
-                const sortedAttendancePercentages = sortedMonths.reduce((acc, month) => {
-                    acc[month] = attendancePercentages[month];
-                    return acc;
-                }, {});
-                console.log("sortedMonths ", sortedMonths);
-
-                resolve({
-                    attendanceByMonth: sortedAttendanceByMonth,
-                    attendancePercentages: sortedAttendancePercentages,
-                    overallPercentage,
-                    // sortedMonths // You can use sortedMonths to display in the correct order
-                });
+      
+                // Update monthly and overall statistics
+                attendancePercentages[monthYearKey].totalDays += 1;
+                attendancePercentages[monthYearKey].totalPoints += attendancePoints;
+                totalDaysAllMonths += 1;
+                totalPointsAllMonths += attendancePoints;
+              });
+      
+              // Calculate percentages for each month
+              Object.keys(attendancePercentages).forEach((month) => {
+                const { totalDays, totalPoints } = attendancePercentages[month];
+                attendancePercentages[month] = totalDays > 0 ? ((totalPoints / totalDays) * 100).toFixed(2) : "0.00";
+              });
+      
+              // Calculate overall percentage
+              const overallPercentage = totalDaysAllMonths > 0 ? ((totalPointsAllMonths / totalDaysAllMonths) * 100).toFixed(2) : "0.00";
+      
+              // Sort months based on the latest added attendance entry (latest month first)
+              const sortedMonths = Object.keys(attendanceByMonth).sort((a, b) => {
+                const [monthA, yearA] = a.split(' ');
+                const [monthB, yearB] = b.split(' ');
+      
+                // Convert month-year into a date for sorting
+                const dateA = new Date(`${monthA} 1, ${yearA}`);
+                const dateB = new Date(`${monthB} 1, ${yearB}`);
+      
+                // Compare to get the latest month first
+                return dateB - dateA; // Reverse order for latest month first
+              });
+      
+              // Prepare the response by reorganizing the months in reverse order
+              const sortedAttendanceByMonth = sortedMonths.reduce((acc, month) => {
+                acc[month] = attendanceByMonth[month];
+                return acc;
+              }, {});
+      
+              const sortedAttendancePercentages = sortedMonths.reduce((acc, month) => {
+                acc[month] = attendancePercentages[month];
+                return acc;
+              }, {});
+              console.log("sortedMonths ", sortedMonths);
+      
+              resolve({
+                attendanceByMonth: sortedAttendanceByMonth,
+                attendancePercentages: sortedAttendancePercentages,
+                overallPercentage,
+                // sortedMonths // You can use sortedMonths to display in the correct order
+              });
             });
-        });
+          });
     },
 
 
