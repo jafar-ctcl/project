@@ -17,8 +17,10 @@
               <p class="card-text text-muted"><strong>Guests:</strong> {{this.guestNames}}</p>
             </div>
             <div class="card-footer bg-light text-center">
-              {{!-- <button class="btn btn-outline-primary btn-sm">View Details</button> --}}
-              <a  class="btn btn-outline-primary btn-sm" href="/event-details">View Details</a>
+              {{#if this.first}}
+                <a class="btn btn-outline-primary btn-sm" href="/view-winners/{{this.eventTitle}}/{{this.eventDate}}">View
+            Winners</a>
+            {{/if}}
             </div>
           </div>
         </div>

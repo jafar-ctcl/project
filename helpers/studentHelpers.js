@@ -1,5 +1,5 @@
-let db = require('../config/connection');
-const { getTimetable } = require('./hodHelpers');
+const db = require('../config/connection');
+const moment = require("moment");
 
 module.exports = {
 
@@ -395,7 +395,23 @@ module.exports = {
         });
     },
 
+    getWinners: (title,date) => {
+        console.log("add winners",title,date);
+          // Convert 'MM-DD-YYYY' to 'YYYY-MM-DD' (format used in MySQL)
+          const formattedDate = moment(date, "MM-DD-YYYY", true).format("YYYY-MM-DD");
 
+          if (!formattedDate || formattedDate === "Invalid date") {
+              console.error("Invalid date format received:", date);
+              return reject(new Error("Invalid date format. Expected MM-DD-YYYY"));
+          }
+        
+        return new Promise((resolve, reject) => {
+            db.query("SELECT * FROM events where eventTitle=? AND eventDate=?",[title,formattedDate], (err, result) => {
+                if (err) reject(err)
+                resolve(result)
+            })
+        })
+    },
 
 
 }

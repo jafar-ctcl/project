@@ -1,4 +1,5 @@
 <div class="container py-4">
+    {{#if months}}
     <a href="/student" class="home-link text-decoration-none">
         <i class="bi bi-house-door me-2"></i>Home
     </a>
@@ -31,12 +32,14 @@
             </tbody>
         </table>
     </div>
+{{/if}}
     {{#if (eq months.length 0)}}
     <div class="no-attendance-message mb-3">
         <h1>No Attendance Records</h1>
-        <p>No attendance has been marked for this student. Please check back later or add the records.</p>
+        <p>No attendance has been marked for this student. Please check back later</p>
     </div>
     {{/if}}
+
 
     <div class="text-center">
         <a href="/student" class="btn btn-primary m-4">Go Back</a>
@@ -60,7 +63,7 @@
     }
 
     .attendance-table th,
-    .attendance-table td {                                                                                                                                              
+    .attendance-table td {
         border: 1px solid #ddd;
         padding: 9px;
     }

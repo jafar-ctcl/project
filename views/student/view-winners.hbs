@@ -16,25 +16,28 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center hover-effect">
                             <div class="d-flex align-items-center">
-                                <span class="badge badge-success badge-pill p-2 mr-3">1st</span>
+                               
                                 <span class="h5 mb-0">First Prize: {{event.first}}</span>
                             </div>
                             <i class="fas fa-trophy text-warning fa-2x"></i>
                         </li>
+                        
                         <li class="list-group-item d-flex justify-content-between align-items-center hover-effect">
                             <div class="d-flex align-items-center">
-                                <span class="badge badge-warning badge-pill p-2 mr-3">2nd</span>
+                              
                                 <span class="h5 mb-0">Second Prize: {{event.second}}</span>
                             </div>
                             <i class="fas fa-medal text-secondary fa-2x"></i>
                         </li>
+                        {{#if event.third}}
                         <li class="list-group-item d-flex justify-content-between align-items-center hover-effect">
                             <div class="d-flex align-items-center">
-                                <span class="badge badge-danger badge-pill p-2 mr-3">3rd</span>
+                               
                                 <span class="h5 mb-0">Third Prize: {{event.third}}</span>
                             </div>
                             <i class="fas fa-award text-info fa-2x"></i>
                         </li>
+                        {{/if}}
                     </ul>
                 </div>
             </div>
@@ -43,7 +46,7 @@
 
     <!-- Navigation Section -->
     <div class="text-center mt-5">
-        <a href="/hod/view-event" class="btn btn-outline-primary btn-lg hover-grow">
+        <a href="/view-event" class="btn btn-outline-primary btn-lg hover-grow">
             <i class="fas fa-arrow-left mr-2"></i>Back to Events
         </a>
     </div>

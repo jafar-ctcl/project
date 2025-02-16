@@ -186,5 +186,20 @@ router.get('/view-event', (req, res) => {
   });
 });
 
+router.get("/view-winners/:title/:date", verifyLogin, (req, res) => {
+  const { title, date } = req.params;
 
+  studentHelpers.getWinners(title, date).then((winners) => {
+    console.log("winners", winners);
+
+    if (winners.length > 0) {
+      res.render("student/view-winners", { event: winners[0] }); // Pass only the first event object
+    } else {
+      res.render("student/view-winners", { event: null }); // Handle no data case
+    }
+  }).catch((error) => {
+    console.error("Error fetching winners:", error);
+    res.status(500).send("Server Error");
+  });
+});
 module.exports = router;

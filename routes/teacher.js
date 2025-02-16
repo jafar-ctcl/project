@@ -1,6 +1,6 @@
 var express = require('express');
 const teacherHelpers = require('../helpers/teacherHelpers');
-const hodHelpers = require('../helpers/hodHelpers');
+
 var router = express.Router();
 var teacher = true
 const verifyLogin = (req, res, next) => {
@@ -498,6 +498,22 @@ router.get('/view-event', (req, res) => {
   }).catch((err) => {
     console.error("Error fetching events:", err);
     res.status(500).send("Error fetching events.");
+  });
+});
+router.get("/view-winners/:title/:date", verifyLogin, (req, res) => {
+  const { title, date } = req.params;
+
+  teacherHelpers.getWinners(title, date).then((winners) => {
+    console.log("winners", winners);
+
+    if (winners.length > 0) {
+      res.render("teacher/view-winners", { event: winners[0] }); // Pass only the first event object
+    } else {
+      res.render("teacher/view-winners", { event: null }); // Handle no data case
+    }
+  }).catch((error) => {
+    console.error("Error fetching winners:", error);
+    res.status(500).send("Server Error");
   });
 });
 

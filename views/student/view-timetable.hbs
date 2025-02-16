@@ -1,4 +1,5 @@
 <section class="timetable-view-section">
+{{#if times}}
      <div class="container mt-4">
         <a href="/student" class="home-link text-decoration-none">
           <i class="bi bi-house-door me-2"></i>Home
@@ -29,6 +30,9 @@
                 {{/each}}
             </tbody>
         </table>
+        {{else}}
+        <h2 class="text-center text-danger py-4">Timetable is not found</h2>
+        {{/if}}
    <!-- Back Button -->
     <div class="text-center mt-4">
       <a href="/student" class="btn btn-outline-primary">

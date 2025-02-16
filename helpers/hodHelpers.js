@@ -10,38 +10,61 @@ module.exports = {
         // const password = loginData.Password
 
         // const { email, password } = userData;
-
         return new Promise((resolve, reject) => {
-            // Query the database for the user by email
-            // const query = 'SELECT * FROM login_data WHERE email = ?';
+            // Query the database to find a user by email
             db.query('SELECT * FROM admin WHERE email = ?', [loginData.email], (err, data) => {
-                // console.log(data[0]);
+              if (err) {
+                console.error("Database error:", err);
+                return reject(err);
+              }
+      
+              if (data.length === 0) {
+                return resolve({ err: "Email not exist" });
+              }
+      
+              const user = data[0]; // Get the user data
+      
+              // Check if the provided password matches the one stored in the database
+              if (loginData.password !== user.password) {
+                return resolve({ err: "Password is incorrect" });
+              }
+      
+      
+              // Successful login
+              resolve({ err: false, data: user });
+            });
+          });
+        // return new Promise((resolve, reject) => {
+        //     // Query the database for the user by email
+        //     // const query = 'SELECT * FROM login_data WHERE email = ?';
+        //     db.query('SELECT * FROM admin WHERE email = ?', [loginData.email], (err, data) => {
+        //         // console.log(data[0]);
 
-                if (data.length === 0) {
-                    // No user found with the provided email
-                    console.log("email not exist"); ``
+        //         if (data.length === 0) {
+        //             // No user found with the provided email
+        //             console.log("email not exist"); ``
 
-                    resolve({ err: 'Email not exist' })
-                } else {
-                    // if(userData.email==data[0].Email){
-                    if (loginData.password == data[0].password) {
-                        // console.log(data[0]);
-                        if (data[0].type == "hod") {
+        //             resolve({ err: 'Email not exist' })
+        //         } else {
+        //             // if(userData.email==data[0].Email){
+        //             if (loginData.password == data[0].password) {
+        //                 // console.log(data[0]);
+        //                 if (data[0].type == "hod") {
 
-                            resolve({ err: false })
-                        } else {
-                            // console.log("its not admin");
-                            resolve({ err: 'Email not exist ' })
-                        }
-                        //   console.log("pasword is equal");
-                    } else {
-                        // console.log('Password is incorrect');
-                        resolve({ err: 'Password is incorrect' })
-                    }
+        //                     resolve({ err: false })
+        //                 } else {
+        //                     // console.log("its not admin");
+        //                     resolve({ err: 'Email not exist ' })
+        //                 }
+        //                 //   console.log("pasword is equal");
+        //             } else {
+        //                 // console.log('Password is incorrect');
+        //                 resolve({ err: 'Password is incorrect' })
+        //             }
 
-                }
-            })
-        })
+        //         }
+        //     })
+        // })
     },
     getAllStudents: () => {
         return new Promise((resolve, reject) => {
@@ -623,15 +646,80 @@ module.exports = {
             });
         });
     },
-    getTeacherTimetable: (teacherEmail) => {
+    getTeacherTimetable: (email) => {
         return new Promise((resolve, reject) => {
-            db.query("SELECT * FROM timetable where email=?", [teacherEmail], (err, data) => {
-                if (err) reject(err)
-                console.log("teachr timetable", data);
-                resolve(data)
-            })
-        })
-    },
+          console.log("Fetching timetable for email:", email);
+    
+          db.query("SELECT day, time, subject, course, semester FROM timetable WHERE email = ?", [email], (err, data) => {
+            if (err) {
+              console.error("Error fetching timetable:", err);
+              return reject(err);
+            }
+    
+            if (data.length === 0) {
+              console.log("No timetable found for the given email.");
+              return resolve({ days: [], times: [], timetable: {} });
+            }
+    
+            // Extract unique days and times
+            const days = [...new Set(data.map(row => row.day))]; // Unique days
+            const times = [...new Set(data.map(row => row.time))]; // Unique times
+    
+            // Sort times (you can use the same sorting logic here)
+            const sortedTimes = times.sort((a, b) => {
+              const parseTime = (time) => {
+                const [hour, minute, period] = time.match(/(\d+):(\d+) (AM|PM)/).slice(1);
+                const isPM = period === 'PM';
+                const hour24 = isPM && hour !== '12' ? +hour + 12 : hour === '12' ? 0 : +hour;
+                return hour24 * 60 + +minute;
+              };
+              const startTimeA = parseTime(a.split(' - ')[0]);
+              const startTimeB = parseTime(b.split(' - ')[0]);
+              return startTimeA - startTimeB;
+            });
+    
+            // Organize timetable data by day and time
+            const timetable = {};
+    
+            // Loop through each day
+            days.forEach(day => {
+              timetable[day] = []; // Initialize an array for each day
+    
+              // Group by time slot for the specific day
+              const timesForDay = data.filter(row => row.day === day);
+    
+              // Loop through each time slot for the day
+              sortedTimes.forEach(time => {
+                // Find subjects for the given time and day
+                const subjectsAtTime = timesForDay.filter(row => row.time === time);
+    
+                // If subjects exist for this time slot, add them
+                if (subjectsAtTime.length > 0) {
+                  timetable[day].push({
+                    time,
+                    subjects: subjectsAtTime.map(row => ({
+                      subject: row.subject,
+                      course: row.course,
+                      semester: row.semester
+                    }))
+                  });
+                } else {
+                  // Otherwise, add a null object for the time slot
+                  timetable[day].push({
+                    time,
+                    subjects: null
+                  });
+                }
+              });
+            });
+    
+            // console.log("Timetable:", timetable);
+    
+            // Resolve with the timetable data including days, times, and structured subjects
+            resolve({ days, times: sortedTimes, timetable });
+          });
+        });
+      },
     getSemTimetable: () => {
         return new Promise((resolve, reject) => {
             // Query to fetch distinct days, times, courses, semesters, subjects, and teachers
@@ -851,9 +939,18 @@ module.exports = {
             });
         });
     },
-    getWinners: () => {
+    getWinners: (title,date) => {
+        console.log("add winners",title,date);
+          // Convert 'MM-DD-YYYY' to 'YYYY-MM-DD' (format used in MySQL)
+          const formattedDate = moment(date, "MM-DD-YYYY", true).format("YYYY-MM-DD");
+
+          if (!formattedDate || formattedDate === "Invalid date") {
+              console.error("Invalid date format received:", date);
+              return reject(new Error("Invalid date format. Expected MM-DD-YYYY"));
+          }
+        
         return new Promise((resolve, reject) => {
-            db.query("SELECT * FROM events", (err, result) => {
+            db.query("SELECT * FROM events where eventTitle=? AND eventDate=?",[title,formattedDate], (err, result) => {
                 if (err) reject(err)
                 resolve(result)
             })

@@ -1,0 +1,35 @@
+<section class="container mt-5">
+  <h2 class="text-center mb-4">Notice Board</h2>
+
+  <!-- Add Notice Form -->
+  <div class="card shadow-lg border-0 bg-light rounded p-4 mb-4">
+    <h4 class="mb-3">Add New Notice</h4>
+    <form action="/hod/add-noticeboard" method="post">
+      <div class="mb-3">
+        <label for="noticeTitle" class="form-label">Title</label>
+        <input type="text" class="form-control" id="noticeTitle" name="title" required>
+      </div>
+      <div class="mb-3">
+        <label for="noticeContent" class="form-label">Content</label>
+        <textarea class="form-control" id="noticeContent" name="content" rows="3" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Post Notice</button>
+    </form>
+  </div>
+
+  <!-- Display Notices -->
+  <div class="card shadow-lg border-0 bg-white rounded p-4">
+    <h4 class="mb-3">Posted Notices</h4>
+    <ul class="list-group">
+      {{#each notices}}
+      <li class="list-group-item">
+        <h5 class="mb-1">{{this.title}}</h5>
+        <p class="mb-1">{{this.content}}</p>
+        <small class="text-muted">Posted on: {{this.created_at}}</small>
+      </li>
+      {{else}}
+      <li class="list-group-item text-center">No notices available</li>
+      {{/each}}
+    </ul>
+  </div>
+</section>

@@ -344,13 +344,14 @@ router.get('/view-managed-teacher/:email', verifyLogin, async (req, res) => {
   // console.log(req.params);
   let { email } = req.params
   let timetableData = await hodHelpers.getTeacherTimetable(email)
+  const { days, times, timetable } = timetableData
   console.log("teacher timetable", timetableData);
 
   hodHelpers.viewManagedTeacher(email).then((resp) => {
     let teacherData = resp[0];
     // Pass teacherData and subjects to the view
     let subjects = resp[0].subjects.split(",").map(subject => subject.trim()); // Convert subjects to array if it's a comma-separated string
-    res.render('hod/view-managed-teacher', { teacherData, subjects, timetable: timetableData });
+    res.render('hod/view-managed-teacher', { teacherData, subjects, timetable: timetableData ,days, times, timetable });
   });
 });
 
@@ -382,35 +383,6 @@ router.get('/view-all-teachers', verifyLogin, (req, res) => {
 
 
 
-router.get('/add-event', (req, res) => {
-  res.render('hod/add-event', { hod })
-})
-router.post('/add-event', (req, res) => {
-  // Log the request body to verify the data
-  console.log("Event data:", req.body);
-  // Call the addEvent function from your helpers
-  hodHelpers.addEvent(req.body).then((resp) => {
-    res.redirect('/hod/view-event')
-
-
-  }).catch((err) => {
-    // Error case: Send a failure response with the error message
-    console.error("Error adding event:", err);
-
-  });
-});
-
-router.get('/view-event', (req, res) => {
-  // Fetch event data from the database or any other source
-  hodHelpers.getEvents().then((events) => {
-    // Pass the event data to the Handlebars view
-    res.render('hod/view-event', { events });
-  }).catch((err) => {
-    console.error("Error fetching events:", err);
-    res.status(500).send("Error fetching events.");
-  });
-});
-
 router.get('/view-mark', (req, res) => {
   res.render('hod/view-mark')
 })
@@ -438,26 +410,67 @@ router.get('/about-student/:email', async (req, res) => {
     res.status(500).send("An error occurred while fetching student details.");
   }
 });
-router.get('/event-details/:title/:date', verifyLogin, (req, res) => {
+
+router.get('/add-event',verifyLogin, (req, res) => {
+  res.render('hod/add-event', { hod })
+})
+router.post('/add-event', (req, res) => {
+  // Log the request body to verify the data
+  console.log("Event data:", req.body);
+  // Call the addEvent function from your helpers
+  hodHelpers.addEvent(req.body).then((resp) => {
+    res.redirect('/hod/view-event')
+
+
+  }).catch((err) => {
+    // Error case: Send a failure response with the error message
+    console.error("Error adding event:", err);
+
+  });
+});
+
+router.get('/view-event',verifyLogin, (req, res) => {
+  // Fetch event data from the database or any other source
+  hodHelpers.getEvents().then((events) => {
+    // Pass the event data to the Handlebars view
+    res.render('hod/view-event', { events });
+  }).catch((err) => {
+    console.error("Error fetching events:", err);
+    res.status(500).send("Error fetching events.");
+  });
+});
+
+router.get('/add-winners/:title/:date', verifyLogin, (req, res) => {
   const { title, date } = req.params
   console.log("title", title, date);
 
-  res.render('hod/event-details', { title, date })
+  res.render('hod/add-winners', { title, date })
 })
-router.get("/view-winners", (req, res) => {
-  hodHelpers.getWinners().then((data) => {
-    res.render("hod/view-winners", {})
+router.get("/view-winners/:title/:date", verifyLogin, (req, res) => {
+  const { title, date } = req.params;
 
-  })
-})
-router.post('/event-details', (req, res) => {
+  hodHelpers.getWinners(title, date).then((winners) => {
+    console.log("winners", winners);
+
+    if (winners.length > 0) {
+      res.render("hod/view-winners", { event: winners[0] }); // Pass only the first event object
+    } else {
+      res.render("hod/view-winners", { event: null }); // Handle no data case
+    }
+  }).catch((error) => {
+    console.error("Error fetching winners:", error);
+    res.status(500).send("Server Error");
+  });
+});
+
+router.post('/add-winners', (req, res) => {
   // console.log("Received Data:", req.body);
 
   let { date, title, first, second, third } = req.body;
 
 
   hodHelpers.addWinners({ date, title, first, second, third }).then(() => {
-    res.redirect('/hod/winners-view')
+    res.redirect('/hod/view-event')
 
   }).catch(err => {
     console.error("Error adding winners:", err);
@@ -465,8 +478,13 @@ router.post('/event-details', (req, res) => {
   });
 });
 
-
-
+router.get('/add-noticeboard',(req,res)=>{
+  res.render('hod/add-noticeboard')
+})
+router.post('/add-noticeboard',(req,res)=>{
+  console.log("add notice",req.body);
+  
+})
 
 module.exports = router;
 
