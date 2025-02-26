@@ -1,9 +1,10 @@
 <div class="container ">
-  <h2 class="text-center">Timetable</h2>
   <a href="/teacher">Home</a>
+   {{#if days.length}}
+  <h2 class="text-center">Timetable</h2>
   {{!--
   <pre>{{json timetable}}</pre> --}}
-  {{#if days.length}}
+ 
   <!-- Table displaying the timetable -->
   <table class="table table-bordered table-striped">
     <thead class="table-dark text-center">
@@ -44,7 +45,13 @@
     </tbody>
   </table>
   {{else}}
-  <p class="text-center">No timetable available for this teacher.</p>
+ 
+  <div class="alert alert-danger text-center mt-4">
+   <p class="text-center">No timetable available for this teacher.</p>
+  </div>
+   <div class="text-center">
+  <a href="/teacher" class="btn btn-primary btn-sm mb-4">Go Back</a>
+</div>
   {{/if}}
 </div>
 <style>

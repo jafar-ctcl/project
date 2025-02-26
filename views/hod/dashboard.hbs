@@ -1,204 +1,212 @@
 <section class="container mt-5">
-  <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">HOD Dashboard</h1>
+  <!-- Header Section -->
+  <div class="text-center mb-5">
+    <h1 class="h2 text-uppercase fw-bold text-primary mb-3">HOD Dashboard</h1>
+    <p class="lead text-muted">Welcome back! Here’s an overview of your department.</p>
+  </div>
 
   <!-- Dashboard Overview Cards -->
-  <div class="row text-center g-4">
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm bg-primary text-white">
-        <div class="card-body">
+  <div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-4">
+      <div class="card border-0 shadow-lg bg-gradient-primary text-white hover-scale">
+        <div class="card-body py-4 text-center">
+          <i class="fas fa-users fa-3x mb-3"></i>
           <h5 class="mb-3">Total Students</h5>
-          <p class="display-4 fw-bold">300</p>
+          <p class="display-5 fw-bold">{{totalStudents}}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm bg-success text-white">
-        <div class="card-body">
+    <div class="col-md-6 col-lg-4">
+      <div class="card border-0 shadow-lg bg-gradient-success text-white hover-scale">
+        <div class="card-body py-4 text-center">
+          <i class="fas fa-chalkboard-teacher fa-3x mb-3"></i>
           <h5 class="mb-3">Total Faculty</h5>
-          <p class="display-4 fw-bold">10</p>
+          <p class="display-5 fw-bold">{{totalTeachers}}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm bg-warning text-white">
-        <div class="card-body">
-          <h5 class="mb-3">Year-wise Students</h5>
-          <p class="display-6 fw-bold">120 | 100 | 80</p>
+    <div class="col-md-6 col-lg-4">
+      <div class="card border-0 shadow-lg bg-gradient-warning text-white hover-scale">
+        <div class="card-body py-4 text-center">
+          <i class="fas fa-book-open fa-3x mb-3"></i>
+          <h5 class="mb-3">Total Courses</h5>
+          <p class="display-5 fw-bold">{{totalCourses}}</p>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Graphs Section -->
-  <div class="row mt-5 g-4">
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-info text-white">Total Students Over Time</div>
-        <div class="card-body">
-          <canvas id="studentsChart"></canvas>
+  <div class="row g-4 mb-5">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm hover-scale">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span>Students by Gender</span>
+          <i class="fas fa-venus-mars"></i>
         </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-info text-white">Students by Gender</div>
         <div class="card-body">
           <canvas id="genderChart"></canvas>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-info text-white">Department Students</div>
-        <div class="card-body">
-          <canvas id="departmentChart"></canvas>
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm hover-scale">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span>Students by Semester</span>
+          <i class="fas fa-chart-bar"></i>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Approved Students Table -->
-  <div class="row mt-5">
-    <div class="col-md-12">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-info text-white">Approved Students</div>
         <div class="card-body">
-          <table class="table table-hover">
-            <thead class="table-dark">
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Course</th>
-                <th>Semester</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each students}}
-              <tr>
-                <td>{{increment @index}}</td>
-                <td>{{this.name}}</td>
-                <td>{{this.course}}</td>
-                <td>{{this.semester}}</td>
-              </tr>
-              {{/each}}
-            </tbody>
-          </table>
+          <canvas id="semesterChart"></canvas>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Approved Teachers Table -->
-  <div class="row mt-5">
+  <div class="row mb-5">
     <div class="col-md-12">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-info text-white">Approved Teachers</div>
+      <div class="card border-0 shadow-lg hover-scale">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <span>Approved Teachers</span>
+          <i class="fas fa-user-check"></i>
+        </div>
         <div class="card-body">
-          <table class="table table-hover">
-            <thead class="table-dark">
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Subject</th>
-                <th>Class Teacher</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each teachers}}
-              <tr>
-                <td>{{increment @index}}</td>
-                <td>{{this.name}}</td>
-                <td>{{this.subjects}}</td>
-                <td>{{this.class_teacher}}</td>
-              </tr>
-              {{/each}}
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Subject</th>
+                  <th>Class Teacher</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each teachers}}
+                <tr>
+                  <td>{{increment @index}}</td>
+                  <td>{{this.name}}</td>
+                  <td>{{this.subjects}}</td>
+                  <td>{{this.class_teacher}}</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View Profile">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approved Students Table -->
+  <div class="row mb-5">
+    <div class="col-md-12">
+      <div class="card border-0 shadow-lg hover-scale">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <span>Approved Students</span>
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Course</th>
+                  <th>Semester</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each students}}
+                <tr>
+                  <td>{{increment @index}}</td>
+                  <td>{{this.name}}</td>
+                  <td>{{this.course}}</td>
+                  <td>{{this.semester}}</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View Profile">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Include Chart.js -->
+<!-- Include Chart.js and FontAwesome -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // Line Chart: Total Students Over Time
-    const studentsCtx = document.getElementById("studentsChart").getContext("2d");
-    new Chart(studentsCtx, {
-      type: "line",
-      data: {
-        labels: ["January", "February", "March", "April", "May", "June"],
-        datasets: [
-          {
-            label: "Total Students",
-            data: [200, 220, 240, 260, 280, 300],
-            borderColor: "#007bff",
-            backgroundColor: "rgba(0, 123, 255, 0.2)",
-            borderWidth: 2,
-            fill: true,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: "top",
-          },
-        },
-      },
-    });
-
-    // Doughnut Chart: Total Students by Gender
-    const genderCtx = document.getElementById("genderChart").getContext("2d");
+    // Gender Chart
+    var genderCtx = document.getElementById("genderChart").getContext("2d");
     new Chart(genderCtx, {
       type: "doughnut",
       data: {
         labels: ["Male", "Female"],
-        datasets: [
-          {
-            data: [160, 140],
-            backgroundColor: ["#4caf50", "#f44336"],
-            hoverOffset: 4,
-          },
-        ],
+        datasets: [{
+          data: [{{male_students}}, {{female_students}}],
+          backgroundColor: ["#007bff", "#dc3545"],
+        }],
       },
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            position: "top",
-          },
+          legend: { position: "bottom" },
         },
       },
     });
 
-    // Bar Chart: Department Students (Year-wise)
-    const departmentCtx = document.getElementById("departmentChart").getContext("2d");
-    new Chart(departmentCtx, {
+    // Semester Chart
+    var semesterCtx = document.getElementById("semesterChart").getContext("2d");
+    new Chart(semesterCtx, {
       type: "bar",
       data: {
-        labels: ["1st Year", "2nd Year", "3rd Year"],
-        datasets: [
-          {
-            label: "Students",
-            data: [120, 100, 80],
-            backgroundColor: ["#ff9800", "#673ab7", "#03a9f4"],
-            borderWidth: 1,
-          },
-        ],
+        labels: {{months}},
+        datasets: [{
+          label: "Students",
+          data: {{total_students_over_time}},
+          backgroundColor: "#28a745",
+        }],
       },
       options: {
         responsive: true,
-        plugins: {
-          legend: {
-            position: "top",
-          },
+        scales: {
+          y: { beginAtZero: true },
         },
       },
     });
+
+    // Tooltip Initialization
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
   });
 </script>
+
+<style>
+  /* Custom Styles */
+  .bg-gradient-primary { background: linear-gradient(135deg, #007bff, #0056b3); }
+  .bg-gradient-success { background: linear-gradient(135deg, #28a745, #1c7430); }
+  .bg-gradient-warning { background: linear-gradient(135deg, #ffc107, #e0a800); }
+  .shadow-lg { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important; }
+  .hover-scale { transition: transform 0.2s ease-in-out; }
+  .hover-scale:hover { transform: scale(1.02); }
+  .table-hover tbody tr:hover { background-color: rgba(0, 0, 0, 0.05) !important; }
+  .lead { font-size: 1.25rem; font-weight: 300; }
+</style>

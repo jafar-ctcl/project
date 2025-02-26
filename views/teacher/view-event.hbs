@@ -23,11 +23,17 @@
           </div>
         </div>
       {{/each}}
+
     {{else}}
-      <div class="col-12">
-        <p class="text-center">No events available.</p>
-      </div>
+   
+  <div class="alert alert-danger text-center mt-4">
+   <p class="text-center">No events available.</p>
+  </div>
+   
     {{/if}}
+    <div class="text-center">
+  <a href="/teacher" class="btn btn-outline-primary btn-sm mb-4">Go Back</a>
+</div>
   </div>
 
 </section>

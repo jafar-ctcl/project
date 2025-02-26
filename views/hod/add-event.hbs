@@ -1,32 +1,31 @@
-
-<section class="container mt-2">
-  <h1 class="h2 text-center mb-4 text-uppercase fw-bold text-primary">Add New Event</h1>
+<section class="container mt-4">
+  <h1 class="h2 text-center text-uppercase fw-bold text-primary">Add New Event</h1>
 
   <!-- Event Form -->
   <div class="row justify-content-center">
     <div class="col-md-10 col-lg-8">
-      <div class="card border-light shadow-lg">
-        <div class="card-body">
+      <div class="card border-0 shadow-lg rounded-4">
+        <div class="card-body p-4">
           <form id="eventForm" action="/hod/add-event" method="POST">
 
             <!-- Event Title -->
-            <div class="mb-4">
-              <label for="eventTitle" class="form-label fs-5 fw-semibold">Event Title</label>
-              <input type="text" class="form-control border-0 shadow-sm" id="eventTitle" name="eventTitle" required>
+            <div class="mb-2">
+              <label for="eventTitle" class="form-label fw-semibold">Event Title</label>
+              <input type="text" class="form-control form-control-lg shadow-sm" id="eventTitle" name="eventTitle" required>
             </div>
 
             <!-- Event Date -->
-            <div class="mb-4">
-              <label for="eventDate" class="form-label fs-5 fw-semibold">Event Date</label>
-              <input type="date" class="form-control border-0 shadow-sm" id="eventDate" name="eventDate" required>
+            <div class="mb-3">
+              <label for="eventDate" class="form-label fw-semibold">Event Date</label>
+              <input type="date" class="form-control form-control-lg shadow-sm" id="eventDate" name="eventDate" required>
             </div>
 
             <!-- Start Time -->
-            <div class="mb-4">
-              <label for="startTime" class="form-label fs-5 fw-semibold">Start Time</label>
+            <div class="mb-3">
+              <label for="startTime" class="form-label fw-semibold">Start Time</label>
               <div class="d-flex">
-                <input type="time" class="form-control border-0 shadow-sm" id="startTime" name="startTime" required>
-                <select class="form-control ms-2 shadow-sm" id="startAmPm" name="startAmPm" required>
+                <input type="time" class="form-control form-control-lg shadow-sm" id="startTime" name="startTime" required>
+                <select class="form-select form-control-lg shadow-sm ms-2" id="startAmPm" name="startAmPm" required>
                   <option value="AM">AM</option>
                   <option value="PM">PM</option>
                 </select>
@@ -34,37 +33,35 @@
             </div>
 
             <!-- End Time -->
-            <div class="mb-4">
-              <label for="endTime" class="form-label fs-5 fw-semibold">End Time</label>
+            <div class="mb-3">
+              <label for="endTime" class="form-label fw-semibold">End Time</label>
               <div class="d-flex">
-                <input type="time" class="form-control border-0 shadow-sm" id="endTime" name="endTime" required>
-                <select class="form-control ms-2 shadow-sm" id="endAmPm" name="endAmPm" required>
+                <input type="time" class="form-control form-control-lg shadow-sm" id="endTime" name="endTime" required>
+                <select class="form-select form-control-lg shadow-sm ms-2" id="endAmPm" name="endAmPm" required>
                   <option value="AM">AM</option>
                   <option value="PM">PM</option>
                 </select>
               </div>
             </div>
 
-            <!-- Dynamic Guest Fields Container -->
+            <!-- Guest List -->
             <div id="guestsContainer"></div>
-
-            <!-- Add Guest Button -->
-            <div class="mb-4 text-center">
-              <button type="button" id="addGuestBtn" class="btn btn-outline-primary shadow-sm">Add Guest</button>
+            <div class="mb-3 text-center">
+              <button type="button" id="addGuestBtn" class="btn btn-outline-primary fw-bold">Add Guest</button>
             </div>
 
             <!-- Event Place -->
-            <div class="mb-4">
-              <label for="eventPlace" class="form-label fs-5 fw-semibold">Event Place</label>
-              <input type="text" class="form-control border-0 shadow-sm" id="eventPlace" name="eventPlace" required>
+            <div class="mb-3">
+              <label for="eventPlace" class="form-label fw-semibold">Event Place</label>
+              <input type="text" class="form-control form-control-lg shadow-sm" id="eventPlace" name="eventPlace" required>
             </div>
 
             <!-- Hidden Guest Names Field -->
             <input type="hidden" id="guestNames" name="guestNames">
 
             <!-- Submit Button -->
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary w-100 shadow-sm">Add Event</button>
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">Add Event</button>
             </div>
           </form>
         </div>
@@ -73,10 +70,11 @@
   </div>
 
   <!-- Navigation Button -->
-  <div class="m-5 text-center">
-    <a href="/hod/view-event" class="btn btn-outline-primary">Go to Event Calendar</a>
+  <div class="m-4 text-center">
+    <a href="/hod/view-event" class="btn btn-outline-primary fw-bold">View events</a>
   </div>
 </section>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -144,86 +142,3 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<style>
-  /* Custom Styles for the Event Form */
-.container {
-    max-width: 1200px;
-    margin: auto;
-    
-}
-
-.card {
-    background-color: #e0f7fa;
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-.card-body {
-    padding: 2rem;
-}
-
-.form-control {
-    border-radius: 10px;
-    padding: 10px 15px;
-    font-size: 1rem;
-}
-
-.form-control:focus {
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.form-label {
-    color: #495057;
-    margin-bottom: 0.5rem;
-}
-
-.btn {
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.btn-outline-primary {
-    border: 2px solid #0d6efd;
-    color: #0d6efd;
-}
-
-.btn-outline-primary:hover {
-    background-color: #0d6efd;
-    color: white;
-}
-
-.btn-primary {
-    background-color: #0d6efd;
-    border: none;
-}
-
-.btn-primary:hover {
-    background-color: #0b5ed7;
-}
-
-.shadow-sm {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-}
-
-.text-primary {
-    color: #0d6efd !important;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .card-body {
-        padding: 1rem;
-    }
-
-    .form-control {
-        padding: 8px 10px;
-    }
-
-    .btn {
-        padding: 8px 15px;
-    }
-}
-</style>

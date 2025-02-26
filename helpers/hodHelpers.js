@@ -103,6 +103,30 @@ module.exports = {
             })
         })
     },
+    filterStudents: () => {
+        return new Promise((resolve, reject) => {
+            db.query("SELECT DISTINCT course, semester FROM students", (err, result) => {
+                if (err) return reject(err);
+    
+                // Extract unique courses and semesters
+                const courses = [...new Set(result.map(row => row.course))];
+                const semesters = [...new Set(result.map(row => row.semester))];
+    
+                resolve({ courses, semesters });
+            });
+        });
+    },
+    getFilteredStudents:(course,semester)=>{
+        return new Promise((resolve,reject)=>{
+            db.query('SELECT * FROM students where course=? AND semester=? AND status = 1 ', [course,semester],(err, data) => {
+                // db.query('SELECT * FROM login_data WHERE type="student" AND status=1', (err, data) => {
+
+                if (err) reject(err)
+                resolve(data)
+            })
+        })
+    },
+    
     getTeacher: () => {
         return new Promise((resolve, reject) => {
             db.query('SELECT * FROM teachers', (err, data) => {
@@ -139,6 +163,36 @@ module.exports = {
         })
        
     },
+    getDashboardData: () => {
+        return new Promise((resolve, reject) => {
+            db.query("SELECT COUNT(*) AS total_students FROM students WHERE status = 1", (err, studentCountResult) => {
+                if (err) return reject(err);
+    
+                db.query("SELECT id, name, course, semester FROM students WHERE status = 1", (err, studentDataResult) => {
+                    if (err) return reject(err);
+    
+                    db.query("SELECT COUNT(*) AS total_teachers FROM teachers WHERE status = 1", (err, teacherCountResult) => {
+                        if (err) return reject(err);
+    
+                        db.query("SELECT id, name, subjects, class_teacher FROM teachers WHERE status = 1", (err, teacherDataResult) => {
+                            if (err) return reject(err);
+    
+                            resolve({
+                                totalStudents: studentCountResult[0]?.total_students || 0,
+                                students: studentDataResult || [],
+                                totalTeachers: teacherCountResult[0]?.total_teachers || 0,
+                                teachers: teacherDataResult || []
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    },
+    
+    
+
+    
     getTimetableData: () => {
         return new Promise((resolve, reject) => {
             db.query('SELECT * FROM teachers where status=1', (err, result) => {
@@ -956,5 +1010,59 @@ module.exports = {
             })
         })
     },
+    addNoticeBoard:({title,content,date})=>{
+        return new Promise((resolve, reject) => {
+            console.log("titel",title,content);
+            
+            const query = "INSERT INTO admin (notice_title, notice_content,notice_date) VALUES (?, ?,?)";
+            db.query(query, [title, content,date], (err, result) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result);
+              }
+            });
+        })
+    },
+    
+
+    getNotice: () => {
+        return new Promise((resolve, reject) => {
+          // First, get the last 3 distinct dates
+          db.query(
+            "SELECT DISTINCT notice_date FROM admin WHERE notice_date IS NOT NULL ORDER BY notice_date DESC LIMIT 3",
+            (err, dateResult) => {
+              if (err) {
+                reject(err);
+              } else {
+                const lastThreeDates = dateResult.map(row => row.notice_date);
+      
+                // Fetch notices from only those dates
+                db.query(
+                  "SELECT notice_title AS title, notice_content AS content, notice_date AS date FROM admin WHERE notice_date IN (?) ORDER BY notice_date DESC",
+                  [lastThreeDates],
+                  (err, noticeResult) => {
+                    if (err) {
+                      reject(err);
+                    } else {
+                      // Format the date before sending
+                      const formattedNotices = noticeResult.map(notice => ({
+                        ...notice,
+                        date: moment(notice.date).format('DD-MM-YYYY') // Formatting date
+                      }));
+      
+                      console.log("Last 3 Date Notices:", formattedNotices);
+                      resolve(formattedNotices);
+                    }
+                  }
+                );
+              }
+            }
+          );
+        });
+      },
+
+      
+      
 }
 

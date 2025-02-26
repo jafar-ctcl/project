@@ -1,39 +1,38 @@
-<section class="vh-100 mt-4">
-    <div class="container-fluid h-custom" style="margin-top: 100px;">
+<section class="vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="container">
         <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-md-9 col-lg-6 col-xl-4">
-                <img src="assets/img/register.png" class="img-fluid" alt="Sample image">
-            </div>
-            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                <h3 class="text-center">Hod Login</h3>
-                <p class="text-center text-danger">{{err}}</p>
-                <form action="/hod/login" method="post" autocomplete="on">
+         
+            <div class="col-md-8 col-lg-6 col-xl-4">
+                <div class="card p-4 border-0 shadow-lg">
+                    <h3 class="text-center fw-bold text-primary mb-3">HOD Login</h3>
+                    <p class="text-center text-danger">{{err}}</p>
 
-                    <!-- Email input -->
-                    <div data-mdb-input-init class="form-outline mb-4">
-                        <label class="form-label" for="form3Example3">Email address</label>
-                        <input type="email" name="email" id="form3Example3" class="form-control form-control-lg"
-                            placeholder="Enter a valid email address" />
-                    </div>
+                    <form action="/hod/login" method="post">
 
-                    <!-- Password input -->
-                    <div data-mdb-input-init class="form-outline mb-3">
-                        <label class="form-label" for="form3Example4">Password</label>
-                        <input type="password" name="password" id="form3Example4" class="form-control form-control-lg"
-                            placeholder="Enter password" />
-                    </div>
-           
+                        <!-- Email input -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="email">Email Address</label>
+                            <input type="email" name="email" id="email" class="form-control"
+                                placeholder="Enter a valid email address" required />
+                        </div>
 
-                    <div class="text-center text-lg-start mt-4 pt-2">
-                        <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
-                            style="padding-left: 
-                2.5rem; padding-right: 2.5rem;">Login</button>
-                    </div>
+                        <!-- Password input -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control"
+                                placeholder="Enter password" required />
+                        </div>
 
+                        <!-- Login Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                Login
+                            </button>
+                        </div>
 
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
 </section>

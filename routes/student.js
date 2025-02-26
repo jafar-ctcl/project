@@ -2,6 +2,7 @@ var express = require('express');
 const studentHelpers = require('../helpers/studentHelpers');
 const session = require('express-session');
 const { log } = require('handlebars');
+const hodHelpers = require('../helpers/hodHelpers');
 var router = express.Router();
 var student = true
 const verifyLogin = (req, res, next) => {
@@ -200,6 +201,16 @@ router.get("/view-winners/:title/:date", verifyLogin, (req, res) => {
   }).catch((error) => {
     console.error("Error fetching winners:", error);
     res.status(500).send("Server Error");
+  });
+});
+
+router.get('/view-noticeboard', (req, res) => {
+  hodHelpers.getNotice().then((notices) => {
+    console.log("Notices:", notices);
+    res.render('student/view-noticeboard', { notices }); // Pass notices to the template
+  }).catch((err) => {
+    console.error("Error fetching notices:", err);
+    res.status(500).send("Error fetching notices");
   });
 });
 module.exports = router;

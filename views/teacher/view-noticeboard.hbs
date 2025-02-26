@@ -1,0 +1,103 @@
+
+<section class="container mt-5">
+  <h2 class="text-center mb-5">📢 Notice Board</h2>
+
+
+  {{#if notices.length}}
+  <div class="row">
+    {{#each notices}}
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card shadow-lg border-0 bg-light rounded">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">{{this.title}}</h5>
+
+          <!-- Content with Read More Toggle -->
+          <p class="card-text">
+            <span class="short-content"></span>
+            <span class="full-content">{{this.content}}</span>
+          </p>
+
+          <!-- Read More Button -->
+          <button class="btn btn-link btn-outline-primary read-more pb-2">
+            <span>Read More</span> <span class="toggle-icon">⏬</span>
+          </button>
+
+          <p class="text-muted small">📅 Posted on: {{this.date}}</p>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{else}}
+  <p class="text-center text-muted">No notices available.</p>
+  {{/if}}
+
+  <!-- Navigation Section -->
+  <div class="text-center mt-5">
+    <a href="/teacher" class="btn btn-outline-primary">⬅ Go Back</a>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".card-text").forEach(cardText => {
+      let fullContent = cardText.querySelector(".full-content");
+      let shortContent = cardText.querySelector(".short-content");
+      let readMoreBtn = cardText.nextElementSibling;
+
+      if (fullContent.innerText.length > 100) {
+        shortContent.innerText = fullContent.innerText.substring(0, 100) + "...";
+        fullContent.style.display = "none";
+      } else {
+        shortContent.innerText = fullContent.innerText;
+        readMoreBtn.style.display = "none"; // Hide button if content is short
+      }
+
+      readMoreBtn.addEventListener("click", function() {
+        if (fullContent.style.display === "none") {
+          shortContent.style.display = "none";
+          fullContent.style.display = "inline";
+          this.innerHTML = '<span>Read Less</span> <span class="toggle-icon">⏫</span>';
+        } else {
+          shortContent.style.display = "inline";
+          fullContent.style.display = "none";
+          this.innerHTML = '<span>Read More</span> <span class="toggle-icon">⏬</span>';
+        }
+      });
+    });
+  });
+</script>
+<style>
+  /* Limit height for short content */
+  .short-content {
+    display: inline;
+  }
+  
+  .full-content {
+    display: none;
+  }
+
+  /* Read More Button Styling */
+  .read-more {
+    color: #007bff;
+   
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .read-more:hover {
+    color: white;
+    text-decoration: none;
+  }
+
+  .toggle-icon {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .expanded .toggle-icon {
+    transform: rotate(180deg);
+  }
+</style>

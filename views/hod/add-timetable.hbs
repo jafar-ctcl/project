@@ -61,7 +61,7 @@
 
           <!-- Submit Button -->
           <div class="text-center">
-            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+            <button type="submit" class="btn btn-primary btn-lg">Create timetable</button>
           </div>
         </form>
       </div>
@@ -228,7 +228,7 @@
         contentType: 'application/json',
         data: JSON.stringify({ periods: periodData }),
         success: function (response) {
-          alert(response.message || 'Periods saved successfully!');
+        //  alert(response.message || 'Periods saved successfully!');
           if (response.success) {
             // Reload the page and hide/show relevant sections
             window.location.reload();

@@ -1,7 +1,9 @@
 <!-- Timetable View Section -->
 <section class="timetable-view-section">
   <div class="container py-4 border bg-light">
+    {{#if days}}
     <a href="/hod" class="text-decoration-none text-primary">&larr; Home</a>
+    
     {{!-- <pre>{{json timetable}}</pre> --}}
     {{#each days as |day index|}} <!-- Loop over days -->
     <h3 class="text-center mb-4">{{day}}</h3> <!-- Display the day name -->
@@ -41,6 +43,14 @@
     </div>
     {{/each}}
   </div>
+  {{else}}
+<div class="alert alert-danger text-center mt-4">
+      <p>Timetable is not available</p>
+    </div>
+ <div class="text-center">
+     <a href="/hod" class="btn btn-primary btn-sm mb-4">Go Back</a>
+  </div>
+  {{/if}}
 </section>
 
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">

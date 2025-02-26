@@ -1,5 +1,6 @@
 var express = require('express');
 const teacherHelpers = require('../helpers/teacherHelpers');
+const hodHelpers = require('../helpers/hodHelpers');
 
 var router = express.Router();
 var teacher = true
@@ -514,6 +515,16 @@ router.get("/view-winners/:title/:date", verifyLogin, (req, res) => {
   }).catch((error) => {
     console.error("Error fetching winners:", error);
     res.status(500).send("Server Error");
+  });
+});
+
+router.get('/view-noticeboard', (req, res) => {
+  hodHelpers.getNotice().then((notices) => {
+    console.log("Notices:", notices);
+    res.render('teacher/view-noticeboard', { notices }); // Pass notices to the template
+  }).catch((err) => {
+    console.error("Error fetching notices:", err);
+    res.status(500).send("Error fetching notices");
   });
 });
 

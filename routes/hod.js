@@ -21,13 +21,19 @@ router.get('/', verifyLogin, async (req, res) => {
   //   hodHelpers.getAllTeachers()
   // ]);
   // console.log("teachers", teachers);
-  let students = await hodHelpers.getAllStudents()
-  let teachers = await hodHelpers.getAllTeachers()
+  // let students = await hodHelpers.getAllStudents()
+  let { totalStudents, students, totalTeachers, teachers } = await hodHelpers.getDashboardData();
+
+  //  console.log("dashboard",totalStudents);
+  
+  // let teachers = await hodHelpers.getAllTeachers()
 
   res.render('hod/dashboard', {
 
     hod,
     students,
+    totalStudents,
+    totalTeachers,
     teachers
   });
 
@@ -82,6 +88,23 @@ router.get('/view-students', verifyLogin, (req, res) => {
     res.render('hod/view-students', { hod, students: resp })
   })
 })
+router.get('/filter-students', verifyLogin, async (req, res) => {
+  try {
+      const { courses, semesters } = await hodHelpers.filterStudents();
+      res.render('hod/filter-students', { hod, courses, semesters });
+  } catch (error) {
+      console.error("Error fetching filter data:", error);
+      res.status(500).send("Internal Server Error");
+  }
+});
+router.post('/filter-students',(req,res)=>{
+  console.log("filter studetns",req.body);
+  const {course,semester}=req.body
+  hodHelpers.getFilteredStudents(course,semester).then((resp)=>{
+    res.render('hod/filtered-students',{ hod, students: resp ,course,semester})
+  })
+})
+
 router.get('/approve-teacher', verifyLogin, (req, res) => {
   // res.render('hod/approve-teacher',{hod})
   hodHelpers.getTeacher().then((resp) => {
@@ -374,7 +397,7 @@ router.get('/view-all-teachers', verifyLogin, (req, res) => {
     // console.log("Managed Teachers:", teachers); // Debugging log
 
     // Pass the full list of managed teachers to the view
-    res.render('hod/view-all-teachers', { teachers });
+    res.render('hod/view-all-teachers', { teachers ,hod});
   }).catch((err) => {
     console.log("Error fetching managed teachers:", err);
     res.status(500).send('Error fetching teachers data');
@@ -477,14 +500,34 @@ router.post('/add-winners', (req, res) => {
     res.status(500).send("Error saving winners");
   });
 });
+router.get('/add-noticeboard', async (req, res) => {
+  try {
+    res.render('hod/add-noticeboard',); 
+  } catch (err) {
+    console.error("Error fetching notices:", err);
+    res.render('hod/add-noticeboard');
+  }
+});
 
-router.get('/add-noticeboard',(req,res)=>{
-  res.render('hod/add-noticeboard')
-})
 router.post('/add-noticeboard',(req,res)=>{
   console.log("add notice",req.body);
+  const {title,content,date} = req.body
+  hodHelpers.addNoticeBoard({title,content,date} ).then(()=>{
+    res.redirect('/hod')
+  })
   
 })
+
+router.get('/view-noticeboard', (req, res) => {
+  hodHelpers.getNotice().then((notices) => {
+    console.log("Notices:", notices);
+    res.render('hod/view-noticeboard', { notices }); // Pass notices to the template
+  }).catch((err) => {
+    console.error("Error fetching notices:", err);
+    res.render('hod/view-noticeboard', { err }); // Pass notices to the template
+   
+  });
+});
 
 module.exports = router;
 

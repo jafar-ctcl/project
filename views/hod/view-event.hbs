@@ -1,9 +1,9 @@
 <section class="container mt-5">
+    {{#if events}}
   <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-primary">Event Details</h1>
 
   <!-- Event List -->
   <div class="row justify-content-center">
-    {{#if events}}
     {{#each events}}
     <div class="col-md-6 col-lg-4 mb-4">
       <div class="card shadow-lg border-light rounded-3 overflow-hidden h-100">
@@ -31,15 +31,21 @@
     </div>
     {{/each}}
     {{else}}
-    <div class="col-12">
-      <p class="text-center">No events available.</p>
+   
+     <div class="alert alert-danger text-center mt-4">
+       <p class="text-center">No events available.</p>
     </div>
+  
     {{/if}}
   </div>
 
   <!-- Navigation Button -->
+  
   <div class="mt-5 text-center">
+    
+ 
     <a href="/hod/add-event" class="btn btn-outline-primary">Add New Event</a>
+     <a href="/hod" class="btn btn-outline-primary">Go Back</a>
   </div>
 </section>
 
